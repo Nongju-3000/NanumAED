@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#232323">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="70dp"
+            android:layout_marginTop="30dp"
+            android:layout_weight="0.2"
+            android:orientation="horizontal">
+
+            <soup.neumorphism.NeumorphCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="30dp"
+                android:layout_weight="1"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="3dp"
+                app:neumorph_shapeType="flat">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/Score_name_cpr01"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:backgroundTint="#aaaaaa"
+                        android:ems="15"
+                        android:gravity="center"
+                        android:hint="@string/name"
+                        android:inputType="text"
+                        android:textColor="#ffffff"
+                        android:textColorHint="#aaaaaa"
+                        android:textSize="40sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="@string/score"
+                        android:textColor="#ffffff"
+                        android:textSize="40sp" />
+
+                    <TextView
+                        android:id="@+id/score_cpr_re_01"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:text="-"
+                        android:textColor="#FF7C2B"
+                        android:textSize="60sp" />
+
+                    <soup.neumorphism.NeumorphCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        app:neumorph_backgroundColor="#292929"
+                        app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                        app:neumorph_shadowColorLight="#444444"
+                        app:neumorph_shadowElevation="3dp"
+                        app:neumorph_shapeType="pressed">
+
+                        <ListView
+                            android:choiceMode="multipleChoice"
+                            android:id="@+id/score_list_cpr01"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </soup.neumorphism.NeumorphCardView>
+
+                </LinearLayout>
+
+            </soup.neumorphism.NeumorphCardView><!--score 1-->
+
+
+
+
+
+
+        </LinearLayout><!--Main layout-->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <ImageView
+                android:id="@+id/score_setting_cpr"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="left|center"
+                android:layout_marginLeft="30dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/side_set" />
+
+            <soup.neumorphism.NeumorphButton
+                android:id="@+id/create_cpr_btn01"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/create_report"
+                android:textColor="#ffffff"
+                android:textSize="40sp"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="3dp"
+                app:neumorph_shapeType="flat" />
+
+        </FrameLayout>
+
+    </LinearLayout> <!--All Layout -->
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
