@@ -187,7 +187,7 @@
                             <RelativeLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="80dp"
+                                android:layout_marginStart="60dp"
                                 android:layout_gravity="center">
                                 <ImageView
                                     android:visibility="invisible"
@@ -195,14 +195,16 @@
                                     android:layout_width="45dp"
                                     android:layout_height="90dp"
                                     android:src="@drawable/cpr_up_arrow"
-                                    android:layout_gravity="center"/>
+                                    android:layout_gravity="center"
+                                    android:translationX="40dp"/>
                                 <ImageView
                                     android:id="@+id/cpr_arrow01_"
                                     android:layout_width="45dp"
                                     android:layout_height="89dp"
                                     android:layout_gravity="center_vertical"
                                     android:src="@drawable/cpr_down_arrow"
-                                    android:visibility="invisible" />
+                                    android:visibility="invisible"
+                                    android:translationX="40dp"/>
                                 <TextView
                                     android:id="@+id/remote_arrow_down_text"
                                     android:layout_width="wrap_content"
@@ -212,17 +214,22 @@
                                     android:layout_centerInParent="true"
                                     android:textColor="#fff"
                                     android:text="@string/compress"
-                                    android:textSize="20dp"/>
+                                    android:textSize="13dp"
+                                    android:translationX="-11dp"
+                                    android:translationY="25dp"/>
+
                                 <TextView
                                     android:id="@+id/remote_arrow_up_text"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:visibility="invisible"
-                                    android:layout_toEndOf="@id/cpr_arrow01_"
                                     android:layout_centerInParent="true"
-                                    android:textColor="#fff"
+                                    android:layout_toEndOf="@id/cpr_arrow01_"
                                     android:text="@string/release"
-                                    android:textSize="20dp"/>
+                                    android:textColor="#fff"
+                                    android:textSize="13dp"
+                                    android:visibility="invisible"
+                                    android:translationX="-6dp"
+                                    android:translationY="-25dp"/>
                             </RelativeLayout>
                             <TextView
                                 android:id="@+id/remote_depth_text"
