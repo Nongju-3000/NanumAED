@@ -262,13 +262,13 @@ public class BluetoothLeServiceCPR extends Service {
                     int min = min_list.get(index);
                     if(min != 0) {
                         min_list.set(index, 0);
-                        writeCharacteristic(rxBleConnection, String.valueOf(min), index);
+                        writeCharacteristic(rxBleConnection, Integer.toHexString(min), index);
                         Print.e(TAG, "min sent..");
                     }
                     isHandlerFree = true;
                 }, 200);
             }
-            int value = Integer.parseInt(data);
+            int value = Integer.parseInt(data, 16);
             if (value >= 30 && value <= 70) { // new Range min or max sent
                 if (min_list.get(index) == 0 && max_list.get(index) != 0) {
                     Print.e(TAG, "sent min data is end. -> time to send max flag");
@@ -277,7 +277,7 @@ public class BluetoothLeServiceCPR extends Service {
                         int max = max_list.get(0);
                         if (max != 0) {
                             max_list.set(0, 0);
-                            writeCharacteristic(rxBleConnection, String.valueOf(max), index);
+                            writeCharacteristic(rxBleConnection, Integer.toHexString(max), index);
                             Print.e(TAG, "max sent..");
                         }
                         isHandlerFree = true;
