@@ -2325,13 +2325,15 @@ public class CPRActivity extends AppCompatActivity {
         newRange.add(245);
         newRange.add(minDepth);
         newRange.add(maxDepth);
-        if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
-            Intent sender = new Intent(this, BluetoothLeServiceCPR.class);
-            sender.setAction(BluetoothLeServiceCPR.ACTION_DEPTH_CHANGE);
-            sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, minDepth);
-            sender.putExtra(BluetoothLeServiceCPR.DATA2_NOT_KEY, maxDepth);
-            startService(sender);
+        if((Devices.get("Device_01") != null)){
+            if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
+                Intent sender = new Intent(this, BluetoothLeServiceCPR.class);
+                sender.setAction(BluetoothLeServiceCPR.ACTION_DEPTH_CHANGE);
+                sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, minDepth);
+                sender.putExtra(BluetoothLeServiceCPR.DATA2_NOT_KEY, maxDepth);
+                startService(sender);
 
+            }
         }
     }
 
@@ -2426,6 +2428,14 @@ public class CPRActivity extends AppCompatActivity {
             } else {
                 score = reportItems.get(0).getReport_down_depth();
             }
+
+            String stopList;
+            if(reportItems.get(0).getStop_time_list().isEmpty()){
+                stopList = "0";
+            }else{
+                stopList = converters.writingIntegerStringFromList(reportItems.get(0).getStop_time_list());
+            }
+
             ChatData chatData__ = new ChatData("score/"+score+"/"+avg_depth_s+"/"+bpm, getTime_, UserName);
             databaseReference.child("Room").child(room).child("message").push().setValue(chatData__);
 
@@ -2444,7 +2454,7 @@ public class CPRActivity extends AppCompatActivity {
                     + reportItems.get(0).getReport_position_correct() + "/"
                     + reportItems.get(0).getReport_lung_num() + "/"
                     + reportItems.get(0).getReport_lung_correct() + "/"
-                    + converters.writingIntegerStringFromList(reportItems.get(0).getStop_time_list())
+                    + stopList
                     , getTime_
                     , UserName);
 
@@ -2793,7 +2803,10 @@ public class CPRActivity extends AppCompatActivity {
             position_ = Integer.parseInt(score);
         }
       //  int bpm = (int) (((double) (Depth_size / (double) Seconds_) * 60));
-        int bpm = (int) add_bpm / gBpm.size();
+        int bpm = 0;
+        if(gBpm.size() > 0){
+            bpm = add_bpm / gBpm.size();
+        }
         int angle = (int) (((double) angleSum / (double) Depth_size));
 
         reportItem = new ReportItem(name

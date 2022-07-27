@@ -434,7 +434,7 @@ public class BluetoothLeServiceCPR extends Service {
             final StringBuilder stringBuilder = new StringBuilder(bytes.length);
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
-            intent.putExtra(EXTRA_DATA, stringBuilder.toString() + "," + CHAR_POSITION_UUID+ "," + bleDevice.getMacAddress());
+            intent.putExtra(EXTRA_DATA, stringBuilder + "," + CHAR_POSITION_UUID+ "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
     }
@@ -454,7 +454,7 @@ public class BluetoothLeServiceCPR extends Service {
             final StringBuilder stringBuilder = new StringBuilder(bytes.length);
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
-            intent.putExtra(EXTRA_DATA, stringBuilder.toString() + "," + CHAR_DEPTH_UUID+ "," + bleDevice.getMacAddress());
+            intent.putExtra(EXTRA_DATA, stringBuilder + "," + CHAR_DEPTH_UUID+ "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
     }

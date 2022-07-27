@@ -83,6 +83,8 @@ public class ReportActivity extends Activity {
     private TextView report_angle;
     private TextView report_total;
 
+    private TextView equip;
+
     private ArrayList<Float> chart_item;
     private ArrayList<ReportItem> reportItems;
     private ArrayList<String> names;
@@ -166,6 +168,8 @@ public class ReportActivity extends Activity {
         all_accuracy = findViewById(R.id.all_accuracy);
         breath_accuracy = findViewById(R.id.breath_accuracy);
         depth_accuracy = findViewById(R.id.depth_accuracy);
+
+        equip = findViewById(R.id.equip);
 
         totalCount = findViewById(R.id.totalCount);
         correctCount = findViewById(R.id.correctCount);
@@ -382,6 +386,18 @@ public class ReportActivity extends Activity {
             report_bpm.setText(reportItems.get(0).getReport_bpm() + " BPM");
             int angle = 90 - Integer.parseInt(reportItems.get(0).getReport_angle());
             report_angle.setText(angle + " °");
+
+            if(Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0 && Integer.parseInt(reportItems.get(0).getReport_lung_num()) == 0)){
+                equip.setText("");
+            }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) != 0 && Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0 && Integer.parseInt(reportItems.get(0).getReport_lung_num()) == 0){
+                equip.setText("BAND");
+            }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)){
+                equip.setText("AIO");
+                report_angle.setText("BLOCK");
+            }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) != 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)){
+                equip.setText("BAND, AIO");
+            }
+
             chart_item = reportItems.get(0).getReport_depth_list();
 
             int sum_depth = Integer.parseInt(reportItems.get(0).getReport_depth_correct())

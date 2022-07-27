@@ -53,6 +53,7 @@
 
         <activity
             android:name=".activity.ReportActivity"
+            android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             />
 

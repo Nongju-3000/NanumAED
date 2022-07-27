@@ -4,188 +4,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#292929"
-    android:orientation="vertical"
-    android:id="@+id/printView">
+    android:orientation="vertical">
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="30dp"
-            android:id="@+id/report_list"
+        android:orientation="vertical"
+        >
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="bottom"
-            />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="30dp"
+                android:id="@+id/report_list"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="bottom"
+                />
+        </FrameLayout>
 
-    </LinearLayout>
-
-    <!--top -->
-    <LinearLayout
-        android:layout_marginTop="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="700dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <!--score-->
-        <soup.neumorphism.NeumorphCardView
+        <!--top -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:neumorph_backgroundColor="#292929"
-            app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-            app:neumorph_shadowColorLight="#444444"
-            app:neumorph_shadowElevation="3dp"
-            app:neumorph_shapeType="flat">
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <!--score-->
+            <soup.neumorphism.NeumorphCardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cpr_score"
-                        android:textColor="#ffffff"
-                        android:textSize="28dp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/all_accuracy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:text="100%"
-                        android:textColor="#49c644"
-                        android:textSize="28dp" />
-
-                </LinearLayout>
+                android:layout_weight="1"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="3dp"
+                app:neumorph_shapeType="flat"
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="20dp"
-                            android:gravity="center"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/breath_accuracy_img"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_weight="1"
-                                android:scaleType="fitCenter"
-                                android:src="@drawable/score_02" />
-
-                            <TextView
-                                android:id="@+id/breath_accuracy"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="100%"
-                                android:textSize="38dp"
-                                android:visibility="visible"
-                                android:textColor="#ffffff" />
-                            <TextView
-                                android:id="@+id/breath_break"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:textSize="34dp"
-                                android:text="BLOCK"
-                                android:visibility="gone"
-                                android:background="#545454"
-                                android:textColor="#ffffff"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/depth_accuracy_img"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_weight="1"
-                                android:scaleType="fitCenter"
-                                android:src="@drawable/score_03" />
-
-                            <TextView
-                                android:id="@+id/depth_accuracy"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:textSize="38dp"
-                                android:text="100%"
-                                android:textColor="#ffffff" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-        </soup.neumorphism.NeumorphCardView>
-
-
-        <!--info-->
-        <soup.neumorphism.NeumorphCardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            app:neumorph_backgroundColor="#292929"
-            app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-            app:neumorph_shadowColorLight="#444444"
-            app:neumorph_shadowElevation="3dp"
-            app:neumorph_shapeType="flat">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:gravity="left"
-                        android:layout_marginLeft="30dp"
-                        android:text="@string/session_info"
-                        android:textColor="#ffffff"
-                        android:textSize="33dp"
-                        android:textStyle="bold" />
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/cprTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cpr_score"
+                            android:textColor="#ffffff"
+                            android:textSize="28dp"
+                            android:textStyle="bold"
+                            />
+
+                        <TextView
+                            android:id="@+id/all_accuracy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="100%"
+                            android:textColor="#49c644"
+                            android:textSize="28dp" />
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -193,10 +81,12 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -208,498 +98,807 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
-                                    android:id="@+id/report_end_time_img"
+                                    android:id="@+id/breath_accuracy_img"
                                     android:layout_width="50dp"
                                     android:layout_height="50dp"
                                     android:layout_weight="1"
                                     android:scaleType="fitCenter"
-                                    android:src="@drawable/info_01" />
+                                    android:src="@drawable/score_02" />
 
                                 <TextView
-                                    android:id="@+id/report_end_time"
+                                    android:id="@+id/breath_accuracy"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
+                                    android:text="100%"
                                     android:textSize="38dp"
-                                    android:text="-"
-                                    android:textColor="#ffffff" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:id="@+id/report_interval_img"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_weight="1"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/info_02" />
-
-                                <TextView
-                                    android:id="@+id/report_interval_sec"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:text="-"
-                                    android:textSize="38dp"
-                                    android:textColor="#ffffff" />
-
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="20dp"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:id="@+id/cycle_img"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_weight="1"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/info_03" />
-
-                                <TextView
-                                    android:id="@+id/report_cycle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:textSize="38dp"
-                                    android:text="-"
-                                    android:textColor="#ffffff" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:id="@+id/depth_correct_img"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_weight="1"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/info_04" />
-
-                                <TextView
-                                    android:id="@+id/report_depth_correct"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:textSize="38dp"
-                                    android:text="-"
                                     android:visibility="visible"
                                     android:textColor="#ffffff" />
                                 <TextView
-                                    android:id="@+id/depth_break"
+                                    android:id="@+id/breath_break"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
                                     android:textSize="34dp"
                                     android:text="BLOCK"
-                                    android:background="#545454"
                                     android:visibility="gone"
+                                    android:background="#545454"
                                     android:textColor="#ffffff"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/depth_accuracy_img"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_weight="1"
+                                    android:scaleType="fitCenter"
+                                    android:src="@drawable/score_03" />
+
+                                <TextView
+                                    android:id="@+id/depth_accuracy"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:textSize="38dp"
+                                    android:text="100%"
+                                    android:textColor="#ffffff" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
-
                 </LinearLayout>
+            </soup.neumorphism.NeumorphCardView>
 
-                <!--compress-->
+
+            <!--info-->
+            <soup.neumorphism.NeumorphCardView
+                android:id="@+id/sessionCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="3dp"
+                app:neumorph_shapeType="flat">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:gravity="left"
-                        android:layout_marginLeft="30dp"
-                        android:text="@string/compressions"
-                        android:textColor="#ffffff"
-                        android:textSize="33dp"
-                        android:textStyle="bold" />
-
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="130dp"
-                            android:layout_height="150dp"
-                            android:layout_marginLeft="50dp"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/release_accuracy"
-                                android:textSize="15dp"
-                                android:textColor="#ffffff" />
-                            <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_weight="0.1">
-
-                                <Button
-                                    android:layout_width="70dp"
-                                    android:layout_height="80dp"
-                                    android:layout_gravity="center"
-                                    android:alpha="0.5"
-                                    android:background="@drawable/anne_line" />
-
-                                <TextView
-                                    android:id="@+id/report_total"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="-"
-                                    android:textColor="#ffffff"
-                                    />
-
-                                <Button
-                                    android:id="@+id/report_up_depth"
-                                    android:layout_width="80dp"
-                                    android:layout_height="25dp"
-                                    android:layout_gravity="center"
-                                    android:layout_marginBottom="35dp"
-                                    android:background="@drawable/ventilation"
-                                    android:text="-"
-                                    android:textColor="#ffffff"
-                                    android:textSize="20dp" />
-
-
-                                <Button
-                                    android:id="@+id/report_down_depth"
-                                    android:layout_width="80dp"
-                                    android:layout_height="25dp"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="35dp"
-                                    android:background="@drawable/ventilation"
-                                    android:text="100%"
-                                    android:textColor="#ffffff"
-                                    android:textSize="20dp" />
-
-                            </FrameLayout>
-
-                            <TextView
-                                android:id="@+id/report_02"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/depth_accuracy"
-                                android:textSize="15dp"
-                                android:textColor="#ffffff" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/sesseionTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="left"
+                            android:layout_marginLeft="30dp"
+                            android:text="@string/session_info"
+                            android:textColor="#ffffff"
+                            android:textSize="33dp"
+                            android:textStyle="bold"
+                            />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="20dp"
-                            android:layout_marginBottom="10dp"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
                             <LinearLayout
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
-                                android:background="@drawable/compress_01"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
                                 android:gravity="center"
                                 android:orientation="vertical">
 
-                                <FrameLayout
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="20dp"
                                     android:gravity="center"
-                                    android:orientation="vertical">
+                                    android:orientation="horizontal">
 
                                     <ImageView
-                                        android:layout_width="27dp"
-                                        android:layout_height="36dp"
-                                        android:layout_gravity="center"
-                                        android:layout_marginTop="15dp"
-                                        android:rotation="0"
-                                        android:src="@drawable/compress_02" />
+                                        android:id="@+id/report_end_time_img"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/info_01" />
 
-                                </FrameLayout>
+                                    <TextView
+                                        android:id="@+id/report_end_time"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:textSize="38dp"
+                                        android:text="-"
+                                        android:textColor="#ffffff" />
 
-                                <TextView
-                                    android:gravity="center"
-                                    android:id="@+id/report_bpm"
-                                    android:layout_width="wrap_content"
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="100km/h"
-                                    android:textColor="#ffffff" />
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
 
+                                    <ImageView
+                                        android:id="@+id/report_interval_img"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/info_02" />
+
+                                    <TextView
+                                        android:id="@+id/report_interval_sec"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:text="-"
+                                        android:textSize="38dp"
+                                        android:textColor="#ffffff" />
+
+                                </LinearLayout>
                             </LinearLayout>
 
                             <LinearLayout
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
                                 android:gravity="center"
-                                android:background="@drawable/compress_03"
                                 android:orientation="vertical">
 
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="20dp"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:id="@+id/cycle_img"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/info_03" />
+
+                                    <TextView
+                                        android:id="@+id/report_cycle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:textSize="38dp"
+                                        android:text="-"
+                                        android:textColor="#ffffff" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:id="@+id/depth_correct_img"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/info_04" />
+
+                                    <TextView
+                                        android:id="@+id/report_depth_correct"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:textSize="38dp"
+                                        android:text="-"
+                                        android:visibility="visible"
+                                        android:textColor="#ffffff" />
+                                    <TextView
+                                        android:id="@+id/depth_break"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="center"
+                                        android:textSize="34dp"
+                                        android:text="BLOCK"
+                                        android:background="#545454"
+                                        android:visibility="gone"
+                                        android:textColor="#ffffff"/>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!--compress-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/compressionTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="left"
+                            android:layout_marginLeft="30dp"
+                            android:text="@string/compressions"
+                            android:textColor="#ffffff"
+                            android:textSize="33dp"
+                            android:textStyle="bold" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="130dp"
+                                android:layout_height="150dp"
+                                android:layout_marginLeft="50dp"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:id="@+id/releaseTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/release_accuracy"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff" />
                                 <FrameLayout
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_weight="0.1">
+
+                                    <Button
+                                        android:layout_width="70dp"
+                                        android:layout_height="80dp"
+                                        android:layout_gravity="center"
+                                        android:alpha="0.5"
+                                        android:background="@drawable/anne_line" />
+
+                                    <TextView
+                                        android:id="@+id/report_total"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:text="-"
+                                        android:textColor="#ffffff"
+                                        />
+
+                                    <Button
+                                        android:id="@+id/report_up_depth"
+                                        android:layout_width="80dp"
+                                        android:layout_height="25dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginBottom="35dp"
+                                        android:background="@drawable/ventilation"
+                                        android:text="-"
+                                        android:textColor="#ffffff"
+                                        android:textSize="20dp" />
+
+
+                                    <Button
+                                        android:id="@+id/report_down_depth"
+                                        android:layout_width="80dp"
+                                        android:layout_height="25dp"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="35dp"
+                                        android:background="@drawable/ventilation"
+                                        android:text="100%"
+                                        android:textColor="#ffffff"
+                                        android:textSize="20dp" />
+
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/depthTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/depth_accuracy"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginBottom="10dp"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="70dp"
+                                    android:layout_height="70dp"
+                                    android:background="@drawable/compress_01"
                                     android:gravity="center"
                                     android:orientation="vertical">
 
-                                    <ImageView
-                                        android:id="@+id/angle_ave"
-                                        android:layout_width="36dp"
-                                        android:layout_height="25dp"
-                                        android:layout_marginTop="15dp"
-                                        android:layout_gravity="center"
-                                        android:rotation="0"
-                                        android:src="@drawable/compress_02" />
+                                    <FrameLayout
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:gravity="center"
+                                        android:orientation="vertical">
 
-                                </FrameLayout>
-                                <TextView
+                                        <ImageView
+                                            android:layout_width="27dp"
+                                            android:layout_height="36dp"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="15dp"
+                                            android:rotation="0"
+                                            android:src="@drawable/compress_02" />
+
+                                    </FrameLayout>
+
+                                    <TextView
+                                        android:gravity="center"
+                                        android:id="@+id/report_bpm"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="100km/h"
+                                        android:textColor="#ffffff" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="70dp"
+                                    android:layout_height="70dp"
                                     android:gravity="center"
-                                    android:id="@+id/report_angle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="0°"
-                                    android:textColor="#ffffff" />
+                                    android:background="@drawable/compress_03"
+                                    android:orientation="vertical">
+
+                                    <FrameLayout
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:gravity="center"
+                                        android:orientation="vertical">
+
+                                        <ImageView
+                                            android:id="@+id/angle_ave"
+                                            android:layout_width="36dp"
+                                            android:layout_height="25dp"
+                                            android:layout_marginTop="15dp"
+                                            android:layout_gravity="center"
+                                            android:rotation="0"
+                                            android:src="@drawable/compress_02" />
+
+                                    </FrameLayout>
+                                    <TextView
+                                        android:gravity="center"
+                                        android:id="@+id/report_angle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0°"
+                                        android:textColor="#ffffff" />
+                                </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </soup.neumorphism.NeumorphCardView>
+            </soup.neumorphism.NeumorphCardView>
 
-        <!--ventilation-->
+            <!--ventilation-->
 
-        <soup.neumorphism.NeumorphCardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:neumorph_backgroundColor="#292929"
-            app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-            app:neumorph_shadowColorLight="#444444"
-            app:neumorph_shadowElevation="3dp"
-            app:neumorph_shapeType="flat">
-
-            <LinearLayout
+            <soup.neumorphism.NeumorphCardView
+                android:id="@+id/ventilationCardView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="10dp"
-                    android:gravity="left"
-                    android:text="@string/ventilation"
-                    android:textColor="#ffffff"
-                    android:textSize="33dp"
-                    android:maxLines="1"
-                    android:textStyle="bold" />
+                android:layout_weight="1"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="3dp"
+                app:neumorph_shapeType="flat">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="20dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <TextView
-                        android:gravity="center"
-                        android:textSize="28dp"
-                        android:layout_weight="1"
-                        android:textColor="#ffffff"
-                        android:text="@string/score"
-                        android:maxLines="1"
+                        android:id="@+id/ventilationTextView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="left"
+                        android:text="@string/ventilation"
+                        android:textColor="#ffffff"
+                        android:textSize="33dp"
+                        android:maxLines="1"
+                        android:textStyle="bold" />
 
-                    <TextView
-                        android:gravity="center"
-                        android:layout_weight="1"
-                        android:id="@+id/chart_img_02"
-                        android:text="-"
-                        android:textColor="#ffffff"
-                        android:textSize="28dp"
-                        android:maxLines="1"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                    <TextView
-                        android:id="@+id/chart_break"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
                         android:gravity="center"
-                        android:textSize="24dp"
-                        android:text="BLOCK"
-                        android:background="#545454"
-                        android:visibility="gone"
-                        android:textColor="#ffffff"/>
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/scoreTextView"
+                            android:gravity="center"
+                            android:textSize="28dp"
+                            android:layout_weight="1"
+                            android:textColor="#ffffff"
+                            android:text="@string/score"
+                            android:maxLines="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:id="@+id/chart_img_02"
+                            android:text="-"
+                            android:textColor="#ffffff"
+                            android:textSize="28dp"
+                            android:maxLines="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/chart_break"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textSize="24dp"
+                            android:text="BLOCK"
+                            android:background="#545454"
+                            android:visibility="gone"
+                            android:textColor="#ffffff"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_gravity="left"
+                            android:layout_marginRight="12dp">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/dateTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:text="Date : "/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:id="@+id/date"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/timeTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:text="Time : "/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:id="@+id/time"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/aveTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:text="Average : "/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:id="@+id/ave_depth"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginLeft="12dp"
+                            android:layout_gravity="right">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/totalTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:text="Total : "/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:id="@+id/totalCount"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/correctTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:text="Correct : "/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:id="@+id/correctCount"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/wrongTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:text="Wrong : "/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:textSize="15dp"
+                                    android:textColor="#ffffff"
+                                    android:id="@+id/wrongCount"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </soup.neumorphism.NeumorphCardView>
+
+        </LinearLayout>    <!--top -->
+
+        <!--middle -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="50dp"
+                android:layout_gravity="left|center">
+
+                <TextView
+                    android:id="@+id/equip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textColor="#fff"
+                    android:textSize="40dp" />
+            </LinearLayout>
+
+
+        </FrameLayout>
+        <!--<ImageView
+            android:id="@+id/printButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center|right"
+            android:src="@drawable/print_icon"
+            android:visibility="gone"/>-->
+
+        <!-- Graph Start-->
+        <ViewFlipper
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/graphViewFlipper"
+            >
+            <!-- FirstView Start-->
+            <soup.neumorphism.NeumorphCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="3dp"
+                app:neumorph_shapeType="flat"
+                android:id="@+id/graphCardView">
+
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="230dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_gravity="top">
+
+                            <com.github.mikephil.charting.charts.LineChart
+                                android:id="@+id/chart_img"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp" />
+                        </RelativeLayout>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|right"
+                        android:orientation="horizontal"
+                        android:layout_marginRight="70dp"
+                        android:layout_marginBottom="10dp"
+                        android:translationY="-20dp"
+                        android:scaleX="1.2"
+                        android:scaleY="1.2">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="60dp">
+                            <Button
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/release_rec"
+                                android:clickable="false"
+                                android:layout_marginRight="12dp"/>
+
+                            <TextView
+                                android:id="@+id/release_cmt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/release" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="60dp">
+                            <Button
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/compress_rec"
+                                android:clickable="false"
+                                android:layout_marginRight="12dp"/>
+
+                            <TextView
+                                android:id="@+id/compress_cmt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/compress"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="60dp">
+                            <Button
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/ventil_rec"
+                                android:clickable="false"
+                                android:layout_marginRight="12dp"/>
+
+                            <TextView
+                                android:id="@+id/ventilation_cmt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ventilation"/>
+                        </LinearLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
-
-            </LinearLayout>
-        </soup.neumorphism.NeumorphCardView>
-
-    </LinearLayout>    <!--top -->
-
-    <!--middle -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/graph"
-            android:textColor="#ffffff"
-            android:textSize="30dp"
-            android:textStyle="bold" />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginRight="50dp"
-            android:layout_gravity="right">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textSize="12dp"
-                    android:textColor="#ffffff"
-                    android:text="Total : "/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textSize="12dp"
-                    android:textColor="#ffffff"
-                    android:id="@+id/totalCount"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textSize="12dp"
-                    android:textColor="#ffffff"
-                    android:text="Correct : "/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textSize="12dp"
-                    android:textColor="#ffffff"
-                    android:id="@+id/correctCount"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textSize="12dp"
-                    android:textColor="#ffffff"
-                    android:text="Wrong : "/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textSize="12dp"
-                    android:textColor="#ffffff"
-                    android:id="@+id/wrongCount"/>
-            </LinearLayout>
-        </LinearLayout>
-    </FrameLayout>
-    <ImageView
-        android:id="@+id/printButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center|right"
-        android:visibility="gone"/>
-
-    <soup.neumorphism.NeumorphCardView
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        app:neumorph_backgroundColor="#292929"
-        app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-        app:neumorph_shadowColorLight="#444444"
-        app:neumorph_shadowElevation="3dp"
-        app:neumorph_shapeType="flat">
-        <LinearLayout
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:orientation="vertical">
-            <LinearLayout
+            </soup.neumorphism.NeumorphCardView>
+            <!-- FirstView End-->
+            <!-- SecondView Start-->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-                <RelativeLayout
+                android:layout_height="wrap_content"
+                android:id="@+id/graphScrollView"
+                android:background="#fff"
+                android:descendantFocusability="blocksDescendants">
+                <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/chart_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp" />
-                </RelativeLayout>
-            </LinearLayout>
-        </LinearLayout>
-    </soup.neumorphism.NeumorphCardView>
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/graphRecyclerView"/>
+            </RelativeLayout>
+            <!-- SecondView End-->
+        </ViewFlipper>
+        <!-- Graph End-->
+        <!--bottom -->
 
-    <!--bottom -->
-
-
+    </LinearLayout>
 </LinearLayout>

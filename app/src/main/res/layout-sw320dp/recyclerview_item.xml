@@ -12,7 +12,7 @@
         android:id="@+id/text1"
         android:textColor="#ffffff"
         android:text="-"
-        android:textSize="30dp"
+        android:textSize="15dp"
         tools:ignore="MissingConstraints" />
 
 

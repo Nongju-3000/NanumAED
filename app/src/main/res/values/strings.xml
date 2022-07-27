@@ -27,10 +27,16 @@
     <string name="search">Search</string>
     <string name="close">Close</string>
     <string name="band01">01 Band : </string>
+    <string name="pad01">01 Pad : </string>
+    <string name="band02">02 Band : </string>
     <string name="pad02">02 Pad : </string>
     <string name="band03">03 Band : </string>
+    <string name="pad03">03 Pad : </string>
+    <string name="band04">04 Band : </string>
     <string name="pad04">04 Pad : </string>
     <string name="band05">05 Band : </string>
+    <string name="pad05">05 Pad : </string>
+    <string name="band06">06 Band : </string>
     <string name="pad06">06 Pad : </string>
     <string name="education">Education</string>
     <string name="game">Game</string>
