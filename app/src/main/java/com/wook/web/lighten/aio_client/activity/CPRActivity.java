@@ -566,11 +566,8 @@ public class CPRActivity extends AppCompatActivity {
         cpr_arrow01 = findViewById(R.id.cpr_arrow01);
         cpr_arrow01_ = findViewById(R.id.cpr_arrow01_);
         depthCPR_view01= findViewById(R.id.depthCPR_view01);
-
         depth_btn01 = findViewById(R.id.depth_btn_cpr_01);
-
         press_ave_btn01 = findViewById(R.id.press_ave_btn_cpr_01);
-
         view01 = findViewById(R.id.depthCPR_view01);
 
         view01.post(() -> {
@@ -998,7 +995,7 @@ public class CPRActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
-                                    final Animation animation1 = new TranslateAnimation(0, 0, 0, depth_ready);
+                                    final Animation animation1 = new TranslateAnimation(0, 0, 0, 0);
                                     animation1.setDuration(200);
                                     animation1.setFillAfter(false);
 
@@ -1130,15 +1127,7 @@ public class CPRActivity extends AppCompatActivity {
                                 breath01 = Integer.parseInt(getHexToDec(spil[0]));
                                 //press_position01.setVisibility(View.INVISIBLE);
 
-                                depthview.setVisibility(View.INVISIBLE);
-                                anne.setVisibility(View.INVISIBLE);
-                                remote_depth_text.setVisibility(View.INVISIBLE);
-                                cpr_ani01.setVisibility(View.INVISIBLE);
-                                cpr_ani02.setVisibility(View.INVISIBLE);
-                                standardCPR_btn01.setVisibility(View.INVISIBLE);
-                                depth_btn_cpr_01.setVisibility(View.INVISIBLE);
-                                depth_btn_cpr_up.setVisibility(View.INVISIBLE);
-                                depthCPR_view01.setVisibility(View.INVISIBLE);
+
 
                                 if(breath01 > bre_threshold01 && !isBreath01){
                                     breathval_01.add(71.0f);
@@ -1158,6 +1147,15 @@ public class CPRActivity extends AppCompatActivity {
                                 if(breath01 > min_lung01 + 5){
                                     lung01.setVisibility(View.VISIBLE);
                                     test_lung01.setVisibility(View.VISIBLE);
+                                    depthview.setVisibility(View.INVISIBLE);
+                                    anne.setVisibility(View.INVISIBLE);
+                                    remote_depth_text.setVisibility(View.INVISIBLE);
+                                    cpr_ani01.setVisibility(View.INVISIBLE);
+                                    cpr_ani02.setVisibility(View.INVISIBLE);
+                                    standardCPR_btn01.setVisibility(View.INVISIBLE);
+                                    depth_btn01.setVisibility(View.INVISIBLE);
+                                    depth_btn_cpr_up.setVisibility(View.INVISIBLE);
+                                    depthCPR_view01.setVisibility(View.INVISIBLE);
                                 }
 
                                 if(breath01 < bre_threshold01){
@@ -1266,7 +1264,7 @@ public class CPRActivity extends AppCompatActivity {
                         cpr_ani01.setVisibility(View.VISIBLE);
                         cpr_ani02.setVisibility(View.VISIBLE);
                         standardCPR_btn01.setVisibility(View.VISIBLE);
-                        depth_btn_cpr_01.setVisibility(View.VISIBLE);
+                        depth_btn01.setVisibility(View.VISIBLE);
                         depth_btn_cpr_up.setVisibility(View.VISIBLE);
                         depthCPR_view01.setVisibility(View.VISIBLE);
                         long now__ = System.currentTimeMillis();
@@ -1333,10 +1331,12 @@ public class CPRActivity extends AppCompatActivity {
                                 depth_num = Depth_size;
                             }
                         }
-                        if ((0 < depthSet) && (depthSet <= minDepth)) {
+                        if (depthSet >= minDepth && depthSet <= maxDepth)
+                            animation = new TranslateAnimation(0, 0, 0, depth_true);
+                        if (depthSet < minDepth) {
                             animation = new TranslateAnimation(0, 0, 0, depth_false);
                         }
-                        if (depthSet >= maxDepth) {
+                        if (depthSet > maxDepth) {
                             animation = new TranslateAnimation(0, 0, 0, depth_over);
                         }
 
@@ -1354,9 +1354,9 @@ public class CPRActivity extends AppCompatActivity {
 
                             @Override
                             public void onAnimationEnd(Animation animation) {
-                                final Animation animation1 = new TranslateAnimation(0, 0, 0, depth_ready);
+                                final Animation animation1 = new TranslateAnimation(0, 0, 0, 0);
                                 animation1.setDuration(200);
-                                animation1.setFillAfter(true);
+                                animation1.setFillAfter(false);
 
                                 view01.setBackgroundColor(Color.parseColor("#777777"));
                                 standard_btn01.setBackground(getDrawable(R.drawable.anne_point));
