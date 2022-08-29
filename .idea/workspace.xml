@@ -17,63 +17,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99921b15-6d2e-44ca-9aec-8c67d5d9c535" name="Changes" comment="modify the way of changing the depth">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/build/generated/ap_generated_sources/debug/out/com/wook/web/lighten/aio_client/db/AppDatabase_Impl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/build/generated/ap_generated_sources/debug/out/com/wook/web/lighten/aio_client/db/ReportDao_Impl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/build/generated/res/google-services/debug/values/values.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/build/generated/source/buildConfig/debug/com/wook/web/lighten/aio_client/BuildConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/angle_gray.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/lung_noline.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/lung_noline_clip.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/lung_normal_noline.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/magnifying_glass.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/score_01.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/score_04.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/score_05.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/custom_font_family.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/sandolgothic.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/font/sandolgothicbold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw320dp/info_accuracy.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw320dp/info_session.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw320dp/info_ventil.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw400dp/info_accuracy.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw400dp/info_session.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw400dp/info_ventil.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/info_accuracy.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/info_session.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/info_ventil.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/info_accuracy.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/info_session.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/info_ventil.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_react_react_native_webrtc_1_92_2_jitsi_8711917_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_react_react_native_webrtc_1_92_2_jitsi_8711917_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_squareup_duktape_duktape_android_1_3_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_squareup_duktape_duktape_android_1_3_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_yqritc_android_scalablevideoview_1_0_4_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_yqritc_android_scalablevideoview_1_0_4_aar.xml" afterDir="false" />
+    <list default="true" id="99921b15-6d2e-44ca-9aec-8c67d5d9c535" name="Changes" comment="change ReportActivity, cprActivity&#10;Add presstime, breathtime, total ventil volume">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/MPChartLib/AIO_Client.MPChartLib.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/MPChartLib/AIO_Client.MPChartLib.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/AIO_Client.app.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/AIO_Client.app.main.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/CPRActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/CPRActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/CPRScoreActivity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/ReportActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/ReportActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/ReportItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/ReportItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/RoomActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/RoomActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/UserItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/activity/UserItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/db/Report.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wook/web/lighten/aio_client/db/Report.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw320dp/activity_mode_cpr.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw320dp/activity_mode_cpr.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw320dp/activity_report.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw320dp/activity_report.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw400dp/activity_mode_cpr.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw400dp/activity_mode_cpr.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw400dp/activity_report.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw400dp/activity_report.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_mode_cpr.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_mode_cpr.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_report.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_report.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_mode_cpr.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_mode_cpr.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_report.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_report.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-ko/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-ko/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-vi/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-vi/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1656467797387</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="change ReportActivity, cprActivity&#10;Add presstime, breathtime, total ventil volume">
+      <created>1661750394546</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1661750394546</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -242,6 +197,7 @@
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
     <MESSAGE value="modify the way of changing the depth" />
-    <option name="LAST_COMMIT_MESSAGE" value="modify the way of changing the depth" />
+    <MESSAGE value="change ReportActivity, cprActivity&#10;Add presstime, breathtime, total ventil volume" />
+    <option name="LAST_COMMIT_MESSAGE" value="change ReportActivity, cprActivity&#10;Add presstime, breathtime, total ventil volume" />
   </component>
 </project>
