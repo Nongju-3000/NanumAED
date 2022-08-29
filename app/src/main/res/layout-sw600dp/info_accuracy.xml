@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soup.neumorphism.NeumorphCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/info_cprCardView"
+    android:layout_width="268dp"
+    android:layout_height="256dp"
+    app:neumorph_backgroundColor="#292929"
+    app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+    app:neumorph_shadowColorLight="#444444"
+    app:neumorph_shadowElevation="3dp"
+    app:neumorph_shapeType="flat"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/cprTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cpr_accuracy"
+                android:textColor="#ffffff"
+                android:textSize="27dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/sandolgothic"/>
+
+            <TextView
+                android:id="@+id/all_accuracy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/sandolgothic"
+                android:text="100%"
+                android:textColor="#49c644"
+                android:textSize="27dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="21dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/score_03" />
+
+                    <TextView
+                        android:id="@+id/depth_accuracy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:fontFamily="@font/sandolgothic"
+                        android:text="@string/depth_accuracy_dialog"
+                        android:textColor="#ffffff"
+                        android:textSize="24dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="21dp"
+                    android:layout_marginLeft="20dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <ImageView
+                        android:id="@+id/depth_average_img"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:scaleX="1.7"
+                        android:scaleY="1.7"
+                        android:src="@drawable/score_04"
+                        android:translationY="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:textSize="24dp"
+                        android:fontFamily="@font/sandolgothic"
+                        android:textColor="#ffffff"
+                        android:id="@+id/ave_depth"
+                        android:text="@string/depth_average_dialog"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <ImageView
+                        android:id="@+id/depth_bpm_img"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:scaleX="1.2"
+                        android:scaleY="1.2"
+                        android:src="@drawable/score_05" />
+                    <TextView
+                        android:id="@+id/report_bpm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/bpm_average_dialog"
+                        android:fontFamily="@font/sandolgothic"
+                        android:textSize="24dp"
+                        android:textColor="#ffffff" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</soup.neumorphism.NeumorphCardView>

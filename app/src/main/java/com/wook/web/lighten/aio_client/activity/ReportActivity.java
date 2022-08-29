@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -21,6 +22,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,6 +50,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.wook.web.lighten.aio_client.adapter.ReportAdapter;
 import com.wook.web.lighten.aio_client.ble.BluetoothLeServiceCPR;
 import com.wook.web.lighten.aio_client.data.LabelFormatter;
 import com.wook.web.lighten.aio_client.db.AppDatabase;
@@ -58,15 +63,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import soup.neumorphism.NeumorphCardView;
 
 public class ReportActivity extends Activity {
 
     private BackPressCloseHandler backPressCloseHandler;
 
     private LineChart chart;
-    private TextView chart02;
+    private TextView ventil_score;
     private RecyclerView recyclerView;
+    private TextView date;
+    private TextView time;
 
     //Sesstion
 
@@ -82,10 +92,11 @@ public class ReportActivity extends Activity {
     private TextView report_bpm;
     private TextView report_angle;
     private TextView report_total;
+    private TextView ave_depth;
 
     private TextView equip;
 
-    private ArrayList<Float> chart_item;
+    private ArrayList<Float> chart_item, presstime_list, breathval, breathtime;
     private ArrayList<ReportItem> reportItems;
     private ArrayList<String> names;
 
@@ -93,25 +104,41 @@ public class ReportActivity extends Activity {
     private TextView breath_accuracy;
     private TextView depth_accuracy;
 
+    private LinearLayout report_angleguage, cprCardLayout, sessionCardLayout, ventilationCardLayout;
+    private FrameLayout up_frame;
+    private NeumorphCardView cprCardView, sessionCardView, ventilationCardView, switchCardView, timeCardView;
+
+    private ImageView lung;
+    private ClipDrawable lung_clip;
+
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     private int depth_accuracy_ = 0;
     private String depth_score;
     private int div_time;
+    private int total_score;
     private String min;
     private String max;
+
+    ArrayList<Integer> stop_array = new ArrayList<>();
+    ArrayList<Float> stop_xval = new ArrayList<Float>();
+    boolean isover = false;
 
     //private TextView showCount;
 
     private TextView breath_break, chart_break, depth_break;
     private float prev_val = 0f;
+    private float prev_xval = 0f;
+    private float prev_bval = 0f;
+    private float prev_bxval = 0f;
 
     private TextView totalCount, correctCount, wrongCount;
 
+    private ImageButton mg_glass;
     private ImageView breath_accuracy_img, depth_accuracy_img, report_end_time_img, report_interval_img, cycle_img, depth_correct_img;
     private BluetoothLeServiceCPR bluetoothLeServiceCPR;
-    ArrayList<Integer> stop_list = new ArrayList<>();
+    ArrayList<Float> stop_list = new ArrayList<>();
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -132,10 +159,21 @@ public class ReportActivity extends Activity {
         }
     };
 
+    private void setDateTextView(TextView date, String rawdate){
+        String year, month, day;
+
+        year = String.valueOf(rawdate.charAt(0))+ rawdate.charAt(1) + rawdate.charAt(2) + rawdate.charAt(3);
+        month = String.valueOf(rawdate.charAt(4))+ rawdate.charAt(5);
+        day = String.valueOf(rawdate.charAt(6))+ rawdate.charAt(7);
+
+        date.setText(year+"."+month+"."+day);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -144,15 +182,11 @@ public class ReportActivity extends Activity {
         Intent gattServiceIntent = new Intent(this, BluetoothLeServiceCPR.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-        if(size.y >= 2400){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
-
         backPressCloseHandler = new BackPressCloseHandler(this);
 
         chart = findViewById(R.id.chart_img);
-        chart02 = findViewById(R.id.chart_img_02);
         recyclerView = findViewById(R.id.report_list);
+        ventil_score = findViewById(R.id.ventil_score);
 
         report_end_time = (TextView) findViewById(R.id.report_end_time);
         report_interval_sec = (TextView) findViewById(R.id.report_interval_sec);
@@ -164,125 +198,105 @@ public class ReportActivity extends Activity {
         report_bpm = (TextView) findViewById(R.id.report_bpm);
         report_angle = (TextView) findViewById(R.id.report_angle);
         report_total = (TextView) findViewById(R.id.report_total);
+        report_angleguage = findViewById(R.id.report_angleguage);
+        mg_glass = findViewById(R.id.mg_glass);
 
         all_accuracy = findViewById(R.id.all_accuracy);
-        breath_accuracy = findViewById(R.id.breath_accuracy);
         depth_accuracy = findViewById(R.id.depth_accuracy);
+        ave_depth = findViewById(R.id.ave_depth);
+        date = findViewById(R.id.date);
+        time = findViewById(R.id.time);
+        lung = findViewById(R.id.lung_score_image);
+        lung_clip = (ClipDrawable) lung.getDrawable();
+        lung_clip.setLevel(0);
 
         equip = findViewById(R.id.equip);
 
-        totalCount = findViewById(R.id.totalCount);
+        //totalCount = findViewById(R.id.totalCount);
         correctCount = findViewById(R.id.correctCount);
-        wrongCount = findViewById(R.id.wrongCount);
+        //wrongCount = findViewById(R.id.wrongCount);
 
-        breath_break = findViewById(R.id.breath_break);
-        breath_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
+        cprCardView = findViewById(R.id.cprCardView);
+        sessionCardView = findViewById(R.id.sessionCardView);
+        ventilationCardView = findViewById(R.id.ventilationCardView);
+        timeCardView = findViewById(R.id.timeCardView);
+
+        up_frame = findViewById(R.id.up_frame);
+
+        //breath_break = findViewById(R.id.breath_break);
+        //breath_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
         chart_break = findViewById(R.id.chart_break);
         chart_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
         depth_break = findViewById(R.id.depth_break);
         depth_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
 
-        breath_accuracy_img = findViewById(R.id.breath_accuracy_img);
-        breath_accuracy_img.setOnClickListener(v -> {
-            int[] location = new int[2];
-            breath_accuracy_img.getLocationOnScreen(location);
+        sessionCardView.setOnClickListener(v -> {
             Dialog dialog = new Dialog(ReportActivity.this);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.info_dialog);
-            TextView info_text = dialog.findViewById(R.id.info_text);
-            info_text.setText("인공호흡 정확도입니다.");
+            dialog.setContentView(R.layout.info_session);
+            NeumorphCardView info_sessionCardView = dialog.findViewById(R.id.info_sessionCardView);
+            info_sessionCardView.setLayoutParams(new FrameLayout.LayoutParams(sessionCardView.getWidth(), sessionCardView.getHeight()));
             WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
             wmlp.gravity = Gravity.TOP | Gravity.LEFT;
-            wmlp.x = location[0] + 150;
-            wmlp.y = location[1] - 50;
+            wmlp.x = cprCardView.getWidth();
+            wmlp.y = up_frame.getHeight();
             dialog.setCanceledOnTouchOutside(true);
             dialog.show();
+            info_sessionCardView.setOnClickListener(ev -> {
+                dialog.dismiss();
+            });
         });
-        depth_accuracy_img = findViewById(R.id.depth_accuracy_img);
-        depth_accuracy_img.setOnClickListener(v -> {
-            int[] location = new int[2];
-            depth_accuracy_img.getLocationOnScreen(location);
+
+        cprCardView.setOnClickListener(v -> {
             Dialog dialog = new Dialog(ReportActivity.this);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.info_dialog);
-            TextView info_text = dialog.findViewById(R.id.info_text);
-            info_text.setText("압박 정확도입니다.");
+            Log.d("getwidth", String.valueOf(cprCardView.getWidth()));
+            dialog.setContentView(R.layout.info_accuracy);
+            TextView all_accuracy = dialog.findViewById(R.id.all_accuracy);
+            all_accuracy.setText(total_score + "%");
+            NeumorphCardView info_cprCardView = dialog.findViewById(R.id.info_cprCardView);
+            info_cprCardView.setLayoutParams(new FrameLayout.LayoutParams(cprCardView.getWidth(), cprCardView.getHeight()));
             WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
             wmlp.gravity = Gravity.TOP | Gravity.LEFT;
-            wmlp.x = location[0] + 150;
-            wmlp.y = location[1] - 50;
+            wmlp.x = 0;
+            wmlp.y = up_frame.getHeight();
             dialog.setCanceledOnTouchOutside(true);
             dialog.show();
+            info_cprCardView.setOnClickListener(ev -> {
+                dialog.dismiss();
+            });
         });
-        report_end_time_img = findViewById(R.id.report_end_time_img);
-        report_end_time_img.setOnClickListener(v -> {
-            int[] location = new int[2];
-            report_end_time_img.getLocationOnScreen(location);
+
+        ventilationCardView.setOnClickListener(v -> {
             Dialog dialog = new Dialog(ReportActivity.this);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.info_dialog);
-            TextView info_text = dialog.findViewById(R.id.info_text);
-            info_text.setText("CPR 총 소요 시간입니다.");
+            dialog.setContentView(R.layout.info_ventil);
+            NeumorphCardView info_ventilationCardView = dialog.findViewById(R.id.info_ventilationCardView);
+            TextView ventil_count = dialog.findViewById(R.id.ventil_count);
+            TextView ventil_volume = dialog.findViewById(R.id.ventil_volume);
+            TextView ave_volume = dialog.findViewById(R.id.ave_volume);
+            info_ventilationCardView.setLayoutParams(new FrameLayout.LayoutParams(ventilationCardView.getWidth(), ventilationCardView.getHeight()));
+            ventil_count.setText(reportItems.get(0).getReport_lung_num());
+            ventil_volume.setText(reportItems.get(0).getReport_ventil_volume() + "ml");
+            int num = Integer.parseInt(reportItems.get(0).getReport_lung_num());
+            int volume = Integer.parseInt(reportItems.get(0).getReport_ventil_volume());
+            if(num != 0)
+                ave_volume.setText((volume / num)+ "ml");
             WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
             wmlp.gravity = Gravity.TOP | Gravity.LEFT;
-            wmlp.x = location[0] + 150;
-            wmlp.y = location[1] - 50;
+            wmlp.x = 10000;
+            wmlp.y = up_frame.getHeight();
             dialog.setCanceledOnTouchOutside(true);
             dialog.show();
-        });
-        report_interval_img = findViewById(R.id.report_interval_img);
-        report_interval_img.setOnClickListener(v -> {
-            int[] location = new int[2];
-            report_interval_img.getLocationOnScreen(location);
-            Dialog dialog = new Dialog(ReportActivity.this);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.info_dialog);
-            TextView info_text = dialog.findViewById(R.id.info_text);
-            info_text.setText("압박 중단 시간입니다.");
-            WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
-            wmlp.gravity = Gravity.TOP | Gravity.LEFT;
-            wmlp.x = location[0] + 150;
-            wmlp.y = location[1] - 50;
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.show();
-        });
-        cycle_img = findViewById(R.id.cycle_img);
-        cycle_img.setOnClickListener(v -> {
-            int[] location = new int[2];
-            cycle_img.getLocationOnScreen(location);
-            Dialog dialog = new Dialog(ReportActivity.this);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.info_dialog);
-            TextView info_text = dialog.findViewById(R.id.info_text);
-            info_text.setText("Cycle 횟수 입니다.");
-            WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
-            wmlp.gravity = Gravity.TOP | Gravity.LEFT;
-            wmlp.x = location[0] + 150;
-            wmlp.y = location[1] - 50;
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.show();
-        });
-        depth_correct_img = findViewById(R.id.depth_correct_img);
-        depth_correct_img.setOnClickListener(v -> {
-            int[] location = new int[2];
-            depth_correct_img.getLocationOnScreen(location);
-            Dialog dialog = new Dialog(ReportActivity.this);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.info_dialog);
-            TextView info_text = dialog.findViewById(R.id.info_text);
-            info_text.setText("위치 정확도 입니다.");
-            WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
-            wmlp.gravity = Gravity.TOP | Gravity.LEFT;
-            wmlp.x = location[0] + 150;
-            wmlp.y = location[1] - 50;
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.show();
+            info_ventilationCardView.setOnClickListener(ev -> {
+                dialog.dismiss();
+            });
         });
 
         Intent intent = getIntent();
@@ -297,6 +311,8 @@ public class ReportActivity extends Activity {
         names = new ArrayList<>();
 
         reportItems = (ArrayList<ReportItem>) intent.getSerializableExtra("reportItems");
+
+        mg_glass.setOnClickListener(v -> showReportList(ReportActivity.this));
 
         if (ReportDB) {
             List<Report> reports;
@@ -313,6 +329,15 @@ public class ReportActivity extends Activity {
             if (ReportItem != null && ReportDay != null) {
                 for (Report report : reports)
                     if (ReportDay.equals(report.to_day)) {
+                        String[] split = report.to_day.split("/");
+                        setDateTextView(date,split[0]);
+                        String[] timesplit = split[1].split(":");
+                        int time_sec = Integer.parseInt(timesplit[0]) * 3600 + Integer.parseInt(timesplit[1]) * 60 + Integer.parseInt(timesplit[2]);
+                        time_sec = time_sec + Integer.parseInt( report.report_end_time);
+                        String hour = String.format("%02d",time_sec / 3600);
+                        String min = String.format("%02d",(time_sec % 3600) / 60);
+                        String sec = String.format("%02d",time_sec % 60);
+                        time.setText(split[1] + " - " + hour +":"+ min +":"+ sec);
                         String item[] = ReportItem.split(",");
                         if (item[0].equals(report.report_name) && item[1].equals(report.report_depth_correct)) {
                             reportItems.add(new ReportItem(report.report_name
@@ -325,6 +350,10 @@ public class ReportActivity extends Activity {
                                     , report.report_bpm
                                     , report.report_angle
                                     , (ArrayList<Float>) converters.gettingListFromString(report.report_depth_list)
+                                    , (ArrayList<Float>) converters.gettingListFromString(report.report_presstimeList)
+                                    , (ArrayList<Float>) converters.gettingListFromString(report.report_breathtime)
+                                    , (ArrayList<Float>) converters.gettingListFromString(report.report_breathval)
+                                    , report.report_ventil_volume
                                     , report.min
                                     , report.max
                                     , report.depth_num
@@ -333,7 +362,7 @@ public class ReportActivity extends Activity {
                                     , report.position_correct
                                     , report.lung_num
                                     , report.lung_correct
-                                    , (ArrayList<Integer>) converters.gettingIntegerListFromString(report.stop_time_list)
+                                    , (ArrayList<Float>) converters.gettingListFromString(report.stop_time_list)
                             ));
                         }
                     }
@@ -349,6 +378,10 @@ public class ReportActivity extends Activity {
                             , report.report_bpm
                             , report.report_angle
                             , (ArrayList<Float>) converters.gettingListFromString(report.report_depth_list)
+                            , (ArrayList<Float>) converters.gettingListFromString(report.report_presstimeList)
+                            , (ArrayList<Float>) converters.gettingListFromString(report.report_breathtime)
+                            , (ArrayList<Float>) converters.gettingListFromString(report.report_breathval)
+                            , report.report_ventil_volume
                             , report.min
                             , report.max
                             , report.depth_num
@@ -357,7 +390,7 @@ public class ReportActivity extends Activity {
                             , report.position_correct
                             , report.lung_num
                             , report.lung_correct
-                            , (ArrayList<Integer>) converters.gettingIntegerListFromString(report.stop_time_list)
+                            , (ArrayList<Float>) converters.gettingListFromString(report.stop_time_list)
                     ));
                 }
             }
@@ -381,11 +414,42 @@ public class ReportActivity extends Activity {
                 report_depth_correct.setVisibility(View.VISIBLE);
                 report_depth_correct.setText(reportItems.get(0).getReport_depth_correct() + " %");
                 report_up_depth.setText(reportItems.get(0).getReport_up_depth() + " %");
+                if(Integer.parseInt( reportItems.get(0).getReport_up_depth()) >= 70){
+                    report_up_depth.setTextColor(Color.GREEN);
+                }
+                else if(Integer.parseInt( reportItems.get(0).getReport_up_depth()) >= 30){
+                    report_up_depth.setTextColor(Color.rgb(255,100,0));
+                }
+                else if(Integer.parseInt( reportItems.get(0).getReport_up_depth()) >= 0){
+                    report_up_depth.setTextColor(Color.RED);
+                }
             }
             report_down_depth.setText(reportItems.get(0).getReport_down_depth() + " %");
+            if(Integer.parseInt( reportItems.get(0).getReport_down_depth()) >= 70){
+                report_down_depth.setTextColor(Color.GREEN);
+            }
+            else if(Integer.parseInt( reportItems.get(0).getReport_down_depth()) >= 30){
+                report_down_depth.setTextColor(Color.rgb(255,100,0));
+            }
+            else if(Integer.parseInt( reportItems.get(0).getReport_down_depth()) >= 0){
+                report_down_depth.setTextColor(Color.RED);
+            }
             report_bpm.setText(reportItems.get(0).getReport_bpm() + " BPM");
             int angle = 90 - Integer.parseInt(reportItems.get(0).getReport_angle());
-            report_angle.setText(angle + " °");
+            if( angle > 60 && angle < 120) {
+                report_angle.setText(getString(R.string.correct));
+                report_angleguage.setBackground(getDrawable(R.drawable.angle_green));
+            }
+            else if( angle > 30 && angle < 150){
+                report_angle.setText(getString(R.string.incorrect));
+                report_angleguage.setBackground(getDrawable(R.drawable.angle_orange));
+
+            }
+            else{
+                report_angle.setText(getString(R.string.jiggle));
+                report_angleguage.setBackground(getDrawable(R.drawable.angle_red));
+            }
+            report_total.setText(reportItems.get(0).getDepth_num());
 
             if(Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0 && Integer.parseInt(reportItems.get(0).getReport_lung_num()) == 0)){
                 equip.setText("");
@@ -394,6 +458,7 @@ public class ReportActivity extends Activity {
             }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)){
                 equip.setText("AIO");
                 report_angle.setText("BLOCK");
+                report_angleguage.setBackground(getDrawable(R.drawable.angle_gray));
             }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) != 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)){
                 equip.setText("BAND, AIO");
             }
@@ -413,6 +478,9 @@ public class ReportActivity extends Activity {
             }
 
             depth_score = reportItems.get(0).getReport_depth_correct();
+            presstime_list = reportItems.get(0).getReport_presstime_list();
+            breathval = reportItems.get(0).getReport_breathval();
+            breathtime = reportItems.get(0).getReport_breathtime();
 
             div_time = Integer.parseInt(reportItems.get(0).getReport_end_time());
 
@@ -422,9 +490,9 @@ public class ReportActivity extends Activity {
             int depth_correct = Integer.parseInt(reportItems.get(0).getDepth_correct());
             int depth_wrong = depth_num - depth_correct;
 
-            totalCount.setText(reportItems.get(0).getDepth_num());
+            //totalCount.setText(reportItems.get(0).getDepth_num());
             correctCount.setText(reportItems.get(0).getDepth_correct());
-            wrongCount.setText(String.valueOf(depth_wrong));
+            //wrongCount.setText(String.valueOf(depth_wrong));
 
             min = reportItems.get(0).getReport_Min();
             max = reportItems.get(0).getReport_Max();
@@ -504,6 +572,10 @@ public class ReportActivity extends Activity {
 
                 Converters converters = new Converters();
                 report.report_depth_list = converters.writingStringFromList(reportItem.getReport_depth_list());
+                report.report_presstimeList = converters.writingStringFromList(reportItem.getReport_presstime_list());
+                report.report_breathval = converters.writingStringFromList(reportItem.getReport_breathval());
+                report.report_breathtime = converters.writingStringFromList(reportItem.getReport_breathtime());
+                report.report_ventil_volume = reportItem.getReport_ventil_volume();
 
                 Calendar cal = Calendar.getInstance();
                 Date nowDate = cal.getTime();
@@ -518,9 +590,20 @@ public class ReportActivity extends Activity {
                 report.position_correct = reportItem.getReport_position_correct();
                 report.lung_num = reportItem.getReport_lung_num();
                 report.lung_correct = reportItem.getReport_lung_correct();
-                report.stop_time_list = converters.writingIntegerStringFromList(reportItem.getStop_time_list());
+                report.stop_time_list = converters.writingStringFromList(reportItem.getStop_time_list());
 
                 database.reportDao().insert(report);
+
+                String[] split = toDay.split("/");
+                setDateTextView(date,split[0]);
+                String[] timesplit = split[1].split(":");
+                int time_sec = Integer.parseInt(timesplit[0]) * 3600 + Integer.parseInt(timesplit[1]) * 60 + Integer.parseInt(timesplit[2]);
+                Log.d("interval", report.report_end_time);
+                time_sec = time_sec + Integer.parseInt( report.report_end_time);
+                String hour = String.format("%02d",time_sec / 3600);
+                String min = String.format("%02d",(time_sec % 3600) / 60);
+                String sec = String.format("%02d",time_sec % 60);
+                time.setText(split[1] + " - " + hour +":"+ min +":"+ sec);
             }
         }
     }
@@ -536,11 +619,12 @@ public class ReportActivity extends Activity {
         chart.setDrawGridBackground(false);
         chart.setPinchZoom(false);
         chart.setDrawBorders(false);
+        chart.setAutoScaleMinMaxEnabled(false);
         chart.getXAxis().setDrawGridLines(false);
         BarLineChartTouchListener barLineChartTouchListener = (BarLineChartTouchListener) chart.getOnTouchListener();
         barLineChartTouchListener.stopDeceleration();
-        float scale = div_time / 30;
-        chart.zoomToCenter(scale, 0f);
+        float scale = div_time / 15;
+        chart.zoomToCenter(scale/2, 0f);
 
         chart.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -604,20 +688,20 @@ public class ReportActivity extends Activity {
         leftAxis.setDrawAxisLine(false);
         leftAxis.setAxisLineColor(Color.TRANSPARENT);
         leftAxis.setEnabled(true);
-       // leftAxis.setGridColor(ContextCompat.getColor(ReportActivity.this, R.color.lineColor));
+        // leftAxis.setGridColor(ContextCompat.getColor(ReportActivity.this, R.color.lineColor));
         leftAxis.setGridColor(Color.TRANSPARENT);
-      //  leftAxis.setGridLineWidth(1);
+        //  leftAxis.setGridLineWidth(1);
         leftAxis.setTextColor(Color.WHITE);
         //leftAxis.setLabelCount();
         leftAxis.setShowSpecificLabelPositions(true);
         leftAxis.setSpecificLabelPositions(new float[]{0f, Float.parseFloat(min), Float.parseFloat(max)});
         leftAxis.addLimitLine(ll0);
-        leftAxis.addLimitLine(ll1);
-        leftAxis.addLimitLine(ll2);
+        /*leftAxis.addLimitLine(ll1);
+        leftAxis.addLimitLine(ll2);*/
         leftAxis.setDrawLimitLinesBehindData(true);
         //leftAxis.setGranularity(30f);
-       // leftAxis.setLabelCount(1);
-       // leftAxis.setValueFormatter(new YLabelFormatter(min, max));
+        // leftAxis.setLabelCount(1);
+        // leftAxis.setValueFormatter(new YLabelFormatter(min, max));
         leftAxis.setZeroLineWidth(1f);
         leftAxis.setZeroLineColor(Color.WHITE);
         leftAxis.setAxisMaximum(70f);
@@ -635,57 +719,144 @@ public class ReportActivity extends Activity {
         int breath_ = 0;
         int brath = 0;
         int depth = 0;
+        int depth_sum = 0;
+        int depth_count = 0;
         int index = 0;
+        int indax = 0;
         int chart_size = chart_item.size();
 
+        float pre_item = 0f;
+        float pre_xval = 0f;
+
+        for(float itam: breathval) {
+            if (itam > 0) {
+                addEntry_chart(itam, breathtime.get(indax), 1);
+            }
+            else{
+                addEntry_chart(itam * (-1) - 5.0f, breathtime.get(indax), 2);
+            }
+            indax++;
+        }
+
+        int j = 0;
         for (float item : chart_item) {
+            Log.d("item", String.valueOf(item));
             if (item >= Integer.parseInt(min) && item <= Integer.parseInt(max)) {
-                addEntry_chart(0, 150);
-                addEntry_chart(item, 150);
+                try {
+                    if(pre_item != 0) {
+                        addEntry_chart(0, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
+                        addEntry_chart(item, presstime_list.get(index), 0);
+                    }
+                    else{
+                        addEntry_chart(0, pre_xval, 0);
+                        addEntry_chart(item, presstime_list.get(index), 0);
+                    }
+                } catch(ArrayIndexOutOfBoundsException e) {
+                    addEntry_chart(0, 0, 0);
+                    addEntry_chart(item, presstime_list.get(index), 0);
+                }
                 depth++;
+                depth_sum += item;
+                depth_count++;
             } else if ((5 < item && item < Integer.parseInt(min))) {
-                addEntry_chart(0, 150);
-                addEntry_chart(item, 150);
+                try{
+                    if(pre_item!=0) {
+                        addEntry_chart(0, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
+                        addEntry_chart(item, presstime_list.get(index), 0);
+                    }
+                    else{
+                        addEntry_chart(0, pre_xval, 0);
+                        addEntry_chart(item, presstime_list.get(index), 0);
+                    }
+                } catch (ArrayIndexOutOfBoundsException e){
+                    addEntry_chart(0, 0, 0);
+                    addEntry_chart(item, presstime_list.get(index), 0);
+                }
+                /*addEntry_chart(0, 150);
+                addEntry_chart(item, 150);*/
                 depth++;
+                depth_sum += item;
+                depth_count++;
             } else if ((Integer.parseInt(max) < item && item <= 100)) {
-                addEntry_chart(0, 150);
-                addEntry_chart(70, 150);
+                try{
+                    if( pre_item !=0 ) {
+                        addEntry_chart(0, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
+                        addEntry_chart(70, presstime_list.get(index), 0);
+                    }
+                    else{
+                        addEntry_chart(0, pre_xval, 0);
+                        addEntry_chart(70, presstime_list.get(index), 0);
+                    }
+                } catch (ArrayIndexOutOfBoundsException e){
+                    addEntry_chart(0, 0, 0);
+                    addEntry_chart(70, presstime_list.get(index), 0);
+                }
                 depth++;
+                depth_sum += item;
+                depth_count++;
             } else if (100 < item) {
-                addEntry_chart(10, 150);
-                addEntry_chart((item - 100), 150);
+                try{
+                    if(pre_item !=0 ) {
+                        addEntry_chart(10, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
+                        addEntry_chart((item - 100), presstime_list.get(index), 0);
+                    }
+                    else{
+                        addEntry_chart(10, pre_xval, 0);
+                        addEntry_chart((item - 100), presstime_list.get(index), 0);
+                    }
+                } catch (ArrayIndexOutOfBoundsException e){
+                    addEntry_chart(10, 0, 0);
+                    addEntry_chart((item - 100), presstime_list.get(index), 0);
+                }
                 depth++;
             } else if (0 == item) {
-                addEntry_chart(0, 200);
-                addEntry_chart(0, 200);
+                try {
+                    addEntry_chart(0, (presstime_list.get(index - 1) - presstime_list.get(index - 2)) / 2 + presstime_list.get(index - 1), 0);
+                    addEntry_chart(0, presstime_list.get(index - 1)  + (float)stop_list.get(j), 0);
+                    pre_xval = presstime_list.get(index - 1)  + (float)stop_list.get(j);
+                    stop_xval.add((presstime_list.get(index - 1) - presstime_list.get(index - 2)) / 2 + presstime_list.get(index - 1));
+                    stop_xval.add(presstime_list.get(index - 1)  + (float)stop_list.get(j));
+                } catch (ArrayIndexOutOfBoundsException e){
+                    try{
+                        addEntry_chart(0, presstime_list.get(index - 1) + presstime_list.get(index - 1), 0);
+                        addEntry_chart(0, presstime_list.get(index - 1) + (float)stop_list.get(j), 0);
+                        pre_xval = presstime_list.get(index - 1) + (float)stop_list.get(j);
+                        stop_xval.add(presstime_list.get(index - 1) + presstime_list.get(index - 1));
+                        stop_xval.add(presstime_list.get(index - 1) + (float)stop_list.get(j));
+                    } catch (ArrayIndexOutOfBoundsException e_){
+                        addEntry_chart(0, 0, 0);
+                        addEntry_chart(0, 0f + stop_list.get(j), 0);
+                        pre_xval = 0f + stop_list.get(j);
+                        stop_xval.add(0f);
+                        stop_xval.add(0f + stop_list.get(j));
+                    }
+                }
                 depth++;
+                index--;
+                j++;
             } else if (item < 5) {
                 switch ((int) item) {
                     case 1:
                         breath_++;
                         depth++;
-                        addEntry_chart(0, 200);
-                        addEntry_chart(0, 60);
+                        index--;
                         break;
                     case 2:
+                        depth++;
                         brath++;
                         breath_++;
-                        depth++;
-                        addEntry_chart(0, 200);
-                        addEntry_chart(0, 40);
+                        index--;
                         break;
                     case 3:
+                        depth++;
                         brath++;
                         breath_++;
-                        depth++;
-                        addEntry_chart(0, 200);
-                        addEntry_chart(0, 30);
+                        index--;
                         break;
                     case 4:
-                        breath_++;
                         depth++;
-                        addEntry_chart(0, 200);
-                        addEntry_chart(0, 10);
+                        breath_++;
+                        index--;
                         break;
                 }
             }
@@ -699,46 +870,69 @@ public class ReportActivity extends Activity {
                     }
                 }
             }
+            pre_item = item;
         }
 
-        report_total.setText(String.valueOf(depth));
+        for(int i = 0; i < stop_xval.size(); i++){
+            if(i % 2 == 1){
+                if(i+1 == stop_xval.size()){
+                    addll_chart(stop_xval.get(i),div_time,1);
+                }
+            }
+            else if(i % 2 == 0){
+                if(i == 0){
+                    addll_chart(0,stop_xval.get(i),1);
+                }
+                else{
+                    addll_chart(stop_xval.get(i-1),stop_xval.get(i),1);
+                }
+            }
+        }
+
+        if(stop_xval.size() == 0){
+            addll_chart(0,div_time,1);
+        }
+
+        double avg_depth = depth_sum / depth_count;
+        String avg_depth_s = String.format("%.1f", avg_depth);
+        ave_depth.setText(avg_depth_s+"mm");
 
         int breathScore = (int) (((double) brath / (double) breath_) * 100);
         if(Integer.parseInt(reportItems.get(position).getReport_position_num()) == 0){
             chart_break.setVisibility(View.VISIBLE);
-            breath_break.setVisibility(View.VISIBLE);
-            breath_accuracy.setVisibility(View.GONE);
-            chart02.setVisibility(View.GONE);
+            //breath_break.setVisibility(View.VISIBLE);
+            //breath_accuracy.setVisibility(View.GONE);
+            ventil_score.setVisibility(View.GONE);
+            ventilationCardView.setVisibility(View.INVISIBLE);
             chart_break.invalidate();
-            breath_accuracy.invalidate();
-            chart02.invalidate();
-            breath_break.invalidate();
+            //breath_accuracy.invalidate();
+            ventil_score.invalidate();
+            //breath_break.invalidate();
         }
         else{
-            chart02.setText(breathScore + " %");
-            breath_accuracy.setText(breathScore + " %");
-
+            ventil_score.setText(breathScore + " %");
+            //breath_accuracy.setText(breathScore + " %");
+            lung_clip.setLevel(breathScore * 90);
             chart_break.setVisibility(View.GONE);
-            breath_break.setVisibility(View.GONE);
-            breath_accuracy.setVisibility(View.VISIBLE);
-            chart02.setVisibility(View.VISIBLE);
+            chart_break.setVisibility(View.GONE);
+            //breath_break.setVisibility(View.GONE);
+            //breath_accuracy.setVisibility(View.VISIBLE);
+            ventil_score.setVisibility(View.VISIBLE);
             chart_break.invalidate();
-            breath_accuracy.invalidate();
-            chart02.invalidate();
-            breath_break.invalidate();
+            //breath_accuracy.invalidate();
+            ventil_score.invalidate();
+            //breath_break.invalidate();
         }
 
         if (breath_ != 0) {
             int all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
             all_accuracy.setText(all_score + "%");
-        } else { 
-            all_accuracy.setText(reportItems.get(position).getReport_down_depth() + " %");
+            total_score = all_score;
+        } else {
+            all_accuracy.setText(reportItems.get(position).getReport_down_depth() + "%");
+            total_score = Integer.parseInt(reportItems.get(position).getReport_down_depth());
         }
 
-        /*ArrayList<String> xValues = new ArrayList<String>();
-        for(int i=0; i<100; i+=10){
-            xValues.add("" +i);
-        }*/
         XAxis xAxis = chart.getXAxis();
         xAxis.setEnabled(true);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -746,29 +940,30 @@ public class ReportActivity extends Activity {
         xAxis.setAxisMinimum(0f);
         xAxis.removeAllLimitLines();
         xAxis.setDrawAxisLine(true);
+        xAxis.setAxisMaximum((float)div_time);
+        xAxis.setAxisMinimum(0.0f);
         //     xAxis.setAxisLineColor(Color.TRANSPARENT);
         xAxis.setGridColor(Color.TRANSPARENT);
         xAxis.setTextColor(Color.WHITE);
         xAxis.setShowSpecificLabelPositions(true);
 
         float[] label_position = new float[(int)scale + 1];
-        for(int i=0; i<=scale; i++)
-            label_position[i] = ((depth/scale)*i)*2;
+        for(int i=0; i<scale + 1; i++)
+            label_position[i] = i * 15.0f;
 
         xAxis.setSpecificLabelPositions(label_position);
 
-        xAxis.setValueFormatter(new LabelFormatter(depth, (int)scale));
         chart.getXAxis().setTextColor(Color.WHITE);
 
-        for(int i=0; i<stop_array.size(); i++) {
+        for(int i=0; i<stop_xval.size(); i++) {
             LimitLine ll = null;
             if(i%2 == 0)
-                ll = new LimitLine(stop_array.get(i), " ");
+                ll = new LimitLine(stop_xval.get(i), " ");
             else{
                 try{
-                    ll = new LimitLine(stop_array.get(i), (stop_list.get(i/2)+" Secs  "));
+                    ll = new LimitLine(stop_xval.get(i), (String.format("%.1f" , stop_list.get(i/2)) + " Secs  "));
                 }catch(IndexOutOfBoundsException e){
-                    ll = new LimitLine(stop_array.get(i), "2 Secs  ");
+                    ll = new LimitLine(stop_xval.get(i), "2.0 Secs  ");
                 }
             }
             ll.setLineWidth(1f);
@@ -803,7 +998,7 @@ public class ReportActivity extends Activity {
         LineDataSet set = new LineDataSet(null, null);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
 
-        set.setColor(Color.rgb(255, 204, 0));
+        set.setColor(Color.rgb(255, 255, 255));
         set.setLineWidth(2f);
         set.setDrawCircles(false);
         set.setDrawHorizontalHighlightIndicator(false);
@@ -828,51 +1023,168 @@ public class ReportActivity extends Activity {
         return set;
     }
 
-    ArrayList<Integer> stop_array = new ArrayList<>();
+    private LineDataSet createSet3(){
+        LineDataSet set = new LineDataSet(null, null);
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(255,210,0));
+        set.setLineWidth(2f);
+        set.setDrawCircles(false);
+        set.setDrawHorizontalHighlightIndicator(false);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        set.setForm(Legend.LegendForm.NONE);
+        return set;
+    }
+
+    private LineDataSet createSet4(){
+        LineDataSet set = new LineDataSet(null, null);
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(255,100,0));
+        set.setLineWidth(2f);
+        set.setDrawCircles(false);
+        set.setDrawHorizontalHighlightIndicator(false);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        set.setForm(Legend.LegendForm.NONE);
+        return set;
+    }
+
+    private LineDataSet createSet5(){
+        LineDataSet set = new LineDataSet(null, null);
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(72,214,214));
+        set.setLineWidth(3f);
+        set.setDrawCircles(false);
+        set.setDrawHorizontalHighlightIndicator(false);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        set.setForm(Legend.LegendForm.NONE);
+        return set;
+    }
+
+    private LineDataSet createSet6(){
+        LineDataSet set = new LineDataSet(null, null);
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(73,198,68));
+        set.setLineWidth(2.5f);
+        set.setDrawCircles(false);
+        set.setDrawHorizontalHighlightIndicator(false);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        set.setForm(Legend.LegendForm.NONE);
+        return set;
+    }
+
     boolean isStop = false;
 
-    private void addEntry_chart(float val, float val1) {
+    private void addEntry_chart(float val, float xval, int label) {
         LineData data = chart.getData();
         if (data != null) {
             ILineDataSet depth = data.getDataSetByIndex(0);
             ILineDataSet breath = data.getDataSetByIndex(1);
-        //    ILineDataSet depth_red = data.getDataSetByIndex(2);
             if (depth == null) {
                 depth = createSet();
                 breath = createSet1();
-            //    depth_red = createSet2();
                 data.addDataSet(depth);
                 data.addDataSet(breath);
-           //     data.addDataSet(depth_red);
-            }
-            data.addEntry(new Entry(depth.getEntryCount(), val, "Label1"), 0);
-            data.addEntry(new Entry(breath.getEntryCount(), val1), 1);
-
-            if(val1 == 200) {
-                if(!isStop) {
-                    stop_array.add(breath.getEntryCount() - 1);
-                    isStop = true;
-                }
-            }else if(val1 != 200 && val1 != 60 && val1 != 40 && val1 != 30 && val1 != 10){
-                if(isStop) {
-                    stop_array.add(breath.getEntryCount() - 1);
-                    isStop = false;
-                }
             }
 
-            if(val > 0f && val < Integer.parseInt(min) -1 || val > Integer.parseInt(max) + 1){
-                ILineDataSet set = createSet2();
+            if(label == 0)
+                data.addEntry(new Entry(xval, val, "Label1"), 0);
+
+            if(label == 1 || label == 2 )
+                data.addEntry(new Entry(xval, val), 1);
+
+            if( val > 0f && (val > Integer.parseInt(max) || val < Integer.parseInt(min))){
+                if(val > prev_val && label == 0 ) {
+                    ILineDataSet set = createSet2();
+                    data.addDataSet(set);
+                    set.addEntry(new Entry(prev_xval, prev_val));
+                    set.addEntry(new Entry(xval, val));
+                }
+            }
+
+            if( val > 0f && val < Integer.parseInt(min)){
+                if(prev_val > val && label == 0 ) {
+                    ILineDataSet set = createSet3();
+                    data.addDataSet(set);
+                    set.addEntry(new Entry(prev_xval, prev_val));
+                    set.addEntry(new Entry(xval, val));
+                }
+            }
+
+            if (isover){
+                Log.d("overdrawing", String.valueOf(prev_bxval));
+                Log.d("overdrawing", String.valueOf(xval));
+                ILineDataSet set = createSet4();
                 data.addDataSet(set);
-                set.addEntry(new Entry(depth.getEntryCount()-2, prev_val));
-                set.addEntry(new Entry(depth.getEntryCount()-1, val));
+                set.addEntry(new Entry(prev_bxval, prev_bval));
+                set.addEntry(new Entry(xval, val));
+                isover = false;
             }
-            prev_val = val;
+
+            if ( label == 2){
+                Log.d("overdrawing", String.valueOf(prev_bxval));
+                Log.d("overdrawing", String.valueOf(xval));
+                ILineDataSet set = createSet4();
+                data.addDataSet(set);
+                set.addEntry(new Entry(prev_bxval, prev_bval));
+                set.addEntry(new Entry(xval, val));
+                isover = true;
+            }
+
+            if(label == 3){
+                ILineDataSet set = createSet5();
+                data.addDataSet(set);
+                set.addEntry(new Entry(xval, val));
+            }
+
+            if(label == 0) {
+                prev_xval = xval;
+                prev_val = val;
+            }
+
+            else if(label == 1 || label == 2){
+                prev_bxval = xval;
+                prev_bval = val;
+            }
 
             data.notifyDataChanged();
             chart.notifyDataSetChanged();
-            if (true) {
-                chart.moveViewToX(data.getEntryCount());
+            chart.moveViewToX(data.getEntryCount());
+        }
+    }
+
+    final float breath_limit = 10.0f;
+    final float breath_threshold= 50.0f;
+
+    private void addll_chart( float pre_xval, float xval, int label) {
+        LineData data = chart.getData();
+        if (data != null) {
+            if(label == 0){
+                ILineDataSet set = createSet5();
+                ILineDataSet mset = createSet5();
+                data.addDataSet(set);
+                data.addDataSet(mset);
+                set.addEntry(new Entry(pre_xval, breath_limit));
+                set.addEntry(new Entry(xval, breath_limit));
+                mset.addEntry(new Entry(pre_xval, breath_threshold));
+                mset.addEntry(new Entry(xval, breath_threshold));
             }
+            if(label == 1){
+                ILineDataSet set = createSet6();
+                ILineDataSet mset = createSet6();
+                data.addDataSet(set);
+                data.addDataSet(mset);
+                set.addEntry(new Entry(pre_xval, Float.parseFloat(min)));
+                set.addEntry(new Entry(xval, Float.parseFloat(min)));
+                mset.addEntry(new Entry(pre_xval, Float.parseFloat(max)));
+                mset.addEntry(new Entry(xval, Float.parseFloat(max)));
+            }
+            //data.addEntry(new Entry(depth_red.getEntryCount(), val), 2);
+            data.notifyDataChanged();
+            chart.notifyDataSetChanged();
+            chart.moveViewToX(data.getEntryCount());
         }
     }
 
@@ -939,5 +1251,100 @@ public class ReportActivity extends Activity {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.show();
         }
+    }
+
+    private void showReportList(final Activity activity) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View view = inflater.inflate(R.layout.report_layout, null);
+        builder.setView(view);
+
+        final ExpandableListView report_list_data = (ExpandableListView) view.findViewById(R.id.report_list_data);
+        final Button report_print = (Button) view.findViewById(R.id.report_print);
+        final Button report_cancel = (Button) view.findViewById(R.id.report_cancel);
+
+        final AlertDialog dialog = builder.create();
+        final List<Report> reports;
+
+        AppDatabase database = AppDatabase.getDbInstance(getApplicationContext());
+        reports = database.reportDao().getAllDevice();
+
+        HashMap<String, String> keyitem = new HashMap<>();
+
+        final HashMap<String, ArrayList<String>> reportList = new HashMap<>();
+        final ArrayList<String> date = new ArrayList<>();
+
+        for (Report report : reports){
+            String split[] = report.to_day.split("/");
+            keyitem.put(split[0], "");
+        }
+
+        for (String key : keyitem.keySet()) {date.add(key);}
+
+        Collections.sort(date);
+
+        for (String date_ : date) {
+            ArrayList<String> item = new ArrayList<>();
+            for (Report report : reports) {
+                String split[] = report.to_day.split("/");
+                //if (date_.equals(report.to_day)) {
+                if(date_.equals(split[0])){
+                    int all_score;
+                    int breathScore = (int) ((Double.parseDouble(report.lung_correct) / Double.parseDouble(report.lung_num)) * 100);
+                    int sum_depth = Integer.parseInt(report.report_depth_correct)
+                            + Integer.parseInt(report.report_up_depth)
+                            + Integer.parseInt(report.report_down_depth);
+
+                    int depth_accuracy_ = (int) ((double) sum_depth / (double) 3);
+                    if(Integer.parseInt(report.lung_num) != 0){
+                        all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
+                    }else
+                        all_score = Integer.parseInt(report.report_down_depth);
+                    item.add(report.report_name + "," + report.report_depth_correct+ ","+report.to_day +","+all_score);
+                }
+            }
+            Collections.sort(item);
+            reportList.put(date_, item);
+        }
+
+        ReportAdapter arrayAdapter = new ReportAdapter(ReportActivity.this, date, reportList);
+        report_list_data.setAdapter(arrayAdapter);
+
+        report_list_data.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            //String day = date.get(groupPosition);
+            String item = reportList.get(date.get(groupPosition)).get(childPosition);
+            String[] split = item.split(",");
+            String day = split[2];
+            Intent main = new Intent(ReportActivity.this, ReportActivity.class);
+            main.putExtra("ReportDB", true);
+            main.putExtra("ReportDay", day);
+            main.putExtra("ReportItem", item);
+            startActivity(main);
+            overridePendingTransition(R.anim.fadeout, R.anim.fadein);
+            dialog.dismiss();
+            activity.finish();
+
+            return true;
+        });
+
+        report_print.setOnClickListener(v -> {
+            Intent main = new Intent(ReportActivity.this, ReportActivity.class);
+            main.putExtra("ReportDB", true);
+            startActivity(main);
+            overridePendingTransition(R.anim.fadeout, R.anim.fadein);
+            dialog.dismiss();
+            activity.finish();
+        });
+
+        report_cancel.setOnClickListener(v -> {
+            overridePendingTransition(R.anim.fadeout, R.anim.fadein);
+            dialog.dismiss();
+        });
+
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
     }
 }

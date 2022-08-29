@@ -40,7 +40,19 @@ public class ReportItem implements Serializable {
     public ArrayList<Float> getReport_depth_list() {
         return report_depth_list;
     }
+    public ArrayList<Float> getReport_presstime_list() {
+        return report_presstimeList;
+    }
+    public ArrayList<Float> getReport_breathtime() {
+        return report_breathtime;
+    }
+    public ArrayList<Float> getReport_breathval() {
+        return report_breathval;
+    }
 
+    public String getReport_ventil_volume() {
+        return report_ventil_volume;
+    }
     public String getReport_name() {
         return report_name;
     }
@@ -57,7 +69,7 @@ public class ReportItem implements Serializable {
     public String getReport_lung_num(){return lung_num;}
     public String getReport_lung_correct(){return lung_correct;}
 
-    public ArrayList<Integer> getStop_time_list(){ return stop_time_list; }
+    public ArrayList<Float> getStop_time_list(){ return stop_time_list; }
 
 
     private String report_name;
@@ -70,6 +82,10 @@ public class ReportItem implements Serializable {
     private String report_bpm;
     private String report_angle;
     private ArrayList<Float> report_depth_list;
+    private ArrayList<Float> report_presstimeList;
+    private ArrayList<Float> report_breathtime;
+    private ArrayList<Float> report_breathval;
+    private String report_ventil_volume;
     private String min;
     private String max;
     private String depth_correct;
@@ -78,7 +94,7 @@ public class ReportItem implements Serializable {
     private String position_correct;
     private String lung_num;
     private String lung_correct;
-    private ArrayList<Integer> stop_time_list;
+    private ArrayList<Float> stop_time_list;
 
     public ReportItem(String report_name,
                       String report_end_time,
@@ -90,6 +106,10 @@ public class ReportItem implements Serializable {
                       String report_bpm,
                       String report_angle,
                       ArrayList<Float> report_depth_list,
+                      ArrayList<Float> report_presstimeList,
+                      ArrayList<Float> report_breathtime,
+                      ArrayList<Float> report_breathval,
+                      String report_ventil_volume,
                       String min,
                       String max,
                       String depth_num,
@@ -98,7 +118,7 @@ public class ReportItem implements Serializable {
                       String position_correct,
                       String lung_num,
                       String lung_correct,
-                      ArrayList<Integer> stop_time_list) {
+                      ArrayList<Float> stop_time_list) {
 
         this.report_name = report_name;
         this.report_end_time = report_end_time;
@@ -110,6 +130,10 @@ public class ReportItem implements Serializable {
         this.report_bpm = report_bpm;
         this.report_angle = report_angle;
         this.report_depth_list = report_depth_list;
+        this.report_presstimeList = report_presstimeList;
+        this.report_breathtime = report_breathtime;
+        this.report_breathval = report_breathval;
+        this.report_ventil_volume = report_ventil_volume;
         this.min = min;
         this.max = max;
         this.depth_num = depth_num;

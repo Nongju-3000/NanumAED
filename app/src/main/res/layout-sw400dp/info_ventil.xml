@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soup.neumorphism.NeumorphCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/info_ventilationCardView"
+    android:layout_width="195dp"
+    android:layout_height="136dp"
+    app:neumorph_backgroundColor="#292929"
+    app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+    app:neumorph_shadowColorLight="#444444"
+    app:neumorph_shadowElevation="3dp"
+    app:neumorph_shapeType="flat">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ventilationTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:gravity="left"
+            android:text="@string/ventilation"
+            android:textColor="#ffffff"
+            android:textSize="13dp"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:fontFamily="@font/sandolgothic"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/volumeTextView"
+                android:gravity="center"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                android:textColor="#ffffff"
+                android:text="@string/ventilation_volume"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sandolgothic"/>
+
+            <TextView
+                android:gravity="center"
+                android:layout_weight="1"
+                android:id="@+id/ventil_volume"
+                android:text="-"
+                android:textColor="#ffffff"
+                android:textSize="13dp"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sandolgothic"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ventilcountTextView"
+                android:gravity="center"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                android:textColor="#ffffff"
+                android:text="@string/count"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sandolgothic"/>
+
+            <TextView
+                android:gravity="center"
+                android:layout_weight="1"
+                android:id="@+id/ventil_count"
+                android:text="-"
+                android:textColor="#ffffff"
+                android:textSize="13dp"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sandolgothic"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/avevolumeTextView"
+                android:gravity="center"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                android:textColor="#ffffff"
+                android:text="@string/average_volume"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sandolgothic"/>
+
+            <TextView
+                android:gravity="center"
+                android:layout_weight="1"
+                android:id="@+id/ave_volume"
+                android:text="-"
+                android:textColor="#ffffff"
+                android:textSize="13dp"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sandolgothic"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</soup.neumorphism.NeumorphCardView>

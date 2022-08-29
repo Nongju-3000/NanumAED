@@ -225,7 +225,7 @@ public class CPRActivity extends AppCompatActivity {
     private TextView mode_cpr_value;
     private TextView cpr_timer;
 
-    private Button cpr_sub, cpr_add;
+    private Button cpr_sub, cpr_add, standardCPR_btn01, depth_btn_cpr_01;
 
     private long MillisecondTime, StartTime, TimeBuff, UpdateTime, intrval_01, StartTime_L, position_intrval = 0L;
 
@@ -236,6 +236,21 @@ public class CPRActivity extends AppCompatActivity {
     private int Seconds_, Seconds, Minutes, MilliSeconds;
 
     private int handOff_01;
+
+    private String toDay;
+
+    private ArrayList<Float> breathval_01 = new ArrayList<Float>(){{
+        add(200.0f);
+    }};
+
+    private ArrayList<Float> breathtime_01 = new ArrayList<Float>(){{
+        add(0.0f);
+    }};
+
+    private ArrayList<Float> presstime_list01 = new ArrayList<Float>();
+
+
+    private boolean isBreath01 = false;
 
     private RadioGroup cpr_interval;
 
@@ -346,6 +361,8 @@ public class CPRActivity extends AppCompatActivity {
     double min_lung01 = 64;
     private final int BREOVERTIME = 16;
 
+    int ventil_volume_01 = 0;
+
     double bre_threshold01 = 66;
     private int over_breath01 = 0;
     private int bre_level01;
@@ -355,6 +372,9 @@ public class CPRActivity extends AppCompatActivity {
     private boolean isImageNormal01 = true;
     double gap_lung01;
     boolean isCali01 = false;
+    private ImageView anne;
+    private LinearLayout depthview;
+    private View depthCPR_view01;
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -411,7 +431,7 @@ public class CPRActivity extends AppCompatActivity {
     };
 
     public void onBackPressed() {
-            this.backPressCloseHandler.onBackPressed();
+        this.backPressCloseHandler.onBackPressed();
     }
     private RxBleClient rxBleClient;
     private Disposable scanDisposable;
@@ -488,6 +508,9 @@ public class CPRActivity extends AppCompatActivity {
 
         handler = new Handler(Looper.getMainLooper());
 
+        anne = findViewById(R.id.anne);
+        depthview = findViewById(R.id.depthview);
+
         start_mode_cpr = findViewById(R.id.start_mode_cpr);
         mode_cpr = findViewById(R.id.mode_cpr);
 
@@ -504,6 +527,10 @@ public class CPRActivity extends AppCompatActivity {
         mode_cpr_value = findViewById(R.id.mode_cpr_value);
 
         depth_btn_cpr_up = findViewById(R.id.depth_btn_cpr_up);
+
+        standardCPR_btn01 = findViewById(R.id.standardCPR_btn01);
+
+        depth_btn_cpr_01 = findViewById(R.id.depth_btn_cpr_01);
 
         start_mode_cpr.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPreferences.edit().putBoolean("starModeCPR", isChecked).apply();
@@ -538,6 +565,7 @@ public class CPRActivity extends AppCompatActivity {
         cpr_timer = findViewById(R.id.cpr_timer);
         cpr_arrow01 = findViewById(R.id.cpr_arrow01);
         cpr_arrow01_ = findViewById(R.id.cpr_arrow01_);
+        depthCPR_view01= findViewById(R.id.depthCPR_view01);
 
         depth_btn01 = findViewById(R.id.depth_btn_cpr_01);
 
@@ -649,8 +677,10 @@ public class CPRActivity extends AppCompatActivity {
     private int mLevel01 = 0;
     private int fromLevel01 = 0;
     private int toLevel01 = 0;
+    private boolean ispeak01 = false;
     public static final int MAX_LEVEL = 10000;
-    public static final int LEVEL_DIFF = 100;
+    public static final int LEVEL_DIFF_UP = 250;
+    public static final int LEVEL_DIFF_DOWN = 100;
     public static final int DELAY = 15;
 
     private Handler mUpHandler01 = new Handler(Looper.getMainLooper());
@@ -661,7 +691,7 @@ public class CPRActivity extends AppCompatActivity {
     private Runnable animateDownImage01 = () -> doTheDownAnimation01(fromLevel01, toLevel01);
 
     private void doTheUpAnimation01(int fromLevel, int toLevel) {
-        mLevel01 += LEVEL_DIFF;
+        mLevel01 += LEVEL_DIFF_UP;
         lung_clip01.setLevel(mLevel01);
         if (mLevel01 <= toLevel) {
             mUpHandler01.postDelayed(animateUpImage01, DELAY);
@@ -672,17 +702,19 @@ public class CPRActivity extends AppCompatActivity {
     }
 
     private void doTheDownAnimation01(int fromLevel, int toLevel) {
-        mLevel01 -= LEVEL_DIFF;
+        mLevel01 -= LEVEL_DIFF_DOWN;
         lung_clip01.setLevel(mLevel01);
         if (mLevel01 >= toLevel) {
             mDownHandler01.postDelayed(animateDownImage01, DELAY);
         } else {
             mDownHandler01.removeCallbacks(animateDownImage01);
             fromLevel01 = toLevel01;
+            ispeak01 = false;
         }
     }
 
     public void moveLungClip01(int percent) {
+
         int temp_level = (percent * MAX_LEVEL) / 100;
 
         if (toLevel01 == temp_level || temp_level > MAX_LEVEL) {
@@ -702,6 +734,13 @@ public class CPRActivity extends AppCompatActivity {
 
             mDownHandler01.post(animateDownImage01);
         }
+    }
+
+    public void peakLungClip01() {
+        mUpHandler01.removeCallbacks(animateUpImage01);
+        toLevel01 = 0;
+        fromLevel01 = toLevel01;
+        mDownHandler01.post(animateDownImage01);
     }
 
     private void registerForBroadcastMessages() {
@@ -755,7 +794,7 @@ public class CPRActivity extends AppCompatActivity {
             e.printStackTrace();
             throw new RuntimeException("Invalid server URL!");
         }
-            JitsiMeetConferenceOptions defaultOptions
+        JitsiMeetConferenceOptions defaultOptions
                 = new JitsiMeetConferenceOptions.Builder()
                 .setServerURL(serverURL)
                 // When using JaaS, set the obtained JWT here
@@ -856,8 +895,8 @@ public class CPRActivity extends AppCompatActivity {
         disconnectJitsi();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
 
-       // runHander(false);
-       // unbindService(finishConnection);
+        // runHander(false);
+        // unbindService(finishConnection);
         unbindService(mServiceConnection);
         bluetoothLeServiceCPR = null;
     }
@@ -921,6 +960,9 @@ public class CPRActivity extends AppCompatActivity {
                                 long now = System.currentTimeMillis(); now = now - (now % 10);
                                 peakTimes.add(now);
                                 setBpm();
+
+                                float presstime = (float) ((now - StartTime_L) / 1000.0f);
+                                presstime_list01.add(presstime);
 
                                 if (!mode_cpr.isChecked()) {
                                     cycle_01 = Depth_size / cycle_set;
@@ -1015,9 +1057,9 @@ public class CPRActivity extends AppCompatActivity {
                 }
 
             }  else if (Devices.get("Device_02").equals(spil[2])) {
+                long now = System.currentTimeMillis();
                 if(!device2_connect)
                     device2_connect = !device2_connect;
-
                 switch (spil[1]) {
                     case "0000fff1-0000-1000-8000-00805f9b34fb":
                         lung01.setVisibility(View.INVISIBLE);
@@ -1025,7 +1067,7 @@ public class CPRActivity extends AppCompatActivity {
                         intrval_01 = System.currentTimeMillis();
                         position01 = Integer.parseInt(getHexToDec(spil[0]));
 
-                        long now = System.currentTimeMillis();
+
                         Date date = new Date(now);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                         String getTime = sdf.format(date);
@@ -1079,9 +1121,35 @@ public class CPRActivity extends AppCompatActivity {
                     case "0000fff2-0000-1000-8000-00805f9b34fb":
                         if(!start_check) {
                             long secs = System.currentTimeMillis() - intrval_01;
-                            if (secs >= 1300) {
+                            now = now - (now % 10);
+                            float current_time = (float) ((now - StartTime_L) / 1000.0f);
+
+                            double breath = breath01 - min_lung01;
+                            double percent = ((float)breath / gap_lung01) * 100;
+                            if (secs >= 1500) {
                                 breath01 = Integer.parseInt(getHexToDec(spil[0]));
                                 //press_position01.setVisibility(View.INVISIBLE);
+
+                                depthview.setVisibility(View.INVISIBLE);
+                                anne.setVisibility(View.INVISIBLE);
+                                remote_depth_text.setVisibility(View.INVISIBLE);
+                                cpr_ani01.setVisibility(View.INVISIBLE);
+                                cpr_ani02.setVisibility(View.INVISIBLE);
+                                standardCPR_btn01.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_01.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_up.setVisibility(View.INVISIBLE);
+                                depthCPR_view01.setVisibility(View.INVISIBLE);
+
+                                if(breath01 > bre_threshold01 && !isBreath01){
+                                    breathval_01.add(71.0f);
+                                    breathtime_01.add(current_time);
+                                    isBreath01 = true;
+                                }
+                                if(breath01 < bre_threshold01 && isBreath01){
+                                    breathval_01.add(71.0f);
+                                    breathtime_01.add(current_time);
+                                    isBreath01 = false;
+                                }
 
                                 if (cycle_01 == Integer.parseInt(mode_cpr_value.getText().toString())) {
                                     reset(1);
@@ -1135,7 +1203,7 @@ public class CPRActivity extends AppCompatActivity {
                                             if(lung_list01.get(i) > lung_list01.get(i - 1))
                                                 max = lung_list01.get(i);
                                         }
-                                        setBreath01(max);
+                                        setBreath01(max, current_time);
                                         lung_list01.clear();
                                     }
                                 }
@@ -1164,13 +1232,23 @@ public class CPRActivity extends AppCompatActivity {
                                         isImageNormal01 = true;
                                     }
                                 }
-                                if(gap_lung01 != 0){
-                                    double breath = breath01 - min_lung01;
-                                    double percent = ((float)breath / gap_lung01) * 100;
-                                    if(percent > 100)
+
+                                if(gap_lung01 != 0 && !ispeak01){
+                                    if(percent > 100) {
                                         percent = 100;
+                                    }
+                                    if(percent < 0){
+                                        percent = 0;
+                                    }
                                     moveLungClip01((int)percent);
                                 }
+
+                                if(gap_lung01 != 0 && ispeak01){
+                                    if(percent > 100)
+                                        percent = 100;
+                                    peakLungClip01();
+                                }
+
                                 long now_ = System.currentTimeMillis();
                                 Date date_ = new Date(now_);
                                 SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -1182,6 +1260,15 @@ public class CPRActivity extends AppCompatActivity {
                         break;
 
                     case "0000fff3-0000-1000-8000-00805f9b34fb":
+                        depthview.setVisibility(View.VISIBLE);
+                        anne.setVisibility(View.VISIBLE);
+                        remote_depth_text.setVisibility(View.VISIBLE);
+                        cpr_ani01.setVisibility(View.VISIBLE);
+                        cpr_ani02.setVisibility(View.VISIBLE);
+                        standardCPR_btn01.setVisibility(View.VISIBLE);
+                        depth_btn_cpr_01.setVisibility(View.VISIBLE);
+                        depth_btn_cpr_up.setVisibility(View.VISIBLE);
+                        depthCPR_view01.setVisibility(View.VISIBLE);
                         long now__ = System.currentTimeMillis();
                         Date date__ = new Date(now__);
                         SimpleDateFormat sdf__ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -1230,9 +1317,12 @@ public class CPRActivity extends AppCompatActivity {
                             while (peakTimes.size() > 2) {
                                 peakTimes.remove(0);
                             }
-                            long now2 = System.currentTimeMillis(); now2 = now2 - (now2 % 10);
+                            long now2 = System.currentTimeMillis();
+                            now2 = now2 - (now2 % 10);
                             peakTimes.add(now2);
                             setBpm();
+                            float presstime = (float) ((now2 - StartTime_L) / 1000.0f);
+                            presstime_list01.add(presstime);
                             if (!mode_cpr.isChecked()) {
                                 cycle_01 = Depth_size / cycle_set;
                             }
@@ -1306,7 +1396,7 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    private void setBreath01(int center){
+    private void setBreath01(int center, float centertime){
         int breath = 0;
         if(center < bre_threshold01){
             breath = 0;
@@ -1321,16 +1411,50 @@ public class CPRActivity extends AppCompatActivity {
         }
         if(breath != 0) {
             cprItem_01.add(new UserItem(Seconds_, breath));
-
+            float percent = (float) ((((double)center - min_lung01) / gap_lung01) * 100.0f);
+            // 158% = 550ml
+            ventil_volume_01 += percent * (550.0f / 158.0f);
+            percent = (float) ((((double)center - min_lung01) / gap_lung01) * 60.0f);
+            if(percent < 0)
+                percent = 0;
+            if(percent > 60)
+                percent = 60;
+            percent = (percent - 70.0f) * (-1.0f);
             switch(breath){
                 case 1:
+                    lung_num01++;
+                    ispeak01 = true;
+                    if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
+                        breathval_01.add(60.0f);
+                        breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
+                    }
+                    breathval_01.add(percent*(-1.0f) - 5.0f);
+                    breathtime_01.add(centertime);
+
+                    break;
                 case 4:
                     lung_num01++;
+                    ispeak01 = true;
+                    if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
+                        breathval_01.add(60.0f);
+                        breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
+                    }
+                    breathval_01.add(percent*(-1.0f));
+                    breathtime_01.add(centertime);
+
                     break;
                 case 2:
                 case 3:
                     lung_num01++;
                     lung_correct01++;
+                    ispeak01 = true;
+                    if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
+                        breathval_01.add(60.0f);
+                        breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
+                    }
+                    breathval_01.add(percent);
+                    breathtime_01.add(centertime);
+
                     break;
             }
 
@@ -1698,7 +1822,7 @@ public class CPRActivity extends AppCompatActivity {
                     }
                 }
 
-                 catch (InterruptedException e) {
+                catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -1998,13 +2122,13 @@ public class CPRActivity extends AppCompatActivity {
     }
     private void scanBleDevices() {
         scanDisposable = rxBleClient.scanBleDevices(
-                new ScanSettings.Builder()
-                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                        .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-                        .build(),
-                new ScanFilter.Builder()
-                        .build()
-        )
+                        new ScanSettings.Builder()
+                                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+                                .build(),
+                        new ScanFilter.Builder()
+                                .build()
+                )
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(this::dispose)
                 .subscribe(this::addScanResult, this::onScanFailure);
@@ -2054,7 +2178,7 @@ public class CPRActivity extends AppCompatActivity {
                             if (start_check) {
                                 if(enter_time < Double.parseDouble(chatData.getPostDate())) {
                                     showStart(CPRActivity.this);
-                                   // runHander(true);
+                                    // runHander(true);
                                 }
                             } else {
                                 Toast toast = Toast.makeText(CPRActivity.this, "Running...", Toast.LENGTH_SHORT);
@@ -2064,6 +2188,12 @@ public class CPRActivity extends AppCompatActivity {
                     if(chatData.getMessage().contains("시간/")){
                         String data[] = chatData.getMessage().split("/");
                         mode_cpr_value.setText(data[1]);
+
+                    }
+                    if(chatData.getMessage().contains("starttime/")){
+                        String data[] = chatData.getMessage().split("/");
+                        toDay = data[1] + "/" + data[2];
+                        Log.d("toDay",toDay);
                     }
 
                     if(chatData.getMessage().contains("방송/")){
@@ -2260,7 +2390,7 @@ public class CPRActivity extends AppCompatActivity {
         };
     }
 
-    int max_secs = 0;
+    float max_secs = 0.0f;
 
     //TODO Timer
     public Runnable runnable = new Runnable() {
@@ -2285,13 +2415,13 @@ public class CPRActivity extends AppCompatActivity {
 
             handler.postDelayed(this, 0);
 
-           // String[] timer_sec = cpr_timer.getText().toString().split(":");
+            // String[] timer_sec = cpr_timer.getText().toString().split(":");
 
             if (!Devices.isEmpty()) {
                 if(bluetoothLeServiceCPR != null) {
                     if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02")) || bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
                         long now = System.currentTimeMillis() - intrval_01;
-                        int secs = (int) (now) / 1000;
+                        float secs = now / 1000.0f;
                         if (now >= 1500) {
                             if (handOff_01 < Seconds_) {
                                 if(max_secs < secs)
@@ -2302,9 +2432,9 @@ public class CPRActivity extends AppCompatActivity {
                             remote_arrow_down_text.setVisibility(View.VISIBLE);
                         } else {
                             if(max_secs != 0 )
-                                cprItem_01.add(new UserItem(Seconds_, max_secs+1, 0));
+                                cprItem_01.add(new UserItem(Seconds_, max_secs, 0));
 
-                            max_secs = 0;
+                            max_secs = 0.0f;
                             handOff_01 = Seconds_;
                             cpr_arrow01_.setVisibility(View.INVISIBLE);
                             remote_arrow_down_text.setVisibility(View.INVISIBLE);
@@ -2374,7 +2504,7 @@ public class CPRActivity extends AppCompatActivity {
         sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, 0);
         startService(sender);
 
-       // runHander(false);
+        // runHander(false);
 
         if(set == 2){
             if(max_secs != 0)
@@ -2382,7 +2512,9 @@ public class CPRActivity extends AppCompatActivity {
 
             isReset = true;
             ArrayList<ReportItem> reportItems = new ArrayList<>();
-            reportItems.add(report_setting(cprItem_01, UserName, String.valueOf(cycle_01), String.valueOf(score_01),
+            Log.d("presstime", String.valueOf(presstime_list01));
+            reportItems.add(report_setting(cprItem_01, UserName, presstime_list01, breathval_01, breathtime_01, String.valueOf(ventil_volume_01),
+                    String.valueOf(cycle_01), String.valueOf(score_01),
                     String.valueOf(minDepth), String.valueOf(maxDepth),
                     String.valueOf(depth_num), String.valueOf(depth_correct), String.valueOf(position_num01), String.valueOf(position_correct01),
                     String.valueOf(lung_num01), String.valueOf(lung_correct01), bpm1));
@@ -2433,7 +2565,7 @@ public class CPRActivity extends AppCompatActivity {
             if(reportItems.get(0).getStop_time_list().isEmpty()){
                 stopList = "0";
             }else{
-                stopList = converters.writingIntegerStringFromList(reportItems.get(0).getStop_time_list());
+                stopList = converters.writingStringFromList(reportItems.get(0).getStop_time_list());
             }
 
             ChatData chatData__ = new ChatData("score/"+score+"/"+avg_depth_s+"/"+bpm, getTime_, UserName);
@@ -2448,6 +2580,10 @@ public class CPRActivity extends AppCompatActivity {
                     + reportItems.get(0).getReport_bpm() + "/"
                     + reportItems.get(0).getReport_angle() + "/"
                     + converters.writingStringFromList(reportItems.get(0).getReport_depth_list()) + "/"
+                    + converters.writingStringFromList(reportItems.get(0).getReport_presstime_list()) + "/"
+                    + converters.writingStringFromList(reportItems.get(0).getReport_breathval()) + "/"
+                    + converters.writingStringFromList(reportItems.get(0).getReport_breathtime()) + "/"
+                    + reportItems.get(0).getReport_ventil_volume() + "/"
                     + reportItems.get(0).getDepth_num() + "/"
                     + reportItems.get(0).getDepth_correct() + "/"
                     + reportItems.get(0).getReport_position_num() + "/"
@@ -2492,9 +2628,13 @@ public class CPRActivity extends AppCompatActivity {
         Thread.interrupted();
         start_check = true;
 
+        breathtime_01.clear();
+        breathval_01.clear();
+        presstime_list01.clear();
         peakTimes.clear();
         total_count = 0;
         position_bpm = 0f;
+        ventil_volume_01 = 0;
 
         if (set == 1) {
             Intent intent;
@@ -2715,11 +2855,12 @@ public class CPRActivity extends AppCompatActivity {
                 Converters converters = new Converters();
 
                 report.report_depth_list = converters.writingStringFromList(reportItem.getReport_depth_list());
+                report.report_presstimeList = converters.writingStringFromList(reportItem.getReport_presstime_list());
+                report.report_breathval = converters.writingStringFromList(reportItem.getReport_breathval());
+                report.report_breathtime = converters.writingStringFromList(reportItem.getReport_breathtime());
+                report.report_ventil_volume = reportItem.getReport_ventil_volume();
 
-                Calendar cal = Calendar.getInstance();
-                Date nowDate = cal.getTime();
-                SimpleDateFormat dataformat = new SimpleDateFormat("yyyyMMdd/HH:mm:ss");
-                String toDay = dataformat.format(nowDate);
+                Log.d("toDay-", toDay);
                 report.to_day = toDay;
                 report.min = reportItem.getReport_Min();
                 report.max = reportItem.getReport_Max();
@@ -2729,7 +2870,7 @@ public class CPRActivity extends AppCompatActivity {
                 report.position_correct = reportItem.getReport_position_correct();
                 report.lung_num = reportItem.getReport_lung_num();
                 report.lung_correct = reportItem.getReport_lung_correct();
-                report.stop_time_list = converters.writingIntegerStringFromList(reportItem.getStop_time_list());
+                report.stop_time_list = converters.writingStringFromList(reportItem.getStop_time_list());
 
                 database.reportDao().insert(report);
             }
@@ -2737,12 +2878,14 @@ public class CPRActivity extends AppCompatActivity {
     }
 
 
-    private ReportItem report_setting(ArrayList<UserItem> Useritem, String name, String cycle, String score,
+    private ReportItem report_setting(ArrayList<UserItem> Useritem, String name, ArrayList<Float> presstimeList,
+                                      ArrayList<Float> breathval, ArrayList<Float> breathtime, String ventil_volume,
+                                      String cycle, String score,
                                       String min, String max, String depth_num, String depth_correct,
                                       String position_num, String position_correct, String lung_num, String lung_correct, ArrayList<Float> gBpm) {
         ReportItem reportItem = null;
         ArrayList<Float> arrayList = new ArrayList<Float>();
-        ArrayList<Integer> stopList = new ArrayList<>();
+        ArrayList<Float> stopList = new ArrayList<>();
 
         int Depth_size = 0;
         int position_six = 0;
@@ -2802,7 +2945,7 @@ public class CPRActivity extends AppCompatActivity {
         }else{
             position_ = Integer.parseInt(score);
         }
-      //  int bpm = (int) (((double) (Depth_size / (double) Seconds_) * 60));
+        //  int bpm = (int) (((double) (Depth_size / (double) Seconds_) * 60));
         int bpm = 0;
         if(gBpm.size() > 0){
             bpm = add_bpm / gBpm.size();
@@ -2819,6 +2962,10 @@ public class CPRActivity extends AppCompatActivity {
                 , String.valueOf(bpm)
                 , String.valueOf(angle)
                 , arrayList
+                , presstimeList
+                , breathtime
+                , breathval
+                , ventil_volume
                 , min
                 , max
                 , depth_num
