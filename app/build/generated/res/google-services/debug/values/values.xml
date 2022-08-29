@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">447661649850-c656lgi0vargme63aicuui9delgds01q.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">447661649850</string>
+    <string name="google_api_key" translatable="false">AIzaSyDmL_indRIrJ3BrrdYDKDNZf5ZJ03LDuP4</string>
+    <string name="google_app_id" translatable="false">1:447661649850:android:e8b08f3ebc80870ae23783</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDmL_indRIrJ3BrrdYDKDNZf5ZJ03LDuP4</string>
+    <string name="google_storage_bucket" translatable="false">credoaio.appspot.com</string>
+    <string name="project_id" translatable="false">credoaio</string>
+</resources>

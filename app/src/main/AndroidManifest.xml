@@ -40,12 +40,6 @@
             />
 
         <activity
-            android:name=".activity.CPRScoreActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            />
-
-        <activity
             android:name=".activity.RoomActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"

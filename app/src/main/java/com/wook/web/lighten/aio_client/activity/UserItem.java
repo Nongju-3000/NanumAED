@@ -28,7 +28,7 @@ public class UserItem implements Serializable {
         return time;
     }
 
-    public int getHand_off_start(){return hand_off_start; }
+    public float getHand_off_start(){return hand_off_start; }
 
     public int getHand_off_end(){return hand_off_end; }
 
@@ -38,7 +38,7 @@ public class UserItem implements Serializable {
     private int angle;
     private int position;
     private int breath;
-    private int hand_off_start;
+    private float hand_off_start;
     private int hand_off_end;
 
 
@@ -56,7 +56,7 @@ public class UserItem implements Serializable {
         this.breath = breath;
     }
 
-    public UserItem(int time, int hand_off_start , int hand_off_end){
+    public UserItem(int time, float hand_off_start , int hand_off_end){
         this.time = time;
         this.hand_off_start = hand_off_start;
         this.hand_off_end = hand_off_end;

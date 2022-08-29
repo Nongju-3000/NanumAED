@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soup.neumorphism.NeumorphCardView android:id="@+id/info_sessionCardView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="0.5"
+    app:neumorph_backgroundColor="#292929"
+    app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+    app:neumorph_shadowColorLight="#444444"
+    app:neumorph_shadowElevation="1.5dp"
+    app:neumorph_shapeType="flat"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="0.3">
+
+            <TextView
+                android:id="@+id/sesseionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_marginLeft="13dp"
+                android:text="@string/session_info"
+                android:fontFamily="@font/sandolgothic"
+                android:textColor="#ffffff"
+                android:textSize="8dp"
+                android:layout_marginTop="4dp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/report_end_time_img"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/info_01" />
+
+                        <TextView
+                            android:id="@+id/report_end_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sandolgothic"
+                            android:gravity="center"
+                            android:text="@string/total_cpr_dialog"
+                            android:textColor="#ffffff"
+                            android:textSize="10dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginBottom="5dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/report_interval_img"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/info_02" />
+
+                        <TextView
+                            android:id="@+id/report_interval_sec"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/stop_depth_dialog"
+                            android:fontFamily="@font/sandolgothic"
+                            android:textSize="10dp"
+                            android:textColor="#ffffff" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/cycle_img"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/info_03" />
+
+                        <TextView
+                            android:id="@+id/report_cycle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="10dp"
+                            android:fontFamily="@font/sandolgothic"
+                            android:text="@string/count_cycle_dialog"
+                            android:textColor="#ffffff" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="5dp">
+
+                        <ImageView
+                            android:id="@+id/depth_correct_img"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/info_04" />
+
+                        <TextView
+                            android:id="@+id/report_depth_correct"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="10dp"
+                            android:fontFamily="@font/sandolgothic"
+                            android:text="@string/position_accuracy_dialog"
+                            android:visibility="visible"
+                            android:textColor="#ffffff" />
+                        <TextView
+                            android:id="@+id/depth_break"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textSize="10dp"
+                            android:fontFamily="@font/sandolgothic"
+                            android:text="BLOCK"
+                            android:background="#545454"
+                            android:visibility="gone"
+                            android:textColor="#ffffff"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--compress-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_weight="0.5">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="left">
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp">
+                    <Button
+                        android:layout_width="39dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="left|center"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="4dp"
+                        android:alpha="0.5"
+                        android:background="@drawable/anne_line"
+                        android:clickable="false"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="15dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="4dp">
+                        <TextView
+                            android:id="@+id/correctCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:text="@string/count_valid"
+                            android:textColor="#49c644"
+                            android:fontFamily="@font/sandolgothic"
+                            android:textSize="10dp" />
+                        <TextView
+                            android:id="@+id/slash"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:text="/"
+                            android:fontFamily="@font/sandolgothic"
+                            android:textColor="#ffffff"
+                            android:textSize="10dp" />
+                        <TextView
+                            android:id="@+id/report_total"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/count"
+                            android:fontFamily="@font/sandolgothic"
+                            android:textColor="#ffffff"
+                            android:textSize="10dp" />
+                    </LinearLayout>
+                    <Button
+                        android:id="@+id/report_up_depth"
+                        android:layout_width="50dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center|left"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/ventilation"
+                        android:text="@string/release_accuracy"
+                        android:fontFamily="@font/sandolgothic"
+                        android:textColor="#ffffff"
+                        android:textSize="10dp"
+                        android:clickable="false"/>
+                    <Button
+                        android:id="@+id/report_down_depth"
+                        android:layout_width="50dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="left|center"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/ventilation"
+                        android:text="@string/depth_accuracy"
+                        android:fontFamily="@font/sandolgothic"
+                        android:textColor="#ffffff"
+                        android:textSize="10dp"
+                        android:clickable="false"/>
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_weight="0.1"
+            android:layout_marginRight="3dp">
+            <LinearLayout
+                android:id="@+id/report_angleguage"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/angle_green"
+                android:layout_marginTop="10dp"
+                android:gravity="top|center"
+                android:orientation="vertical"/>
+
+            <TextView
+                android:id="@+id/report_angle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:fontFamily="@font/sandolgothic"
+                android:text="-"
+                android:textColor="#ffffff"
+                android:textSize="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+</soup.neumorphism.NeumorphCardView>

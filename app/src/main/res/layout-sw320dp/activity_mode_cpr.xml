@@ -163,12 +163,14 @@
                                 android:visibility="invisible"
                                 />
                             <ImageView
+                                android:id="@+id/anne"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/anne" />
 
                             <LinearLayout
+                                android:id="@+id/depthview"
                                 android:layout_width="45dp"
                                 android:layout_height="120dp"
                                 android:layout_marginTop="20dp"

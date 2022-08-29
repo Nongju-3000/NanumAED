@@ -40,6 +40,18 @@ public class Report {
     @ColumnInfo(name = "report_depth_list")
     public String report_depth_list;
 
+    @ColumnInfo(name = "report_presstimeList")
+    public String report_presstimeList;
+
+    @ColumnInfo(name = "report_breathtime")
+    public String report_breathtime;
+
+    @ColumnInfo(name = "report_breathval")
+    public String report_breathval;
+
+    @ColumnInfo(name = "report_ventil_volume")
+    public String report_ventil_volume;
+
     @ColumnInfo(name = "to_day")
     public String to_day;
 

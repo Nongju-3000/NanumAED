@@ -98,6 +98,24 @@
     <string name="interval">TỐC ĐỘ</string>
     <string name="min">HỦY</string>
     <string name="max">TỐI ĐA</string>
+    <string name="depth_average">Depth : </string>
+    <string name="rythme">Rythme : </string>
+    <string name="accuracy">Accuracy</string>
+    <string name="wrist_angle">Wrist angle</string>
+    <string name="correct">Correct</string>
+    <string name="incorrect">Incorrect</string>
+    <string name="jiggle">Jiggle</string>
+    <string name="count_valid">Effect</string>
+    <string name="cpr_accuracy">CPR Accuracy</string>
+    <string name="ventilation_volume">Volume</string>
+    <string name="average_volume">Average</string>
+    <string name="depth_average_dialog">Depth Average</string>
+    <string name="bpm_average_dialog">BPM Average</string>
+    <string name="personal_setting">THIẾT LẬP CÁ NHÂN</string>
+    <string name="company_setting">THIẾT LẬP CÔNG TY</string>
+    <string name="activate_aio">PHẢI SỬ DỤNG AIO ĐỂ KÍCH HOẠT.</string>
+    <string name="band_aio">Band, AIO</string>
+    <string name="only_aio">CHỈ SỬ DỤNG AIO</string>
     <!-- Ble scan error messages -->
     <string name="error_bluetooth_not_available">Bluetooth is not available</string>
     <string name="error_bluetooth_disabled">Enable bluetooth and try again</string>

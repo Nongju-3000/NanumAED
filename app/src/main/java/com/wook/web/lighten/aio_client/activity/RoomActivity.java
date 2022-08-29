@@ -1069,7 +1069,7 @@ public class RoomActivity extends AppCompatActivity {
                     if(Integer.parseInt(report.lung_num) != 0){
                         all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
                     }else
-                        all_score = depth_accuracy_;
+                        all_score = Integer.parseInt(report.report_down_depth);
                     item.add(report.report_name + "," + report.report_depth_correct+ ","+report.to_day +","+all_score);
                 }
             }
