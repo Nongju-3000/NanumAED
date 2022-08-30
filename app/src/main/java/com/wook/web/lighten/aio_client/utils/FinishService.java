@@ -80,9 +80,16 @@ public class FinishService extends Service {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
         String getTime = sdf.format(date);
 
-        ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-        databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
-        databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
+        if(token != null) {
+            ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+            databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+            databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
+        }
+
+        else{
+            ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+            databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+        }
 
         stopSelf();
 
