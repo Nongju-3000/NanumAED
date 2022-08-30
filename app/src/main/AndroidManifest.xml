@@ -61,6 +61,8 @@
         <service android:name=".utils.FinishService"
             android:exported="false"
             android:stopWithTask="false"/>
+        <service android:name=".activity.CPRActivity"
+            android:stopWithTask="false"/>
 
     </application>
 

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PictureInPictureParams;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -438,7 +439,11 @@ public class CPRActivity extends AppCompatActivity {
     //TODO onCreate
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Intent destroy = new Intent(CPRActivity.this, FinishService.class);
+        destroy.putExtra("room", room);
+        destroy.putExtra("UserName", UserName);
+        destroy.setAction(FinishService.ACTION_INITIALIZE);
+        startService(destroy);
         setContentView(R.layout.activity_mode_cpr);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -887,16 +892,7 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    public void onDestroy() {
-        super.onDestroy();
-        disconnectJitsi();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
 
-        // runHander(false);
-        // unbindService(finishConnection);
-        unbindService(mServiceConnection);
-        bluetoothLeServiceCPR = null;
-    }
     private void displayData(String data) { //TODO DATA
         if (data != null) {
             String[] spil = data.split(",");
