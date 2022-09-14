@@ -115,6 +115,7 @@
     <string name="activate_aio">Its activated, if you use AIO</string>
     <string name="band_aio">Band, AIO</string>
     <string name="only_aio">Only AIO</string>
+    <string name="manual">Manual</string>
     <!-- Ble scan error messages -->
     <string name="error_bluetooth_not_available">Bluetooth is not available</string>
     <string name="error_bluetooth_disabled">Enable bluetooth and try again</string>

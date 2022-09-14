@@ -9,38 +9,24 @@
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw320dp/activity_mode_cpr.xml" value="0.4575" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw320dp/activity_report.xml" value="0.33" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw320dp/activity_room.xml" value="0.45375" />
+        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw320dp/loading_screen.xml" value="0.2997007268063275" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw320dp/recyclerview_item.xml" value="0.8015873015873016" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw400dp/activity_mode_cpr.xml" value="0.190625" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw400dp/activity_report.xml" value="0.33" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw400dp/activity_room.xml" value="0.1890625" />
+        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw400dp/loading_screen.xml" value="0.2997007268063275" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw400dp/recyclerview_item.xml" value="0.36594202898550726" />
+        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw600dp/activity_main.xml" value="0.274609375" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw600dp/activity_mode_cpr.xml" value="0.5" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw600dp/activity_report.xml" value="1.0" />
-        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw600dp/activity_room.xml" value="0.141796875" />
+        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw600dp/activity_room.xml" value="0.33" />
+        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw600dp/loading_screen.xml" value="0.273828125" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout-sw600dp/recyclerview_item.xml" value="0.274609375" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout/activity_mode_cpr.xml" value="1.3305439330543933" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout/activity_report.xml" value="0.8274058577405857" />
         <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout/activity_room.xml" value="0.7995594713656388" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/drawable/anne_point_green.xml" value="0.229" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/drawable/position_press.xml" value="0.3625" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw320dp/activity_mode_cpr.xml" value="0.1" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw320dp/activity_report.xml" value="0.83375" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw320dp/info_accuracy.xml" value="0.5325" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw320dp/info_session.xml" value="0.83375" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw400dp/activity_cpr_score.xml" value="0.168875587858059" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw400dp/activity_main.xml" value="0.168875587858059" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw400dp/activity_mode_cpr.xml" value="0.33" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw400dp/activity_report.xml" value="0.8522427440633246" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw400dp/info_accuracy.xml" value="0.75" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw400dp/info_session.xml" value="0.34739583333333335" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw400dp/info_ventil.xml" value="0.67" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw600dp/activity_mode_cpr.xml" value="0.6451612903225806" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw600dp/activity_report.xml" value="0.2883914627798022" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw600dp/info_accuracy.xml" value="0.187109375" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout-sw600dp/info_session.xml" value="0.260546875" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout/activity_mode_cpr.xml" value="1.0814977973568283" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout/activity_report.xml" value="1.0" />
-        <entry key="..\:/Users/user/StudioProjects/Client/app/src/main/res/layout/info_session.xml" value="1.224669603524229" />
+        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/layout/loading_screen.xml" value="0.2997007268063275" />
+        <entry key="..\:/Users/PC2/AndroidStudioProjects/AIO_Client/AIO_Client/app/src/main/res/xml/provider_paths.xml" value="0.15391192817443353" />
       </map>
     </option>
   </component>

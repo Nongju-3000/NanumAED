@@ -30,7 +30,7 @@ public final class AppDatabase_Impl extends AppDatabase {
 
   @Override
   protected SupportSQLiteOpenHelper createOpenHelper(DatabaseConfiguration configuration) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(configuration, new RoomOpenHelper.Delegate(1) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(configuration, new RoomOpenHelper.Delegate(2) {
       @Override
       public void createAllTables(SupportSQLiteDatabase _db) {
         _db.execSQL("CREATE TABLE IF NOT EXISTS `Report` (`report_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `report_name` TEXT, `report_end_time` TEXT, `report_interval_sec` TEXT, `report_cycle` TEXT, `report_depth_correct` TEXT, `report_up_depth` TEXT, `report_down_depth` TEXT, `report_bpm` TEXT, `report_angle` TEXT, `report_depth_list` TEXT, `report_presstimeList` TEXT, `report_breathtime` TEXT, `report_breathval` TEXT, `report_ventil_volume` TEXT, `to_day` TEXT, `min` TEXT, `max` TEXT, `depth_num` TEXT, `depth_correct` TEXT, `position_num` TEXT, `position_correct` TEXT, `lung_num` TEXT, `lung_correct` TEXT, `stop_time_list` TEXT)");

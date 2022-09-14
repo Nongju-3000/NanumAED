@@ -116,6 +116,7 @@
     <string name="activate_aio">PHẢI SỬ DỤNG AIO ĐỂ KÍCH HOẠT.</string>
     <string name="band_aio">Band, AIO</string>
     <string name="only_aio">CHỈ SỬ DỤNG AIO</string>
+    <string name="manual">Manual</string>
     <!-- Ble scan error messages -->
     <string name="error_bluetooth_not_available">Bluetooth is not available</string>
     <string name="error_bluetooth_disabled">Enable bluetooth and try again</string>

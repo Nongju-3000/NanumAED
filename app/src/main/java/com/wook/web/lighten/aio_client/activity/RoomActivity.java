@@ -1,8 +1,11 @@
 package com.wook.web.lighten.aio_client.activity;
 
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -12,7 +15,9 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -28,8 +33,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.hardware.camera2.CameraAccessException;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -58,6 +65,7 @@ import android.widget.ViewFlipper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,6 +76,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.polidea.rxandroidble2.LogConstants;
 import com.polidea.rxandroidble2.LogOptions;
 import com.polidea.rxandroidble2.RxBleClient;
@@ -86,6 +96,8 @@ import com.wook.web.lighten.aio_client.utils.Print;
 import com.wook.web.lighten.aio_client.utils.ScanExceptionHandler;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -126,6 +138,8 @@ public class RoomActivity extends AppCompatActivity {
     private String token;
     private RxBleClient rxBleClient;
     private Disposable scanDisposable;
+    private TextView manual_tv;
+
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -214,6 +228,49 @@ public class RoomActivity extends AppCompatActivity {
             Intent intent = new Intent(RoomActivity.this, OpenSourceActivity.class);
             startActivity(intent);
             finish();
+        });
+
+        manual_tv = findViewById(R.id.manual_tv);
+        manual_tv.setOnClickListener(v->{
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference();
+            StorageReference pdfRef = storageReference.child("manual/credomanual.pdf");
+
+            File destinationPath = new File(getExternalFilesDir(null), "/manual");
+            if(!destinationPath.exists()){
+                destinationPath.mkdirs();
+            }
+            //   File destinationPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);
+            File checkPath = new File(destinationPath, "credomanual.pdf");
+            getPermission();
+            if(checkPath.exists()){
+                showPdf();
+            }else {
+                Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.loading_screen);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setCancelable(false);
+
+                TextView proPercent = dialog.findViewById(R.id.proPercent);
+
+                dialog.show();
+                try {
+                    checkPath.createNewFile();
+                    pdfRef.getFile(checkPath).addOnCompleteListener(complete -> {
+                        dialog.dismiss();
+                        showPdf();
+                    }).addOnProgressListener(data -> {
+                        int percent = (int)((100 * data.getBytesTransferred())/data.getTotalByteCount());
+                        proPercent.setText(String.valueOf(percent));
+                    }).addOnFailureListener( fail ->{
+                        Log.e("Test", "download fail "+ fail.getMessage());
+                    })
+                    ;
+                } catch (IOException e) {
+                    Log.e("Test", "IO Exception "+e.getMessage());
+                }
+            }
         });
 
         room = (EditText) findViewById(R.id.room);
@@ -414,6 +471,26 @@ public class RoomActivity extends AppCompatActivity {
 
     } // onCreate end
 
+    private void showPdf(){
+        File destinationPath = new File(getExternalFilesDir(null), "/manual");
+        File file = new File(destinationPath, "credomanual.pdf");
+        // Get the URI Path of file.
+        Uri uriPdfPath = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
+        // Start Intent to View PDF from the Installed Applications.
+        Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
+        pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        pdfOpenIntent.setClipData(ClipData.newRawUri("", uriPdfPath));
+        pdfOpenIntent.setDataAndType(uriPdfPath, "application/pdf");
+        pdfOpenIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |  Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        try {
+            startActivity(pdfOpenIntent);
+        } catch (ActivityNotFoundException activityNotFoundException) {
+            Toast.makeText(this,"There is no app to load corresponding PDF",Toast.LENGTH_LONG).show();
+
+        }
+    }
+
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLeServiceCPR.ACTION_BLE_CONNECTED);
@@ -434,7 +511,21 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     boolean mConnected = false;
-
+    private void getPermission(){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+            requestPermissions(
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    },
+                    1);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    },
+                    1);
+        }
+    }
     //TODO Broadcast_Receiver
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -470,14 +561,16 @@ public class RoomActivity extends AppCompatActivity {
                             Manifest.permission.BLUETOOTH,
                             Manifest.permission.BLUETOOTH_SCAN,
                             Manifest.permission.BLUETOOTH_ADVERTISE,
-                            Manifest.permission.BLUETOOTH_CONNECT
+                            Manifest.permission.BLUETOOTH_CONNECT,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
                     },
                     1);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(
                     new String[]{
                             Manifest.permission.BLUETOOTH,
-                            Manifest.permission.ACCESS_FINE_LOCATION
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
                     },
                     1);
         }

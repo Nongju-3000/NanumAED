@@ -44,6 +44,16 @@
                 style="@style/Widget.Neumorph.Button"
                 />
             <TextView
+                android:id="@+id/manual_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sandolgothic"
+                android:text="@string/manual"
+                android:layout_gravity="end|center"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="130dp"
+                android:textSize="12dp"/>
+            <TextView
                 android:id="@+id/license_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

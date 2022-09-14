@@ -116,6 +116,7 @@
     <string name="activate_aio">AIO를 사용하셔야 활성화됩니다.</string>a
     <string name="band_aio">Band, AIO</string>
     <string name="only_aio">AIO만 사용</string>
+    <string name="manual">메뉴얼</string>
     <!-- Ble scan error messages -->
     <string name="error_bluetooth_not_available">Bluetooth is not available</string>
     <string name="error_bluetooth_disabled">Enable bluetooth and try again</string>
