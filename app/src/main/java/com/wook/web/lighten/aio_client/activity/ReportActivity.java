@@ -14,6 +14,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -91,7 +92,7 @@ public class ReportActivity extends Activity {
     private Button report_down_depth;
     private TextView report_bpm;
     private TextView report_angle;
-    private TextView report_total;
+    private TextView report_total, slash;
     private TextView ave_depth;
 
     private TextView equip;
@@ -209,7 +210,7 @@ public class ReportActivity extends Activity {
         lung = findViewById(R.id.lung_score_image);
         lung_clip = (ClipDrawable) lung.getDrawable();
         lung_clip.setLevel(0);
-
+        slash = findViewById(R.id.slash);
         equip = findViewById(R.id.equip);
 
         //totalCount = findViewById(R.id.totalCount);
@@ -498,6 +499,27 @@ public class ReportActivity extends Activity {
             max = reportItems.get(0).getReport_Max();
 
             stop_list = reportItems.get(0).getStop_time_list();
+
+            report_total.post(()->{
+                float correctCountTextSize = correctCount.getTextSize()*0.8f;
+                float report_totalTextSize = report_total.getTextSize()*0.8f;
+                Log.d("CountTextSize", String.valueOf(correctCountTextSize) + ", " + report_totalTextSize);
+                if (correctCountTextSize > report_totalTextSize){
+                    report_total.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+                    correctCount.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+                    slash.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+                    report_total.setTextSize(TypedValue.COMPLEX_UNIT_PX, report_totalTextSize);
+                    correctCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, report_totalTextSize);
+                    slash.setTextSize(TypedValue.COMPLEX_UNIT_PX, report_totalTextSize);
+                } else {
+                    correctCount.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+                    report_total.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+                    slash.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+                    correctCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, correctCountTextSize);
+                    report_total.setTextSize(TypedValue.COMPLEX_UNIT_PX, correctCountTextSize);
+                    slash.setTextSize(TypedValue.COMPLEX_UNIT_PX, correctCountTextSize);
+                }
+            });
 
             for (ReportItem reportItem : reportItems)
                 names.add("   " + reportItem.getReport_name() + "   ");

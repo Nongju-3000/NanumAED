@@ -80,6 +80,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -374,7 +375,6 @@ public class CPRActivity extends AppCompatActivity {
     double gap_lung01;
     boolean isCali01 = false;
     private ImageView anne;
-    private LinearLayout depthview;
     private View depthCPR_view01;
 
     //TODO BLE SERVICE CONNECTION
@@ -514,7 +514,6 @@ public class CPRActivity extends AppCompatActivity {
         handler = new Handler(Looper.getMainLooper());
 
         anne = findViewById(R.id.anne);
-        depthview = findViewById(R.id.depthview);
 
         start_mode_cpr = findViewById(R.id.start_mode_cpr);
         mode_cpr = findViewById(R.id.mode_cpr);
@@ -594,10 +593,10 @@ public class CPRActivity extends AppCompatActivity {
             frame_interval = (frame_width - press_width)/4;
             int text_interval = (int)frame_interval + layout2_width/2;
 
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)layout100.getLayoutParams();
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)layout100.getLayoutParams();
             params.setMargins(text_interval, 0, 0, 0);
             layout100.setLayoutParams(params);
-            FrameLayout.LayoutParams params2 = (FrameLayout.LayoutParams)layout120.getLayoutParams();
+            ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams)layout120.getLayoutParams();
             params2.setMargins(0, 0, text_interval, 0);
             layout120.setLayoutParams(params2);
 
@@ -605,6 +604,10 @@ public class CPRActivity extends AppCompatActivity {
 
             layerDrawable.setLayerInset(2, frame_interval, 5, frame_interval, 5);
             positionLayout.setBackground(layerDrawable);
+        });
+
+        depthCPR_view01.post(() -> {
+            view01.setTranslationY(depthCPR_view01.getHeight() * -1.0f);
         });
 
         standard_btn01 = findViewById(R.id.standardCPR_btn01);
@@ -1143,7 +1146,6 @@ public class CPRActivity extends AppCompatActivity {
                                 if(breath01 > min_lung01 + 5){
                                     lung01.setVisibility(View.VISIBLE);
                                     test_lung01.setVisibility(View.VISIBLE);
-                                    depthview.setVisibility(View.INVISIBLE);
                                     anne.setVisibility(View.INVISIBLE);
                                     remote_depth_text.setVisibility(View.INVISIBLE);
                                     cpr_ani01.setVisibility(View.INVISIBLE);
@@ -1254,7 +1256,6 @@ public class CPRActivity extends AppCompatActivity {
                         break;
 
                     case "0000fff3-0000-1000-8000-00805f9b34fb":
-                        depthview.setVisibility(View.VISIBLE);
                         anne.setVisibility(View.VISIBLE);
                         remote_depth_text.setVisibility(View.VISIBLE);
                         cpr_ani01.setVisibility(View.VISIBLE);

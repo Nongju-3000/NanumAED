@@ -1,25 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#292929"
     android:orientation="vertical">
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/up_frame"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/mg_glass"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:layout_gravity="left"
                 android:background="@null"
                 android:scaleType="fitCenter"
@@ -28,30 +31,32 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/report_list"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="12"
                 android:gravity="bottom"
-                android:layout_marginLeft="40dp" />
-        </FrameLayout>
+                />
+        </LinearLayout>
 
         <!--top -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_weight="4"
             android:orientation="horizontal">
 
             <!--score-->
             <soup.neumorphism.NeumorphCardView
                 android:id="@+id/cprCardView"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:neumorph_backgroundColor="#292929"
                 app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
                 app:neumorph_shadowColorLight="#444444"
                 app:neumorph_shadowElevation="3dp"
-                app:neumorph_shapeType="flat">
+                app:neumorph_shapeType="flat"
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -60,128 +65,211 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:layout_marginTop="3dp">
+                        android:layout_marginTop="10dp">
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5"/>
 
                         <TextView
                             android:id="@+id/cprTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
                             android:text="@string/cpr_accuracy"
+                            android:layout_weight="2"
+                            android:layout_gravity="center"
+                            android:gravity="center"
                             android:textColor="#ffffff"
-                            android:textSize="13dp"
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="5sp"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:maxLines="1"
                             android:textStyle="bold"
                             android:fontFamily="@font/sandolgothic"/>
 
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.1"/>
+
                         <TextView
                             android:id="@+id/all_accuracy"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:fontFamily="@font/sandolgothic"
                             android:text="100%"
+                            android:maxLines="1"
                             android:textColor="#49c644"
-                            android:textSize="13dp"
-                            android:fontFamily="@font/sandolgothic"/>
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="5sp"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:textStyle="bold" />
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5"/>
+
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="0dp"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_weight="4"
+                        android:orientation="vertical">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"/>
+
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="top"
-                            android:orientation="vertical">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginRight="20dp"
-                                android:layout_marginLeft="25dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_gravity="left"
-                                android:orientation="horizontal">
-                                <ImageView
-                                    android:id="@+id/depth_accuracy_img"
-                                    android:layout_width="20dp"
-                                    android:layout_height="19dp"
-                                    android:layout_gravity="center"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/score_03" />
-                                <TextView
-                                    android:id="@+id/depth_accuracy"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginLeft="10dp"
-                                    android:textSize="15dp"
-                                    android:text="100%"
-                                    android:textColor="#ffffff"
-                                    android:fontFamily="@font/sandolgothic"/>
-                            </LinearLayout>
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="20dp"
-                                android:layout_marginLeft="25dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_gravity="left"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:id="@+id/depth_average_img"
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:scaleType="fitCenter"
-                                    android:scaleX="1.7"
-                                    android:scaleY="1.7"
-                                    android:src="@drawable/score_04"
-                                    android:translationY="2dp" />
-
-                                <TextView
-                                    android:id="@+id/ave_depth"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginLeft="10dp"
-                                    android:textSize="15dp"
-                                    android:text="40.0mm"
-                                    android:textColor="#ffffff"
-                                    android:fontFamily="@font/sandolgothic"/>
-                            </LinearLayout>
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="20dp"
-                                android:layout_marginLeft="25dp"
-                                android:orientation="horizontal"
-                                android:layout_gravity="left">
-                                <ImageView
-                                    android:id="@+id/depth_bpm_img"
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:scaleType="fitCenter"
-                                    android:scaleX="1.2"
-                                    android:scaleY="1.2"
-                                    android:src="@drawable/score_05" />
-                                <TextView
-                                    android:id="@+id/report_bpm"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginLeft="10dp"
-                                    android:text="120BPM"
-                                    android:fontFamily="@font/sandolgothic"
-                                    android:textSize="15dp"
-                                    android:textColor="#ffffff" />
-                            </LinearLayout>
+                            android:layout_height="0dp"
+                            android:layout_weight="5"
+                            android:layout_gravity="center"
+                            android:gravity="start"
+                            android:orientation="horizontal">
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                            <ImageView
+                                android:id="@+id/depth_accuracy_img"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/score_03"  />
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                            <TextView
+                                android:id="@+id/depth_accuracy"
+                                android:layout_width="0dp"
+                                android:layout_weight="3"
+                                android:layout_height="match_parent"
+                                android:gravity="start|center"
+                                android:autoSizeMaxTextSize="45sp"
+                                android:autoSizeMinTextSize="15sp"
+                                android:autoSizeTextType="uniform"
+                                android:maxLines="1"
+                                android:text="100%"
+                                android:textColor="#ffffff"
+                                android:fontFamily="@font/sandolgothic"/>
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
                         </LinearLayout>
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="5"
+                            android:orientation="horizontal"
+                            android:layout_gravity="center"
+                            android:gravity="left">
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                            <ImageView
+                                android:id="@+id/depth_average_img"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:scaleType="fitCenter"
+                                android:scaleX="1.7"
+                                android:scaleY="1.7"
+                                android:src="@drawable/score_04"
+                                android:translationY="2dp" />
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:gravity="start|center"
+                                android:autoSizeMaxTextSize="45sp"
+                                android:autoSizeMinTextSize="15sp"
+                                android:autoSizeTextType="uniform"
+                                android:fontFamily="@font/sandolgothic"
+                                android:textColor="#ffffff"
+                                android:id="@+id/ave_depth"
+                                android:maxLines="1"
+                                android:text="40.0mm"/>
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                        </LinearLayout>
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="5"
+                            android:gravity="start"
+                            android:orientation="horizontal">
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                            <ImageView
+                                android:id="@+id/depth_bpm_img"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:scaleType="fitCenter"
+                                android:scaleX="1.2"
+                                android:scaleY="1.2"
+                                android:src="@drawable/score_05" />
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                            <TextView
+                                android:id="@+id/report_bpm"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:gravity="start|center"
+                                android:text="120BPM"
+                                android:fontFamily="@font/sandolgothic"
+                                android:autoSizeMaxTextSize="45sp"
+                                android:autoSizeMinTextSize="15sp"
+                                android:autoSizeTextType="uniform"
+                                android:maxLines="1"
+                                android:textColor="#ffffff" />
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"/>
+                        </LinearLayout>
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"/>
                     </LinearLayout>
                 </LinearLayout>
             </soup.neumorphism.NeumorphCardView>
@@ -190,9 +278,9 @@
             <!--info-->
             <soup.neumorphism.NeumorphCardView
                 android:id="@+id/sessionCardView"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
+                android:layout_weight="3"
                 app:neumorph_backgroundColor="#292929"
                 app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
                 app:neumorph_shadowColorLight="#444444"
@@ -205,286 +293,422 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="170dp"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="6dp"
                         android:orientation="vertical"
-                        android:layout_weight="0.5">
-
-                        <TextView
-                            android:id="@+id/sesseionTextView"
+                        android:layout_weight="1">
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="left"
-                            android:layout_marginLeft="30dp"
-                            android:text="@string/session_info"
-                            android:fontFamily="@font/sandolgothic"
-                            android:textColor="#ffffff"
-                            android:textSize="13dp"
-                            android:textStyle="bold" />
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:layout_marginTop="10dp">
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+                            <TextView
+                                android:id="@+id/sesseionTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="6"
+                                android:gravity="start"
+                                android:text="@string/session_info"
+                                android:fontFamily="@font/sandolgothic"
+                                android:textColor="#ffffff"
+                                android:autoSizeMaxTextSize="45sp"
+                                android:autoSizeMinTextSize="5sp"
+                                android:autoSizeTextType="uniform"
+                                android:maxLines="1"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="4"
                             android:gravity="center"
                             android:orientation="horizontal">
 
                             <LinearLayout
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:orientation="vertical">
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"/>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="30dp"
-                                    android:layout_marginLeft="5dp"
-                                    android:gravity="left"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="5"
+                                    android:gravity="center|start"
                                     android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
 
                                     <ImageView
                                         android:id="@+id/report_end_time_img"
-                                        android:layout_width="19dp"
-                                        android:layout_height="19dp"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
                                         android:scaleType="fitCenter"
                                         android:src="@drawable/info_01" />
 
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
+
                                     <TextView
                                         android:id="@+id/report_end_time"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:textSize="15dp"
-                                        android:layout_marginLeft="7dp"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="3"
                                         android:fontFamily="@font/sandolgothic"
-                                        android:text="-"
-                                        android:textColor="#ffffff" />
-
+                                        android:gravity="center|start"
+                                        android:text="@string/no_score"
+                                        android:textColor="#ffffff"
+                                        android:autoSizeMaxTextSize="45sp"
+                                        android:autoSizeMinTextSize="15sp"
+                                        android:autoSizeTextType="uniform"
+                                        android:maxLines="1"/>
                                 </LinearLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="7"/>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity ="left"
-                                    android:layout_marginBottom="3dp"
-                                    android:layout_marginLeft="5dp"
-                                    android:orientation="horizontal">
+                                    android:layout_height="0dp"
+                                    android:gravity="center|start"
+                                    android:orientation="horizontal"
+                                    android:layout_weight="5">
+
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
 
                                     <ImageView
                                         android:id="@+id/report_interval_img"
-                                        android:layout_width="19dp"
-                                        android:layout_height="19dp"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
                                         android:scaleType="fitCenter"
                                         android:src="@drawable/info_02" />
 
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
+
                                     <TextView
                                         android:id="@+id/report_interval_sec"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:layout_marginLeft="7dp"
-                                        android:text="-"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="3"
+                                        android:gravity="center|start"
+                                        android:text="@string/no_score"
                                         android:fontFamily="@font/sandolgothic"
-                                        android:textSize="15dp"
+                                        android:autoSizeMaxTextSize="45sp"
+                                        android:autoSizeMinTextSize="15sp"
+                                        android:autoSizeTextType="uniform"
+                                        android:maxLines="1"
                                         android:textColor="#ffffff" />
-
                                 </LinearLayout>
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"/>
                             </LinearLayout>
 
                             <LinearLayout
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:orientation="vertical">
 
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"/>
+
                                 <LinearLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="30dp"
-                                    android:layout_marginLeft="5dp"
-                                    android:gravity="left"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="5"
+                                    android:gravity="center|start"
                                     android:orientation="horizontal">
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
 
                                     <ImageView
                                         android:id="@+id/cycle_img"
-                                        android:layout_width="19dp"
-                                        android:layout_height="19dp"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
                                         android:scaleType="fitCenter"
                                         android:src="@drawable/info_03" />
 
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
+
                                     <TextView
                                         android:id="@+id/report_cycle"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:textSize="15dp"
-                                        android:layout_marginLeft="7dp"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="3"
+                                        android:gravity="center|start"
+                                        android:autoSizeMaxTextSize="45sp"
+                                        android:autoSizeMinTextSize="15sp"
+                                        android:autoSizeTextType="uniform"
                                         android:fontFamily="@font/sandolgothic"
-                                        android:text="-"
+                                        android:maxLines="1"
+                                        android:text="@string/no_score"
                                         android:textColor="#ffffff" />
                                 </LinearLayout>
 
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="7"/>
+
                                 <LinearLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="left"
-                                    android:layout_marginBottom="3dp"
-                                    android:layout_marginLeft="5dp"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="5"
+                                    android:gravity="center|start"
                                     android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
 
                                     <ImageView
                                         android:id="@+id/depth_correct_img"
-                                        android:layout_width="19dp"
-                                        android:layout_height="19dp"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
                                         android:scaleType="fitCenter"
                                         android:src="@drawable/info_04" />
 
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
+
                                     <TextView
                                         android:id="@+id/report_depth_correct"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:textSize="15dp"
-                                        android:layout_marginLeft="7dp"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="3"
+                                        android:gravity="center|start"
+                                        android:autoSizeMaxTextSize="45sp"
+                                        android:autoSizeMinTextSize="15sp"
+                                        android:autoSizeTextType="uniform"
+                                        android:maxLines="1"
                                         android:fontFamily="@font/sandolgothic"
-                                        android:text="-"
+                                        android:text="@string/no_score"
                                         android:visibility="visible"
                                         android:textColor="#ffffff" />
                                     <TextView
                                         android:id="@+id/depth_break"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="3"
                                         android:gravity="center"
-                                        android:textSize="15dp"
+                                        android:autoSizeMaxTextSize="45sp"
+                                        android:autoSizeMinTextSize="15sp"
+                                        android:autoSizeTextType="uniform"
+                                        android:maxLines="1"
                                         android:fontFamily="@font/sandolgothic"
                                         android:text="BLOCK"
                                         android:background="#545454"
                                         android:visibility="gone"
                                         android:textColor="#ffffff"/>
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"/>
+
                                 </LinearLayout>
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"/>
                             </LinearLayout>
                         </LinearLayout>
-
                     </LinearLayout>
 
                     <!--compress-->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/accuracy_layout"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="3dp"
-                        android:orientation="horizontal"
                         android:layout_gravity="center"
                         android:layout_weight="0.5">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:layout_gravity="left">
-                            <FrameLayout
-                                android:layout_width="115dp"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="right">
-                                <Button
-                                    android:layout_width="85dp"
-                                    android:layout_height="40dp"
-                                    android:layout_gravity="center"
-                                    android:alpha="0.5"
-                                    android:background="@drawable/anne_line"
-                                    android:clickable="false"/>
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:translationY="-3dp">
-                                    <TextView
-                                        android:id="@+id/correctCount"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:layout_gravity="center"
-                                        android:text="25"
-                                        android:textColor="#49c644"
-                                        android:fontFamily="@font/sandolgothic"
-                                        android:textSize="19dp" />
-                                    <TextView
-                                        android:id="@+id/slash"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:layout_gravity="center"
-                                        android:text="/"
-                                        android:fontFamily="@font/sandolgothic"
-                                        android:textColor="#ffffff"
-                                        android:textSize="19dp" />
-                                    <TextView
-                                        android:id="@+id/report_total"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:text="35"
-                                        android:fontFamily="@font/sandolgothic"
-                                        android:textColor="#ffffff"
-                                        android:textSize="19dp" />
-                                </LinearLayout>
-                                <Button
-                                    android:id="@+id/report_up_depth"
-                                    android:layout_width="110dp"
-                                    android:layout_height="30dp"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:layout_marginBottom="30dp"
-                                    android:background="@drawable/ventilation"
-                                    android:text="-"
-                                    android:fontFamily="@font/sandolgothic"
-                                    android:textColor="#ffffff"
-                                    android:textSize="20dp"
-                                    android:clickable="false"/>
-                                <Button
-                                    android:id="@+id/report_down_depth"
-                                    android:layout_width="110dp"
-                                    android:layout_height="30dp"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:layout_marginTop="25dp"
-                                    android:background="@drawable/ventilation"
-                                    android:text="100%"
-                                    android:fontFamily="@font/sandolgothic"
-                                    android:textColor="#ffffff"
-                                    android:textSize="20dp"
-                                    android:clickable="false"/>
-                            </FrameLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+
+                        <Button
+                            android:id="@+id/button"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:alpha="0.5"
+                            android:background="@drawable/anne_line"
+                            android:clickable="false"
+                            app:layout_constraintWidth_percent="0.6"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@id/report_down_depth"
+                            app:layout_constraintTop_toTopOf="@id/report_up_depth"
+                            app:layout_constraintVertical_bias="0.8"/>
+
+                        <TextView
+                            android:id="@+id/correctCount"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:fontFamily="@font/sandolgothic"
+                            android:text="25"
+                            android:textColor="#49c644"
+                            android:gravity="end|center"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
+                            app:layout_constraintStart_toStartOf="@id/button"
+                            app:layout_constraintTop_toBottomOf="@id/report_up_depth"
+                            app:layout_constraintBottom_toTopOf="@id/report_down_depth"
+                            app:layout_constraintWidth_percent="0.25"/>
+
+                        <TextView
+                            android:id="@+id/slash"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:fontFamily="@font/sandolgothic"
+                            android:text="/"
+                            android:textColor="#ffffff"
+                            android:gravity="center"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
+                            app:layout_constraintStart_toEndOf="@id/correctCount"
+                            app:layout_constraintTop_toBottomOf="@id/report_up_depth"
+                            app:layout_constraintBottom_toTopOf="@id/report_down_depth"
+                            app:layout_constraintWidth_percent="0.1"/>
+
+                        <TextView
+                            android:id="@+id/report_total"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:fontFamily="@font/sandolgothic"
+                            android:text="35"
+                            android:textColor="#ffffff"
+                            android:gravity="start|center"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
+                            app:layout_constraintStart_toEndOf="@id/slash"
+                            app:layout_constraintTop_toBottomOf="@id/report_up_depth"
+                            app:layout_constraintBottom_toTopOf="@id/report_down_depth"
+                            app:layout_constraintWidth_percent="0.25"/>
+
+                        <Button
+                            android:id="@+id/report_up_depth"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
+                            android:background="@drawable/ventilation"
+                            android:clickable="false"
+                            android:fontFamily="@font/sandolgothic"
+                            android:maxLines="1"
+                            android:text="-"
+                            android:textColor="#ffffff"
+                            app:layout_constraintWidth_percent="0.8"
+                            app:layout_constraintHeight_percent="0.2"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintVertical_bias="0.35"/>
+
+                        <Button
+                            android:id="@+id/report_down_depth"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
+                            android:background="@drawable/ventilation"
+                            android:clickable="false"
+                            android:fontFamily="@font/sandolgothic"
+                            android:maxLines="1"
+                            android:text="100%"
+                            android:textColor="#ffffff"
+                            app:layout_constraintWidth_percent="0.8"
+                            app:layout_constraintHeight_percent="0.2"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintVertical_bias="0.95"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/linearLayout"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:layout_weight="0.1">
+                        android:layout_weight="0.5">
 
-                        <LinearLayout
+                        <ImageView
                             android:id="@+id/report_angleguage"
-                            android:layout_width="75dp"
-                            android:layout_height="75dp"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
                             android:background="@drawable/angle_green"
-                            android:layout_marginTop="15dp"
-                            android:layout_marginRight="15dp"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintWidth_percent="0.9"
+                            app:layout_constraintDimensionRatio="10:9"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/report_angle"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:autoSizeMaxTextSize="55sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
+                            android:fontFamily="@font/sandolgothic"
                             android:gravity="top|center"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/report_angle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center|bottom"
-                                android:text="-"
-                                android:fontFamily="@font/sandolgothic"
-                                android:textSize="15dp"
-                                android:textColor="#ffffff"
-                                android:layout_marginTop="55dp"/>
-                        </LinearLayout>
-                    </LinearLayout>
+                            android:maxLines="1"
+                            android:text="@string/no_score"
+                            android:textColor="#ffffff"
+                            app:layout_constraintTop_toBottomOf="@id/report_angleguage"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintWidth_percent="0.5"
+                            app:layout_constraintHeight_percent="0.2"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
             </soup.neumorphism.NeumorphCardView>
 
@@ -492,8 +716,8 @@
 
             <soup.neumorphism.NeumorphCardView
                 android:id="@+id/ventilationCardView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:neumorph_backgroundColor="#292929"
                 app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
@@ -503,163 +727,196 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/ventilationTextView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="5dp"
-                        android:gravity="left"
-                        android:text="@string/ventilation"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:autoSizeMaxTextSize="45sp"
+                        android:autoSizeMinTextSize="15sp"
+                        android:autoSizeTextType="uniform"
                         android:fontFamily="@font/sandolgothic"
-                        android:textColor="#ffffff"
-                        android:textSize="13dp"
+                        android:gravity="center"
                         android:maxLines="1"
+                        android:text="@string/ventilation"
+                        android:textColor="#ffffff"
                         android:textStyle="bold" />
-
-                    <FrameLayout
-                        android:layout_width="65dp"
-                        android:layout_height="55dp"
-                        android:layout_gravity="center">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/lung_noline" />
-
-                        <ImageView
-                            android:id="@+id/lung_score_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/lung_noline_clip" />
-
-                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="3">
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"/>
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_weight="4">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/lung_noline" />
+                            <ImageView
+                                android:id="@+id/lung_score_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/lung_noline_clip" />
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="10dp"
                         android:gravity="center"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="5dp"
-                        >
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/scoreTextView"
                             android:gravity="center"
-                            android:textSize="12dp"
-                            android:fontFamily="@font/sandolgothic"
+                            android:textSize="28dp"
                             android:layout_weight="1"
                             android:textColor="#ffffff"
                             android:text="@string/accuracy"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
                             android:maxLines="1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/sandolgothic"/>
 
                         <TextView
                             android:gravity="center"
                             android:layout_weight="1"
-                            android:id="@+id/ventil_score"
+                            android:id="@+id/chart_img_02"
                             android:text="-"
-                            android:fontFamily="@font/sandolgothic"
                             android:textColor="#ffffff"
-                            android:textSize="12dp"
+                            android:autoSizeMaxTextSize="45sp"
+                            android:autoSizeMinTextSize="15sp"
+                            android:autoSizeTextType="uniform"
                             android:maxLines="1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/sandolgothic"/>
                         <TextView
                             android:id="@+id/chart_break"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:textSize="15dp"
-                            android:fontFamily="@font/sandolgothic"
+                            android:textSize="24dp"
                             android:text="BLOCK"
                             android:background="#545454"
                             android:visibility="gone"
-                            android:textColor="#ffffff"/>
-
+                            android:textColor="#ffffff"
+                            android:fontFamily="@font/sandolgothic"/>
                     </LinearLayout>
-
-
                 </LinearLayout>
             </soup.neumorphism.NeumorphCardView>
 
         </LinearLayout>    <!--top -->
 
         <!--middle -->
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginLeft="25dp"
-                android:layout_gravity="left|center">
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/equip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:fontFamily="@font/sandolgothic"
-                    android:textColor="#fff"
-                    android:textSize="25dp" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/equip"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:fontFamily="@font/sandolgothic"
+                android:text="-"
+                android:textColor="#fff"
+                android:autoSizeMaxTextSize="45sp"
+                android:autoSizeMinTextSize="15sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:gravity="start|center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintWidth_percent="0.2"
+                app:layout_constraintHeight_percent="0.8"/>
+
             <soup.neumorphism.NeumorphCardView
                 android:id="@+id/timeCardView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                app:neumorph_inset="1dp"
                 app:neumorph_backgroundColor="#292929"
                 app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
                 app:neumorph_shadowColorLight="#444444"
                 app:neumorph_shadowElevation="1dp"
                 app:neumorph_shapeType="flat"
-                android:layout_gravity="right">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.95"
+                app:layout_constraintWidth_percent="0.4">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginBottom="3dp"
-                    android:layout_marginTop="3dp">
-
+                    android:orientation="horizontal">
                     <TextView
                         android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:fontFamily="@font/sandolgothic"
+                        android:gravity="center"
                         android:text="2022.07.28"
                         android:textColor="#ffffff"
-                        android:textSize="17dp" />
+                        android:autoSizeMaxTextSize="45sp"
+                        android:autoSizeMinTextSize="15sp"
+                        android:autoSizeTextType="uniform"
+                        android:layout_marginHorizontal="10dp"
+                        android:maxLines="1" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:layout_marginRight="5dp"
-                        android:textSize="17dp"
+                        android:id="@+id/time"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.6"
+                        android:layout_height="match_parent"
                         android:fontFamily="@font/sandolgothic"
+                        android:gravity="center"
+                        android:text="10:24:42 - 10:25:12"
                         android:textColor="#ffffff"
-                        android:text="10:24:42"
-                        android:id="@+id/time"/>
+                        android:autoSizeMaxTextSize="45sp"
+                        android:autoSizeMinTextSize="15sp"
+                        android:autoSizeTextType="uniform"
+                        android:layout_marginHorizontal="10dp"
+                        android:maxLines="1" />
                 </LinearLayout>
             </soup.neumorphism.NeumorphCardView>
-        </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <!--<ImageView
             android:id="@+id/printButton"
             android:layout_width="40dp"
@@ -667,17 +924,18 @@
             android:layout_gravity="center|right"
             android:src="@drawable/print_icon"
             android:visibility="gone"/>-->
+
         <!-- Graph Start-->
         <ViewFlipper
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_weight="5"
             android:id="@+id/graphViewFlipper"
             >
             <!-- FirstView Start-->
             <soup.neumorphism.NeumorphCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:neumorph_backgroundColor="#292929"
                 app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
@@ -689,120 +947,124 @@
                 <LinearLayout
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="230dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1">
+                            android:layout_weight="1"
+                            android:layout_gravity="top">
 
                             <com.github.mikephil.charting.charts.LineChart
                                 android:id="@+id/chart_img"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent" />
+                                android:layout_height="match_parent"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp" />
                         </RelativeLayout>
+
+
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|right"
                         android:orientation="horizontal"
-                        android:layout_marginRight="20dp"
-                        android:translationY="-20dp">
+                        android:layout_marginRight="70dp"
+                        android:layout_marginBottom="10dp"
+                        android:translationY="-20dp"
+                        android:scaleX="1.2"
+                        android:scaleY="1.2">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="20dp">
+                            android:layout_marginRight="60dp">
                             <Button
                                 android:layout_width="15dp"
                                 android:layout_height="15dp"
+                                android:layout_gravity="center"
                                 android:background="@drawable/release_rec"
                                 android:clickable="false"
-                                android:layout_gravity="center"
-                                android:layout_marginRight="5dp"/>
+                                android:layout_marginRight="12dp"/>
 
                             <TextView
                                 android:id="@+id/release_cmt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/release"
-                                android:textSize="14dp"
+                                android:textSize="15dp"
                                 android:fontFamily="@font/sandolgothic"/>
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="20dp">
+                            android:layout_marginRight="60dp">
                             <Button
                                 android:layout_width="15dp"
                                 android:layout_height="15dp"
+                                android:layout_gravity="center"
                                 android:background="@drawable/compress_rec"
                                 android:clickable="false"
-                                android:layout_gravity="center"
-                                android:layout_marginRight="5dp"/>
+                                android:layout_marginRight="12dp"/>
 
                             <TextView
                                 android:id="@+id/compress_cmt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/compress"
-                                android:textSize="14dp"
+                                android:textSize="15dp"
                                 android:fontFamily="@font/sandolgothic"/>
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="20dp">
+                            android:layout_marginRight="60dp">
                             <Button
                                 android:layout_width="15dp"
                                 android:layout_height="15dp"
+                                android:layout_gravity="center"
                                 android:background="@drawable/ventil_rec"
                                 android:clickable="false"
-                                android:layout_gravity="center"
-                                android:layout_marginRight="5dp"/>
-
+                                android:layout_marginRight="12dp"/>
                             <TextView
                                 android:id="@+id/ventilation_cmt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="14dp"
                                 android:text="@string/ventilation"
+                                android:textSize="15dp"
                                 android:fontFamily="@font/sandolgothic"/>
                         </LinearLayout>
                     </LinearLayout>
+
                 </LinearLayout>
             </soup.neumorphism.NeumorphCardView>
-
             <!-- FirstView End-->
             <!-- SecondView Start-->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/graphScrollView"
+                android:background="#fff"
                 android:descendantFocusability="blocksDescendants">
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:id="@+id/graphRecyclerView">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    android:id="@+id/graphRecyclerView"/>
             </RelativeLayout>
             <!-- SecondView End-->
         </ViewFlipper>
         <!-- Graph End-->
         <!--bottom -->
 
-
     </LinearLayout>
-</ScrollView>
+</LinearLayout>
