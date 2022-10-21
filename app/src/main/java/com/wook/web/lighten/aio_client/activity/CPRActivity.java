@@ -809,7 +809,6 @@ public class CPRActivity extends AppCompatActivity {
                 // .setFeatureFlag("filmstrip.enabled", false)
                 .setUserInfo(info)
                 .setFeatureFlag("call-integration.enabled", false)
-                .setWelcomePageEnabled(false)
                 .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
 
