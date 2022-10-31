@@ -812,7 +812,7 @@
                         <TextView
                             android:gravity="center"
                             android:layout_weight="1"
-                            android:id="@+id/chart_img_02"
+                            android:id="@+id/ventil_score"
                             android:text="-"
                             android:textColor="#ffffff"
                             android:autoSizeMaxTextSize="45sp"

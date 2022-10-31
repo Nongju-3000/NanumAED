@@ -105,8 +105,8 @@ public class ReportActivity extends Activity {
     private TextView breath_accuracy;
     private TextView depth_accuracy;
 
-    private LinearLayout report_angleguage, cprCardLayout, sessionCardLayout, ventilationCardLayout;
-    private FrameLayout up_frame;
+    private ImageView report_angleguage;
+    private LinearLayout up_frame;
     private NeumorphCardView cprCardView, sessionCardView, ventilationCardView, switchCardView, timeCardView;
 
     private ImageView lung;

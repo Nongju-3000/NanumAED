@@ -196,7 +196,7 @@
                                 app:layout_constraintEnd_toEndOf="@id/anne"
                                 app:layout_constraintTop_toTopOf="@id/depth_btn_cpr_up"
                                 app:layout_constraintWidth_percent="0.12"
-                                app:layout_constraintHeight_percent="0.6">
+                                app:layout_constraintBottom_toTopOf="@id/standardCPR_btn01">
                                 <View
                                     android:id="@+id/depthCPR_view01"
                                     android:layout_width="match_parent"
