@@ -25,15 +25,17 @@
 
             <TextView
                 android:id="@+id/mainName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="CPR"
                 android:textStyle="bold"
-                android:textSize="50dp"
-                android:textColor="#FF6A0D"
-                />
+                android:autoSizeMinTextSize="5sp"
+                android:autoSizeMaxTextSize="55sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:textColor="#FF6A0D" />
 
 
         </FrameLayout><!--top menu layout -->
@@ -53,27 +55,38 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:gravity="center"
                 >
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:layout_gravity="center"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:autoSizeMaxTextSize="55sp"
+                    android:autoSizeMinTextSize="5sp"
+                    android:autoSizeTextType="uniform"
                     android:text="Event Time"
                     android:textColor="#ffffff"
-                    android:textSize="50dp"
+
                     />
 
                 <TextView
-                    android:textSize="50dp"
                     android:id="@+id/cpr_timer"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="start|center"
+                    android:maxLines="1"
                     android:text="00:00:00"
                     android:layout_gravity="center"
+                    android:autoSizeMaxTextSize="55sp"
+                    android:autoSizeMinTextSize="5sp"
+                    android:autoSizeTextType="uniform"
                     android:textColor="#ffffff"
                     android:layout_marginLeft="50dp"
                     />
