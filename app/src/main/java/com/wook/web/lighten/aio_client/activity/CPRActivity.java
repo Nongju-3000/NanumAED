@@ -241,11 +241,11 @@ public class CPRActivity extends AppCompatActivity {
 
     private String toDay;
 
-    private ArrayList<Float> breathval_01 = new ArrayList<Float>(){{
+    private ArrayList<Float> breathval_01 = new ArrayList<Float>() {{
         add(200.0f);
     }};
 
-    private ArrayList<Float> breathtime_01 = new ArrayList<Float>(){{
+    private ArrayList<Float> breathtime_01 = new ArrayList<Float>() {{
         add(0.0f);
     }};
 
@@ -316,12 +316,14 @@ public class CPRActivity extends AppCompatActivity {
     private ChildEventListener childEventListener;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
     private String cameraId;
     private CameraDevice cameraDevice;
     private CameraCaptureSession cameraCaptureSession;
@@ -376,6 +378,8 @@ public class CPRActivity extends AppCompatActivity {
     boolean isCali01 = false;
     private ImageView anne;
     private View depthCPR_view01;
+    private ArrayList<Float> bluetoothtime_list01;
+    private boolean isReady = false;
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -422,20 +426,81 @@ public class CPRActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if(bluetoothLeServiceCPR.ACTION_BLE_CONNECTED.equals(action)){
+            if (bluetoothLeServiceCPR.ACTION_BLE_CONNECTED.equals(action)) {
                 connection_on(intent.getStringExtra(bluetoothLeServiceCPR.EXTRA_BLE_DEVICE_ADDRESS));
-            }
-            else if (bluetoothLeServiceCPR.ACTION_DATA_AVAILABLE.equals(action)) {
+            } else if (bluetoothLeServiceCPR.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(bluetoothLeServiceCPR.EXTRA_DATA));
+            } else if (bluetoothLeServiceCPR.ACTION_NEW_STATE.equals(action)) {
+                String status = intent.getStringExtra(BluetoothLeServiceCPR.EXTRA_NEW_STATE);
+                String macAddress = intent.getStringExtra(BluetoothLeServiceCPR.EXTRA_BLE_DEVICE_ADDRESS);
+
+                if (status.equals("connected")) {
+                    addBluetoothTime(macAddress);
+                    showNoti(macAddress, true);
+                } else if (status.equals("disconnected")) {
+                    addBluetoothTime(macAddress);
+                    showNoti(macAddress, false);
+                }
             }
         }
     };
 
+    private void addBluetoothTime(String mac) {
+        if (!start_check) {
+            long now = System.currentTimeMillis();
+            now = now - (now % 10);
+
+            float bletime = (float) ((now - StartTime_L) / 1000.0);
+            if (!device2_connect) {
+                if (Objects.equals(Devices.get("Device_01"), mac)) {
+                    bluetoothtime_list01.add(bletime);
+                }
+            } else {
+                if (Objects.equals(Devices.get("Device_02"), mac)) {
+                    bluetoothtime_list01.add(bletime);
+                }
+            }
+        }
+    }
+
+    private void showNoti(String mac, boolean isConnected) {
+        if(isReady) {
+            long now_ = System.currentTimeMillis();
+            Date date_ = new Date(now_);
+            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            String time = sdf_.format(date_);
+            int connected = 0;
+            if (!device2_connect) {
+                if (Objects.equals(Devices.get("Device_01"), mac)) {
+                    if (isConnected) {
+                        connected = 1;
+                    } else {
+                        connected = 0;
+                    }
+                    ChatData chatData_ = new ChatData("연결/" + connected + "/" + mac, time, UserName);
+                    databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                }
+            } else {
+                if (Objects.equals(Devices.get("Device_02"), mac)) {
+                    if (isConnected) {
+                        connected = 1;
+                    } else {
+                        connected = 0;
+                    }
+                    ChatData chatData_ = new ChatData("연결/" + connected, time, UserName);
+                    databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                }
+            }
+        }
+    }
+
     public void onBackPressed() {
         this.backPressCloseHandler.onBackPressed();
     }
+
     private RxBleClient rxBleClient;
     private Disposable scanDisposable;
+
     //TODO onCreate
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -469,6 +534,7 @@ public class CPRActivity extends AppCompatActivity {
         mac_list = new ArrayList<>();
 
         cameraView = findViewById(R.id.cameraView);
+        bluetoothtime_list01 = new ArrayList<>();
 
         Intent intent = getIntent();
         room = intent.getStringExtra("room");
@@ -477,7 +543,7 @@ public class CPRActivity extends AppCompatActivity {
         databaseReference.child("Room").child(room).child("user").orderByChild("name").equalTo(UserName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot datas: snapshot.getChildren()){
+                for (DataSnapshot datas : snapshot.getChildren()) {
                     //token = datas.getRef().getKey();
                     Intent serviceIntent = new Intent(CPRActivity.this, FinishService.class);
                     bindService(serviceIntent, finishConnection, BIND_AUTO_CREATE);
@@ -502,7 +568,7 @@ public class CPRActivity extends AppCompatActivity {
         enter_time = Double.parseDouble(getTime);
 
         mainName = findViewById(R.id.mainName);
-        mainName.setText("CPR("+room+","+UserName+")");
+        mainName.setText("CPR(" + room + "," + UserName + ")");
 
         ytb_img = findViewById(R.id.ytb_img);
         YouTubePlayerView = findViewById(R.id.you_tube_player_view);
@@ -569,38 +635,38 @@ public class CPRActivity extends AppCompatActivity {
         cpr_timer = findViewById(R.id.cpr_timer);
         cpr_arrow01 = findViewById(R.id.cpr_arrow01);
         cpr_arrow01_ = findViewById(R.id.cpr_arrow01_);
-        depthCPR_view01= findViewById(R.id.depthCPR_view01);
+        depthCPR_view01 = findViewById(R.id.depthCPR_view01);
         depth_btn01 = findViewById(R.id.depth_btn_cpr_01);
         press_ave_btn01 = findViewById(R.id.press_ave_btn_cpr_01);
         view01 = findViewById(R.id.depthCPR_view01);
 
         view01.post(() -> {
             depth_true = view01.getHeight();
-            depth_over = view01.getHeight()+50;
-            depth_false = view01.getHeight()/3;
+            depth_over = view01.getHeight() + 50;
+            depth_false = view01.getHeight() / 3;
         });
 
         LinearLayout layout100 = findViewById(R.id.cpr_layout100);
         LinearLayout layout120 = findViewById(R.id.cpr_layout120);
 
         FrameLayout positionLayout = findViewById(R.id.position_layout);
-        LayerDrawable layerDrawable = (LayerDrawable)ContextCompat.getDrawable(this, R.drawable.position);
+        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.position);
         positionLayout.post(() -> {
             int layout2_width = layout120.getWidth();
             press_width = press_ave_btn01.getWidth();
             frame_width = positionLayout.getWidth();
 
-            frame_interval = (frame_width - press_width)/4;
-            int text_interval = (int)frame_interval + layout2_width/2;
+            frame_interval = (frame_width - press_width) / 4;
+            int text_interval = (int) frame_interval + layout2_width / 2;
 
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)layout100.getLayoutParams();
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) layout100.getLayoutParams();
             params.setMargins(text_interval, 0, 0, 0);
             layout100.setLayoutParams(params);
-            ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams)layout120.getLayoutParams();
+            ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams) layout120.getLayoutParams();
             params2.setMargins(0, 0, text_interval, 0);
             layout120.setLayoutParams(params2);
 
-            div_interval = (float)frame_interval/(float)10;
+            div_interval = (float) frame_interval / (float) 10;
 
             layerDrawable.setLayerInset(2, frame_interval, 5, frame_interval, 5);
             positionLayout.setBackground(layerDrawable);
@@ -674,7 +740,7 @@ public class CPRActivity extends AppCompatActivity {
         // Initialize default options for Jitsi Meet conferences.
         initialize_jitsi();
 
-        databaseReference.child("Room").child(room).child("message").addChildEventListener(childEventListener);
+        databaseReference.child("Room").child(room).child("message").limitToLast(10).addChildEventListener(childEventListener);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
 
     }
@@ -725,7 +791,7 @@ public class CPRActivity extends AppCompatActivity {
         if (toLevel01 == temp_level || temp_level > MAX_LEVEL) {
             return;
         }
-        toLevel01 = (temp_level <= MAX_LEVEL) ? temp_level : toLevel01;
+        toLevel01 = temp_level;
         if (toLevel01 > fromLevel01) {
             // cancel previous process first
             mDownHandler01.removeCallbacks(animateDownImage01);
@@ -783,12 +849,13 @@ public class CPRActivity extends AppCompatActivity {
         //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
         JitsiMeetActivityDelegate.onBackPressed();
     }
-    private void disconnectJitsi(){
+
+    private void disconnectJitsi() {
         Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
     }
 
-    private void initialize_jitsi(){
+    private void initialize_jitsi() {
         JitsiMeetUserInfo info = new JitsiMeetUserInfo();
         info.setDisplayName(UserName);
         URL serverURL;
@@ -814,7 +881,8 @@ public class CPRActivity extends AppCompatActivity {
 
         registerForBroadcastMessages();
     }
-    class ExceptionHandler implements Thread.UncaughtExceptionHandler{
+
+    class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
             sharedPreferences.edit().putString("video_uuid", "-").apply();
@@ -850,8 +918,9 @@ public class CPRActivity extends AppCompatActivity {
     }
 
     private final static String expression = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*";
+
     public static String getYoutubeId(String videoUrl) {
-        if (videoUrl == null || videoUrl.trim().length() <= 0){
+        if (videoUrl == null || videoUrl.trim().length() <= 0) {
             return null;
         }
         Pattern pattern = Pattern.compile(expression);
@@ -865,22 +934,25 @@ public class CPRActivity extends AppCompatActivity {
         return null;
     }
 
-    private void showLung00(){
+    private void showLung00() {
         lung01.setImageResource(R.drawable.lung0);
     }
-    private void showLung01(){
+
+    private void showLung01() {
         lung01.setImageResource(R.drawable.lung1);
     }
-    private void showLung02(){
+
+    private void showLung02() {
         lung01.setImageResource(R.drawable.lung2);
     }
-    private void showLung03(){
+
+    private void showLung03() {
         lung01.setImageResource(R.drawable.lung3);
     }
-    private void showLung04(){
+
+    private void showLung04() {
         lung01.setImageResource(R.drawable.lung4);
     }
-
 
 
     @Override
@@ -901,7 +973,7 @@ public class CPRActivity extends AppCompatActivity {
             if (Devices.get("Device_01").equals(spil[2])) {
                 switch (spil[1]) {
                     case "0000fff1-0000-1000-8000-00805f9b34fb":
-                        if(!device2_connect) {
+                        if (!device2_connect) {
                             long now_ = System.currentTimeMillis();
                             Date date_ = new Date(now_);
                             SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -921,23 +993,23 @@ public class CPRActivity extends AppCompatActivity {
 
                             new Thread(() -> runOnUiThread(() -> {
                                 int value;
-                                if(depthSet >= 70)
+                                if (depthSet >= 70)
                                     value = 70;
                                 else
                                     value = depthSet;
                                 remote_depth_text.setText(String.valueOf(value));
                                 if ((0 < depthSet && depthSet < minDepth) || (maxDepth < depthSet)) {
-                                    if(!start_check)
+                                    if (!start_check)
                                         cprItem_01.add(new UserItem(Seconds_, depthSet, 0, angle01, position01));
                                     view01.setBackgroundColor(Color.parseColor("#FF4D4D"));
                                 } else if (viewDepth >= minDepth && viewDepth <= maxDepth) {
-                                    if(!start_check)
+                                    if (!start_check)
                                         cprItem_01.add(new UserItem(Seconds_, 0, depthSet, angle01, position01));
                                     view01.setBackgroundColor(Color.parseColor("#4AFF5E"));
                                 }
                             })).start();
 
-                            if(!start_check) {
+                            if (!start_check) {
                                 int Depth_correct_sum01 = 0;
                                 int Depth_size = 0;
 
@@ -952,7 +1024,8 @@ public class CPRActivity extends AppCompatActivity {
                                 while (peakTimes.size() > 2) {
                                     peakTimes.remove(0);
                                 }
-                                long now = System.currentTimeMillis(); now = now - (now % 10);
+                                long now = System.currentTimeMillis();
+                                now = now - (now % 10);
                                 peakTimes.add(now);
                                 setBpm();
 
@@ -1008,8 +1081,8 @@ public class CPRActivity extends AppCompatActivity {
 
                                 }
                             });
-                            if(depthSet >= minDepth && depthSet <= maxDepth){
-                                Animation animation1 = new TranslateAnimation(0, cpr_ani01.getWidth()+ 100, 0, 0);
+                            if (depthSet >= minDepth && depthSet <= maxDepth) {
+                                Animation animation1 = new TranslateAnimation(0, cpr_ani01.getWidth() + 100, 0, 0);
                                 animation1.setDuration(550);
                                 animation1.setFillAfter(false);
                                 animation1.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -1037,8 +1110,9 @@ public class CPRActivity extends AppCompatActivity {
                         } else if (61 <= angle01) {
                             angle_remote.setImageResource(R.drawable.angle_red);
                         }
-                        if(!isOut) {
-                            if(angle01 > pre_angle + 2 || angle01 < pre_angle - 2) {
+                        if (!isOut) {
+                            handler.postDelayed(angleRunnable, 1000);
+                            /*if(angle01 > pre_angle + 2 || angle01 < pre_angle - 2) {
                                 long now_ = System.currentTimeMillis();
                                 Date date_ = new Date(now_);
                                 SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -1046,15 +1120,15 @@ public class CPRActivity extends AppCompatActivity {
                                 ChatData chatData_ = new ChatData("Angle/" + angle01, getTime_, UserName);
                                 databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
                                 pre_angle = angle01;
-                            }
+                            }*/
                         }
                         break;
                 }
 
-            }  else if (Devices.get("Device_02").equals(spil[2])) {
+            } else if (Devices.get("Device_02").equals(spil[2])) {
                 long now = System.currentTimeMillis();
-                if(!device2_connect)
-                    device2_connect = !device2_connect;
+                if (!device2_connect)
+                    device2_connect = true;
                 switch (spil[1]) {
                     case "0000fff1-0000-1000-8000-00805f9b34fb":
                         lung01.setVisibility(View.INVISIBLE);
@@ -1066,7 +1140,7 @@ public class CPRActivity extends AppCompatActivity {
                         Date date = new Date(now);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                         String getTime = sdf.format(date);
-                        ChatData chatData = new ChatData("Position/"+position01, getTime, UserName);
+                        ChatData chatData = new ChatData("Position/" + position01, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
 
                         if (position01 <= 11) {
@@ -1075,14 +1149,14 @@ public class CPRActivity extends AppCompatActivity {
                                 case 2:
                                 case 3:
                                 case 4:
-                                    if(!start_check)
+                                    if (!start_check)
                                         position_num01++;
                                     cpr_arrow01.setVisibility(View.INVISIBLE);
                                     remote_arrow_up_text.setVisibility(View.INVISIBLE);
                                     depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
                                     break;
                                 case 5:
-                                    if(!start_check){
+                                    if (!start_check) {
                                         position_num01++;
                                         position_correct01++;
                                     }
@@ -1094,14 +1168,14 @@ public class CPRActivity extends AppCompatActivity {
                                 case 8:
                                 case 9:
                                 case 10:
-                                    if(!start_check)
+                                    if (!start_check)
                                         position_num01++;
                                     cpr_arrow01.setVisibility(View.VISIBLE);
                                     remote_arrow_up_text.setVisibility(View.VISIBLE);
                                     depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
                                     break;
                                 case 11:
-                                    if(!start_check){
+                                    if (!start_check) {
                                         position_num01++;
                                         position_correct01++;
                                     }
@@ -1114,25 +1188,23 @@ public class CPRActivity extends AppCompatActivity {
                         break;
 
                     case "0000fff2-0000-1000-8000-00805f9b34fb":
-                        if(!start_check) {
+                        if (!start_check) {
                             long secs = System.currentTimeMillis() - intrval_01;
                             now = now - (now % 10);
                             float current_time = (float) ((now - StartTime_L) / 1000.0f);
 
                             double breath = breath01 - min_lung01;
-                            double percent = ((float)breath / gap_lung01) * 100;
+                            double percent = ((float) breath / gap_lung01) * 100;
                             if (secs >= 1500) {
                                 breath01 = Integer.parseInt(getHexToDec(spil[0]));
                                 //press_position01.setVisibility(View.INVISIBLE);
 
-
-
-                                if(breath01 > bre_threshold01 && !isBreath01){
+                                if (breath01 > bre_threshold01 && !isBreath01) {
                                     breathval_01.add(71.0f);
                                     breathtime_01.add(current_time);
                                     isBreath01 = true;
                                 }
-                                if(breath01 < bre_threshold01 && isBreath01){
+                                if (breath01 < bre_threshold01 && isBreath01) {
                                     breathval_01.add(71.0f);
                                     breathtime_01.add(current_time);
                                     isBreath01 = false;
@@ -1142,7 +1214,7 @@ public class CPRActivity extends AppCompatActivity {
                                     reset(1);
                                 }
 
-                                if(breath01 > min_lung01 + 5){
+                                if (breath01 > min_lung01 + 5) {
                                     lung01.setVisibility(View.VISIBLE);
                                     test_lung01.setVisibility(View.VISIBLE);
                                     anne.setVisibility(View.INVISIBLE);
@@ -1155,71 +1227,71 @@ public class CPRActivity extends AppCompatActivity {
                                     depthCPR_view01.setVisibility(View.INVISIBLE);
                                 }
 
-                                if(breath01 < bre_threshold01){
+                                if (breath01 < bre_threshold01) {
                                     isBreOver01 = false;
                                     isBreBelow01 = false;
                                     over_breath01 = 0;
-                                }else if( breath01 >= bre_threshold01 && breath01 < bre_level01){
+                                } else if (breath01 >= bre_threshold01 && breath01 < bre_level01) {
                                     isBreOver01 = false;
                                     isBreBelow01 = true;
                                     over_breath01 = 0;
-                                }else if(breath01 >= bre_level01 && breath01 < bre_level02){
+                                } else if (breath01 >= bre_level01 && breath01 < bre_level02) {
                                     isBreOver01 = false;
                                     isBreBelow01 = false;
                                     over_breath01 = 0;
-                                }else if(breath01 >= bre_level02 && over_breath01 < BREOVERTIME){
+                                } else if (breath01 >= bre_level02 && over_breath01 < BREOVERTIME) {
                                     isBreOver01 = false;
                                     isBreBelow01 = false;
-                                    over_breath01 ++;
-                                }else if(breath01 >= bre_level02 && over_breath01 >= BREOVERTIME){
+                                    over_breath01++;
+                                } else if (breath01 >= bre_level02 && over_breath01 >= BREOVERTIME) {
                                     isBreOver01 = true;
                                     isBreBelow01 = false;
                                 }
 
                                 int size = lung_list01.size();
-                                if(size != 0) {
-                                    if (breath01 < lung_list01.get(size - 1) -1  || breath01 > lung_list01.get(size - 1) + 1)
+                                if (size != 0) {
+                                    if (breath01 < lung_list01.get(size - 1) - 1 || breath01 > lung_list01.get(size - 1) + 1)
                                         lung_list01.add(breath01);
-                                }else{
+                                } else {
                                     lung_list01.add(breath01);
                                 }
 
-                                if(lung_list01.size() > 7){
+                                if (lung_list01.size() > 7) {
                                     lung_list01.remove(0);
                                 }
 
-                                if(lung_list01.size() == 7){
+                                if (lung_list01.size() == 7) {
                                     int left = lung_list01.get(0);
                                     int center = lung_list01.get(3);
                                     int right = lung_list01.get(6);
-                                    if(center > left+1 && center > right+1){
+                                    if (center > left + 1 && center > right + 1) {
                                         int max = lung_list01.get(0);
-                                        for(int i=1; i<lung_list01.size(); i++){
-                                            if(lung_list01.get(i) > lung_list01.get(i - 1))
+                                        for (int i = 1; i < lung_list01.size(); i++) {
+                                            if (lung_list01.get(i) > lung_list01.get(i - 1))
                                                 max = lung_list01.get(i);
                                         }
                                         setBreath01(max, current_time);
                                         lung_list01.clear();
                                     }
                                 }
-                                if(isBreOver01){
-                                    if(isImageNormal01){
+                                if (isBreOver01) {
+                                    if (isImageNormal01) {
                                         int level = lung_clip01.getLevel();
                                         lung_clip01 = (ClipDrawable) getDrawable(R.drawable.lung_over_clip);
                                         test_lung01.setImageDrawable(lung_clip01);
                                         lung_clip01.setLevel(level);
                                         isImageNormal01 = false;
                                     }
-                                }else if(isBreBelow01){
-                                    if(isImageNormal01){
+                                } else if (isBreBelow01) {
+                                    if (isImageNormal01) {
                                         int level = lung_clip01.getLevel();
                                         lung_clip01 = (ClipDrawable) getDrawable(R.drawable.lung_over_clip);
                                         test_lung01.setImageDrawable(lung_clip01);
                                         lung_clip01.setLevel(level);
                                         isImageNormal01 = false;
                                     }
-                                }else{
-                                    if(!isImageNormal01){
+                                } else {
+                                    if (!isImageNormal01) {
                                         int level = lung_clip01.getLevel();
                                         lung_clip01 = (ClipDrawable) getDrawable(R.drawable.lung_normal_clip);
                                         test_lung01.setImageDrawable(lung_clip01);
@@ -1228,18 +1300,18 @@ public class CPRActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                if(gap_lung01 != 0 && !ispeak01){
-                                    if(percent > 100) {
+                                if (gap_lung01 != 0 && !ispeak01) {
+                                    if (percent > 100) {
                                         percent = 100;
                                     }
-                                    if(percent < 0){
+                                    if (percent < 0) {
                                         percent = 0;
                                     }
-                                    moveLungClip01((int)percent);
+                                    moveLungClip01((int) percent);
                                 }
 
-                                if(gap_lung01 != 0 && ispeak01){
-                                    if(percent > 100)
+                                if (gap_lung01 != 0 && ispeak01) {
+                                    if (percent > 100)
                                         percent = 100;
                                     peakLungClip01();
                                 }
@@ -1248,7 +1320,7 @@ public class CPRActivity extends AppCompatActivity {
                                 Date date_ = new Date(now_);
                                 SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                                 String getTime_ = sdf_.format(date_);
-                                ChatData chatData_ = new ChatData("breath/"+breath01, getTime_, UserName);
+                                ChatData chatData_ = new ChatData("breath/" + breath01, getTime_, UserName);
                                 databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
                             }
                         }
@@ -1267,7 +1339,7 @@ public class CPRActivity extends AppCompatActivity {
                         Date date__ = new Date(now__);
                         SimpleDateFormat sdf__ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                         String getTime__ = sdf__.format(date__);
-                        ChatData chatData__ = new ChatData("Depth/"+getHexToDec(spil[0]), getTime__, UserName);
+                        ChatData chatData__ = new ChatData("Depth/" + getHexToDec(spil[0]), getTime__, UserName);
                         databaseReference.child("Room").child(room).child("message").push().setValue(chatData__);
 
                         lung01.setVisibility(View.INVISIBLE);
@@ -1275,7 +1347,6 @@ public class CPRActivity extends AppCompatActivity {
                         lung_list01.clear();
 
                         final int depthSet = Integer.parseInt(getHexToDec(spil[0]));
-                        final int viewDepth = depthSet;
 
                         String[] timer_sec = cpr_timer.getText().toString().split(":");
 
@@ -1286,18 +1357,18 @@ public class CPRActivity extends AppCompatActivity {
                         new Thread(() -> runOnUiThread(() -> {
                             remote_depth_text.setText(String.valueOf(depthSet));
                             if ((0 < depthSet && depthSet < minDepth) || (maxDepth < depthSet)) {
-                                if(!start_check)
+                                if (!start_check)
                                     cprItem_01.add(new UserItem(Seconds_, depthSet, 0, angle01, position01));
                                 view01.setBackgroundColor(Color.parseColor("#FF4D4D"));
-                            } else if (viewDepth >= minDepth && viewDepth <= maxDepth) {
-                                if(!start_check)
+                            } else if (depthSet >= minDepth && depthSet <= maxDepth) {
+                                if (!start_check)
                                     cprItem_01.add(new UserItem(Seconds_, 0, depthSet, angle01, position01));
                                 view01.setBackgroundColor(Color.parseColor("#4AFF5E"));
                             }
 
                         })).start();
 
-                        if(!start_check) {
+                        if (!start_check) {
                             int Depth_correct_sum01 = 0;
                             int Depth_size = 0;
 
@@ -1366,8 +1437,8 @@ public class CPRActivity extends AppCompatActivity {
                             }
                         });
 
-                        if(depthSet >= minDepth && depthSet <= maxDepth){
-                            Animation animation1 = new TranslateAnimation(0, cpr_ani01.getWidth()+ 100, 0, 0);
+                        if (depthSet >= minDepth && depthSet <= maxDepth) {
+                            Animation animation1 = new TranslateAnimation(0, cpr_ani01.getWidth() + 100, 0, 0);
                             animation1.setDuration(550);
                             animation1.setFillAfter(false);
                             animation1.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -1392,31 +1463,31 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    private void setBreath01(int center, float centertime){
+    private void setBreath01(int center, float centertime) {
         int breath = 0;
-        if(center < bre_threshold01){
+        if (center < bre_threshold01) {
             breath = 0;
-        }else if( center >= bre_threshold01 && center < bre_level01){
+        } else if (center >= bre_threshold01 && center < bre_level01) {
             breath = 1;
-        }else if(center >= bre_level01 && center < bre_level02){
+        } else if (center >= bre_level01 && center < bre_level02) {
             breath = 2;
-        }else if(center >= bre_level02 && over_breath01 < BREOVERTIME){
+        } else if (center >= bre_level02 && over_breath01 < BREOVERTIME) {
             breath = 3;
-        }else if(center >= bre_level02 && over_breath01 >= BREOVERTIME){
+        } else if (center >= bre_level02 && over_breath01 >= BREOVERTIME) {
             breath = 4;
         }
-        if(breath != 0) {
+        if (breath != 0) {
             cprItem_01.add(new UserItem(Seconds_, breath));
-            float percent = (float) ((((double)center - min_lung01) / gap_lung01) * 100.0f);
+            float percent = (float) ((((double) center - min_lung01) / gap_lung01) * 100.0f);
             // 158% = 550ml
             ventil_volume_01 += percent * (550.0f / 158.0f);
-            percent = (float) ((((double)center - min_lung01) / gap_lung01) * 60.0f);
-            if(percent < 0)
+            percent = (float) ((((double) center - min_lung01) / gap_lung01) * 60.0f);
+            if (percent < 0)
                 percent = 0;
-            if(percent > 60)
+            if (percent > 60)
                 percent = 60;
             percent = (percent - 70.0f) * (-1.0f);
-            switch(breath){
+            switch (breath) {
                 case 1:
                     lung_num01++;
                     ispeak01 = true;
@@ -1424,7 +1495,7 @@ public class CPRActivity extends AppCompatActivity {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
                     }
-                    breathval_01.add(percent*(-1.0f) - 5.0f);
+                    breathval_01.add(percent * (-1.0f) - 5.0f);
                     breathtime_01.add(centertime);
 
                     break;
@@ -1435,7 +1506,7 @@ public class CPRActivity extends AppCompatActivity {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
                     }
-                    breathval_01.add(percent*(-1.0f));
+                    breathval_01.add(percent * (-1.0f));
                     breathtime_01.add(centertime);
 
                     break;
@@ -1466,53 +1537,54 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    void setBpm(){
+    void setBpm() {
         float currentBpm = 0f;
         int peak_size = peakTimes.size();
 
-        if(peakTimes!= null && peak_size > 1){
+        if (peakTimes != null && peak_size > 1) {
             long lastPeakTime = peakTimes.get(0);
-            if(System.currentTimeMillis() - lastPeakTime <= 1500){
-                float interval =(float)(peakTimes.get(1) - peakTimes.get(0));
-                while(tmp_bpm1.size() > 4){
+            if (System.currentTimeMillis() - lastPeakTime <= 1500) {
+                float interval = (float) (peakTimes.get(1) - peakTimes.get(0));
+                while (tmp_bpm1.size() > 4) {
                     tmp_bpm1.remove(0);
                 }
                 tmp_bpm1.add((60_000f / interval));
-            }else{
-                try{
-                    if(peakTimes != null){
+            } else {
+                try {
+                    if (peakTimes != null) {
                         peakTimes.clear();
                         tmp_bpm1.clear();
                     }
-                } catch(Exception e){}
+                } catch (Exception e) {
+                }
             }
         }
 
-        if(!tmp_bpm1.isEmpty() && tmp_bpm1.size() > 4){
+        if (!tmp_bpm1.isEmpty() && tmp_bpm1.size() > 4) {
             float tmp_bpm = 0;
-            for(float bpm : tmp_bpm1)
+            for (float bpm : tmp_bpm1)
                 tmp_bpm += bpm;
-            currentBpm = tmp_bpm/tmp_bpm1.size();
+            currentBpm = tmp_bpm / tmp_bpm1.size();
             bpm1.add(currentBpm);
         }
 
         Animation animation = null;
-        if(currentBpm != 0) {
-            if(currentBpm > 140){
-                animation = new TranslateAnimation(position_bpm, frame_interval*4, 0, 0);
-                position_bpm = frame_interval*4;
-            } else if(currentBpm > 120){
-                animation = new TranslateAnimation(position_bpm,  frame_interval * 3 + (currentBpm - 120) * div_interval, 0, 0);
+        if (currentBpm != 0) {
+            if (currentBpm > 140) {
+                animation = new TranslateAnimation(position_bpm, frame_interval * 4, 0, 0);
+                position_bpm = frame_interval * 4;
+            } else if (currentBpm > 120) {
+                animation = new TranslateAnimation(position_bpm, frame_interval * 3 + (currentBpm - 120) * div_interval, 0, 0);
                 position_bpm = frame_interval * 3 + (currentBpm - 120) * div_interval;
-            } else if(currentBpm >= 110){
+            } else if (currentBpm >= 110) {
                 animation = new TranslateAnimation(position_bpm, frame_interval * 2 + (currentBpm - 110) * div_interval, 0, 0);
                 position_bpm = frame_interval * 2 + (currentBpm - 110) * div_interval;
-            } else if(currentBpm >= 100){
+            } else if (currentBpm >= 100) {
                 animation = new TranslateAnimation(position_bpm, frame_interval + (currentBpm - 100) * div_interval, 0, 0);
                 position_bpm = frame_interval + (currentBpm - 100) * div_interval;
-            } else{
-                animation = new TranslateAnimation(position_bpm, currentBpm * div_interval/10, 0, 0);
-                position_bpm = currentBpm * div_interval/10;
+            } else {
+                animation = new TranslateAnimation(position_bpm, currentBpm * div_interval / 10, 0, 0);
+                position_bpm = currentBpm * div_interval / 10;
             }
             animation.setDuration(200);
             animation.setFillAfter(true);
@@ -1531,6 +1603,7 @@ public class CPRActivity extends AppCompatActivity {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLeServiceCPR.ACTION_BLE_CONNECTED);
         intentFilter.addAction(BluetoothLeServiceCPR.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeServiceCPR.ACTION_NEW_STATE);
         return intentFilter;
     }
 
@@ -1691,12 +1764,12 @@ public class CPRActivity extends AppCompatActivity {
     int de2Connect = 0;
 
     private void connection_on(String address) {
-        if(Objects.equals(Devices.get("Device_01"), address)){
-            if(device_btn01 != null)
+        if (Objects.equals(Devices.get("Device_01"), address)) {
+            if (device_btn01 != null)
                 device_btn01.setImageResource(R.drawable.band_on);
             de1Connect = 1;
-        }else if(Objects.equals(Devices.get("Device_02"), address)){
-            if(device_btn02 != null)
+        } else if (Objects.equals(Devices.get("Device_02"), address)) {
+            if (device_btn02 != null)
                 device_btn02.setImageResource(R.drawable.cpr_on);
             initialize();
             device2_connect = true;
@@ -1705,7 +1778,7 @@ public class CPRActivity extends AppCompatActivity {
         mConnected = true;
     }
 
-    private void showScanDialog(final String room_ , final String UserName_) {
+    private void showScanDialog(final String room_, final String UserName_) {
         isConnect = true;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(CPRActivity.this);
@@ -1717,7 +1790,18 @@ public class CPRActivity extends AppCompatActivity {
         if (!mBluetoothAdapter.isEnabled()) {
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                } else {
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
             }
         }
 
@@ -1739,13 +1823,13 @@ public class CPRActivity extends AppCompatActivity {
             for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter.mLeDevices) {
                 String address = bluetoothDevice.getMacAddress();
                 if (Objects.equals(Devices.get("Device_01"), address)) {
-                    bluetoothLeServiceCPR.connect(address,0);
+                    bluetoothLeServiceCPR.connect(address, 0);
                 }
             }
             for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter02.mLeDevices) {
                 String address = bluetoothDevice.getMacAddress();
                 if (Objects.equals(Devices.get("Device_02"), address)) {
-                    bluetoothLeServiceCPR.connect(address,1);
+                    bluetoothLeServiceCPR.connect(address, 1);
                 }
             }
         }
@@ -1760,17 +1844,16 @@ public class CPRActivity extends AppCompatActivity {
         band_dialog_reset.setVisibility(View.VISIBLE);
         band_dialog_layout.setVisibility(View.VISIBLE);
 
-        if(!Devices.isEmpty()){
+        if (!Devices.isEmpty()) {
             List<BluetoothDevice> devices = bluetoothManager.getConnectedDevices(BluetoothGatt.GATT);
             int status = -1;
             for (BluetoothDevice device : devices) {
                 status = bluetoothManager.getConnectionState(device, BluetoothGatt.GATT);
-                if(status == BluetoothProfile.STATE_CONNECTED){
-                    if(Devices.get("Device_01").equals(device.getAddress())){
+                if (status == BluetoothProfile.STATE_CONNECTED) {
+                    if (Devices.get("Device_01").equals(device.getAddress())) {
                         mConnected = true;
                         device_btn01.setImageResource(R.drawable.band_on);
-                    }
-                    else if(Devices.get("Device_02").equals(device.getAddress())){
+                    } else if (Devices.get("Device_02").equals(device.getAddress())) {
                         mConnected = true;
                         device_btn02.setImageResource(R.drawable.cpr_on);
                         initialize();
@@ -1783,11 +1866,11 @@ public class CPRActivity extends AppCompatActivity {
         final AlertDialog dialog = builder.create();
 
         new Thread(() -> {
-            while( isConnect ){
+            while (isConnect) {
                 try {
                     Thread.sleep(500);
                     scan_count++;
-                    if(scan_count == 40){
+                    if (scan_count == 40) {
                         scanLeDevice(true);
                         scan_count = 0;
                     }
@@ -1797,7 +1880,7 @@ public class CPRActivity extends AppCompatActivity {
                                 if ((Devices.get("Device_01") != null))
                                     if (Devices.get("Device_01").equals(bluetoothDevice.getMacAddress())) {
                                         if (bluetoothLeServiceCPR != null) {
-                                            if(!bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
+                                            if (!bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
                                                 bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 0);
                                             }
                                         }
@@ -1808,7 +1891,7 @@ public class CPRActivity extends AppCompatActivity {
                                     if ((Devices.get("Device_02") != null))
                                         if (Devices.get("Device_02").equals(bluetoothDevice.getMacAddress())) {
                                             if (bluetoothLeServiceCPR != null) {
-                                                if(!bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
+                                                if (!bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
                                                     bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 1);
                                                 }
                                             }
@@ -1816,17 +1899,15 @@ public class CPRActivity extends AppCompatActivity {
                                 }
                         }
                     }
-                }
-
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
 
         device_btn01.setOnClickListener(v -> {
-            if((Devices.get("Device_01") != null))
-                if(bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))){
+            if ((Devices.get("Device_01") != null))
+                if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
                     Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
                     sender.setAction(BluetoothLeServiceCPR.ACTION_CALL);
                     sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, 0);
@@ -1835,8 +1916,8 @@ public class CPRActivity extends AppCompatActivity {
         });
 
         device_btn02.setOnClickListener(v -> {
-            if((Devices.get("Device_02") != null))
-                if(bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))){
+            if ((Devices.get("Device_02") != null))
+                if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
                     Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
                     sender.setAction(BluetoothLeServiceCPR.ACTION_CALL);
                     sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, 1);
@@ -1854,10 +1935,11 @@ public class CPRActivity extends AppCompatActivity {
             String time = sdf_.format(date_);
             ChatData chatData_ = new ChatData("준비", time, UserName_);
             databaseReference.child("Room").child(room_).child("message").push().setValue(chatData_);
-            ChatData chatData__ = new ChatData("밴드/"+de1Connect+de2Connect, time, UserName_);
+            ChatData chatData__ = new ChatData("밴드/" + de1Connect + de2Connect, time, UserName_);
             databaseReference.child("Room").child(room_).child("message").push().setValue(chatData__);
+            isReady = true;
 
-            try{
+            try {
                 if (!Devices.isEmpty()) { //TODO BAND SET
                     if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
                         bluetoothLeServiceCPR.writeCharacteristic(0, "f3");
@@ -1866,7 +1948,8 @@ public class CPRActivity extends AppCompatActivity {
                         bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
                     }
                 }
-            }catch(Exception e){}
+            } catch (Exception e) {
+            }
 
             dialog.dismiss();
 
@@ -1922,6 +2005,9 @@ public class CPRActivity extends AppCompatActivity {
         if (!mBluetoothAdapter.isEnabled()) {
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    permissionCheck();
+                }
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
         }
@@ -2047,6 +2133,16 @@ public class CPRActivity extends AppCompatActivity {
                                         }
                                         if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
                                             bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
+                                        }
+                                    }
+
+                                    if(!device2_connect){
+                                        if (!bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
+                                            bluetoothtime_list01.add(0f);
+                                        }
+                                    }else{
+                                        if(!bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))){
+                                            bluetoothtime_list01.add(0f);
                                         }
                                     }
                                 }
@@ -2251,7 +2347,7 @@ public class CPRActivity extends AppCompatActivity {
                             youTubePlayer.seekTo(0);
                     }
                     if(chatData.getMessage().contains("중지")){
-                        reset(0);
+                        reset(2);
                     }
                     if(chatData.getMessage().contains("화상회의/")){
                         String data[] = chatData.getMessage().split("/");
@@ -2388,8 +2484,20 @@ public class CPRActivity extends AppCompatActivity {
 
     float max_secs = 0.0f;
 
+    private Runnable angleRunnable = new Runnable(){
+        public void run(){
+            long now_ = System.currentTimeMillis();
+            Date date_ = new Date(now_);
+            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            String getTime_ = sdf_.format(date_);
+            ChatData chatData_ = new ChatData("Angle/" + angle01, getTime_, UserName);
+            databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+            handler.postDelayed(this, 300);
+        }
+    };
+
     //TODO Timer
-    public Runnable runnable = new Runnable() {
+    private Runnable runnable = new Runnable() {
 
         public void run() {
 
@@ -2513,7 +2621,7 @@ public class CPRActivity extends AppCompatActivity {
                     String.valueOf(cycle_01), String.valueOf(score_01),
                     String.valueOf(minDepth), String.valueOf(maxDepth),
                     String.valueOf(depth_num), String.valueOf(depth_correct), String.valueOf(position_num01), String.valueOf(position_correct01),
-                    String.valueOf(lung_num01), String.valueOf(lung_correct01), bpm1));
+                    String.valueOf(lung_num01), String.valueOf(lung_correct01), bpm1, bluetoothtime_list01));
             ReportSave(reportItems);
 
             Converters converters = new Converters();
@@ -2878,7 +2986,7 @@ public class CPRActivity extends AppCompatActivity {
                                       ArrayList<Float> breathval, ArrayList<Float> breathtime, String ventil_volume,
                                       String cycle, String score,
                                       String min, String max, String depth_num, String depth_correct,
-                                      String position_num, String position_correct, String lung_num, String lung_correct, ArrayList<Float> gBpm) {
+                                      String position_num, String position_correct, String lung_num, String lung_correct, ArrayList<Float> gBpm, ArrayList<Float> bluetoothtime_list) {
         ReportItem reportItem = null;
         ArrayList<Float> arrayList = new ArrayList<Float>();
         ArrayList<Float> stopList = new ArrayList<>();
@@ -2971,6 +3079,7 @@ public class CPRActivity extends AppCompatActivity {
                 , lung_num
                 , lung_correct
                 , stopList
+                , bluetoothtime_list
         );
 
         return reportItem;

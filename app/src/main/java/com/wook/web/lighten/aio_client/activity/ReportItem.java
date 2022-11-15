@@ -70,6 +70,7 @@ public class ReportItem implements Serializable {
     public String getReport_lung_correct(){return lung_correct;}
 
     public ArrayList<Float> getStop_time_list(){ return stop_time_list; }
+    public ArrayList<Float> getReport_bletime_list(){ return report_bletime_list; }
 
 
     private String report_name;
@@ -95,6 +96,7 @@ public class ReportItem implements Serializable {
     private String lung_num;
     private String lung_correct;
     private ArrayList<Float> stop_time_list;
+    private ArrayList<Float> report_bletime_list;
 
     public ReportItem(String report_name,
                       String report_end_time,
@@ -118,7 +120,8 @@ public class ReportItem implements Serializable {
                       String position_correct,
                       String lung_num,
                       String lung_correct,
-                      ArrayList<Float> stop_time_list) {
+                      ArrayList<Float> stop_time_list,
+                      ArrayList<Float> report_ble_time_list) {
 
         this.report_name = report_name;
         this.report_end_time = report_end_time;
@@ -143,6 +146,7 @@ public class ReportItem implements Serializable {
         this.lung_num = lung_num;
         this.lung_correct = lung_correct;
         this.stop_time_list = stop_time_list;
+        this.report_bletime_list = report_ble_time_list;
     }
 }
 

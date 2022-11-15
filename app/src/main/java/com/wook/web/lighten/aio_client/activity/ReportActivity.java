@@ -140,6 +140,7 @@ public class ReportActivity extends Activity {
     private ImageView breath_accuracy_img, depth_accuracy_img, report_end_time_img, report_interval_img, cycle_img, depth_correct_img;
     private BluetoothLeServiceCPR bluetoothLeServiceCPR;
     ArrayList<Float> stop_list = new ArrayList<>();
+    ArrayList<Float> ble_list = new ArrayList<>();
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -364,6 +365,7 @@ public class ReportActivity extends Activity {
                                     , report.lung_num
                                     , report.lung_correct
                                     , (ArrayList<Float>) converters.gettingListFromString(report.stop_time_list)
+                                    , (ArrayList<Float>) converters.gettingListFromString(report.report_bluetoothtime)
                             ));
                         }
                     }
@@ -392,6 +394,7 @@ public class ReportActivity extends Activity {
                             , report.lung_num
                             , report.lung_correct
                             , (ArrayList<Float>) converters.gettingListFromString(report.stop_time_list)
+                            , (ArrayList<Float>) converters.gettingListFromString(report.report_bluetoothtime)
                     ));
                 }
             }
@@ -499,6 +502,7 @@ public class ReportActivity extends Activity {
             max = reportItems.get(0).getReport_Max();
 
             stop_list = reportItems.get(0).getStop_time_list();
+            ble_list = reportItems.get(0).getReport_bletime_list();
 
             report_total.post(()->{
                 float correctCountTextSize = correctCount.getTextSize()*0.8f;
@@ -996,6 +1000,26 @@ public class ReportActivity extends Activity {
             ll.setTextColor(Color.WHITE);
             xAxis.addLimitLine(ll);
         }
+
+        for(int i = 0; i<ble_list.size(); i++){
+            LimitLine ll= null;
+            if(i%2 == 0)
+                ll = new LimitLine(ble_list.get(i), "Bluetooth OFF");
+            else{
+                try{
+                    ll = new LimitLine(ble_list.get(i), "");
+                }catch(IndexOutOfBoundsException e){
+                    ll = new LimitLine(ble_list.get(i), "");
+                }
+            }
+            ll.setLineWidth(1f);
+            ll.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+            ll.setLineColor(Color.BLUE);
+            ll.setTextSize(10f);
+            ll.setTextColor(Color.WHITE);
+            xAxis.addLimitLine(ll);
+        }
+
         chart.setNoDataText(" ");
         chart.moveViewToX(-0.5f);
         chart.invalidate();

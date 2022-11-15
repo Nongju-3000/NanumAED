@@ -81,6 +81,8 @@ public class BluetoothLeServiceCPR extends Service {
     private RxBleClient rxBleClient;
 
     private Handler mHander = new Handler(Looper.getMainLooper());
+    private boolean isStart = false;
+    private String mode = "";
 
     //TODO ble data service setting
 
@@ -234,6 +236,8 @@ public class BluetoothLeServiceCPR extends Service {
         if(sendReferThread != null)
             Print.e("Test", "sendReferThread is not null");
 
+        isStart = false;
+
         if(sendReferThread == null){
             sendReferThread = new Thread(() -> {
                 int index = 0;
@@ -371,12 +375,26 @@ public class BluetoothLeServiceCPR extends Service {
         else
             return rxBleClient.getBleDevice(macAddress).getConnectionState() == RxBleConnection.RxBleConnectionState.CONNECTED;
     }
+
+    private String preStatus = "";
     private void sendNewState(final RxBleDevice device, RxBleConnection.RxBleConnectionState newState, int index){
         connectionChecking.set(index, newState);
-        final Intent intent = new Intent(ACTION_NEW_STATE);
-        intent.putExtra(EXTRA_BLE_DEVICE_ADDRESS, device.getMacAddress());
-        intent.putExtra(EXTRA_NEW_STATE, newState);
-        sendBroadcast(intent);
+        String connectedStatus = "";
+        if(RxBleConnection.RxBleConnectionState.DISCONNECTED == newState){
+            isCharDRegistereds.set(index, false);
+            isCharARegistereds.set(index, false);
+            connect(device.getMacAddress(), index);
+            connectedStatus = "disconnected";
+        }else if(RxBleConnection.RxBleConnectionState.CONNECTED == newState){
+            connectedStatus = "connected";
+        }
+        if(!connectedStatus.equals(preStatus) && (connectedStatus.equals("disconnected") || connectedStatus.equals("connected"))) {
+            final Intent intent = new Intent(ACTION_NEW_STATE);
+            intent.putExtra(EXTRA_BLE_DEVICE_ADDRESS, device.getMacAddress());
+            intent.putExtra(EXTRA_NEW_STATE, connectedStatus);
+            sendBroadcast(intent);
+            preStatus = connectedStatus;
+        }
     }
 
     private void broadCastRxConnectionUpdate(final RxBleDevice device, int index){
@@ -411,7 +429,7 @@ public class BluetoothLeServiceCPR extends Service {
             if(!isCharARegistereds.get(index)){
                 isCharARegistereds.set(index, true);
                 Disposable disposable = rxBleConnection.setupNotification(CHAR_DEPTH_UUID)
-                        .doOnNext(notificationObservable -> sendConnection(device))
+                        .doOnNext(notificationObservable -> sendConnection(device, index))
                         .flatMap(notificationObservable -> notificationObservable)
                         .subscribe(
                                 bytes -> onDepthReceived(device, bytes),
@@ -422,7 +440,10 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void sendConnection(RxBleDevice device){
+    private void sendConnection(RxBleDevice device, int index){
+        if(isStart){
+            writeCharacteristic(index, mode);
+        }
         final Intent intent = new Intent(ACTION_BLE_CONNECTED);
         intent.putExtra(EXTRA_BLE_DEVICE_ADDRESS, device.getMacAddress());
         sendBroadcast(intent);
@@ -506,6 +527,12 @@ public class BluetoothLeServiceCPR extends Service {
     }
 
     public void writeCharacteristic(int index, String data) {
+        if(!isStart){
+            if(data.equals("f3")){
+                mode = data;
+                isStart = true;
+            }
+        }
         byte[] sender = HexString.hexToBytes(data);
         if(connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
             mRxBleConnections.get(index).writeCharacteristic(UUID_WRITE, sender).subscribe();

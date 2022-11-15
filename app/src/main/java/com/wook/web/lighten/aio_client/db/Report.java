@@ -81,4 +81,7 @@ public class Report {
 
     @ColumnInfo(name = "stop_time_list")
     public String stop_time_list;
+
+    @ColumnInfo(name = "report_bluetoothtime")
+    public String report_bluetoothtime;
 }
