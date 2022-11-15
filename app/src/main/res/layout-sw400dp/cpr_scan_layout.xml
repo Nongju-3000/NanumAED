@@ -28,14 +28,14 @@
             <LinearLayout
                 android:layout_weight="5"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <soup.neumorphism.NeumorphCardView
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:neumorph_shadowElevation="3dp"
                     app:neumorph_shadowColorLight="#444444"
                     app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
@@ -45,14 +45,15 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
 
                         <soup.neumorphism.NeumorphImageButton
                             android:id="@+id/device_btn_cpr01"
-                            android:layout_width="200dp"
-                            android:layout_height="200dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
                             android:layout_margin="20dp"
                             android:src="@drawable/band_off"
                             android:adjustViewBounds="true"
@@ -69,10 +70,12 @@
 
                         <soup.neumorphism.NeumorphImageButton
                             android:id="@+id/device_btn_aio_01"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
                             android:layout_margin="20dp"
-                            android:layout_width="200dp"
-                            android:layout_height="200dp"
                             android:src="@drawable/cpr_off"
+                            android:adjustViewBounds="true"
                             android:scaleType="fitCenter"
                             app:neumorph_shapeAppearance="@style/CustomShapeAppearance"
                             app:neumorph_shadowElevation="3dp"
@@ -93,19 +96,25 @@
             <LinearLayout
                 android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:gravity="center"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
                 <soup.neumorphism.NeumorphButton
                     android:id="@+id/cpr_dialog_reset"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
                     android:text="@string/setting"
                     android:textColor="#FF7C2B"
-                    android:visibility="invisible"
+                    android:autoSizeMaxTextSize="55sp"
+                    android:autoSizeMinTextSize="5sp"
+                    android:maxLines="1"
+                    android:autoSizeTextType="uniform"
+                    android:visibility="visible"
+                    android:layout_margin="20dp"
                     app:neumorph_shadowElevation="3dp"
                     app:neumorph_shadowColorLight="#444444"
                     app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
@@ -115,13 +124,19 @@
                     />
 
                 <soup.neumorphism.NeumorphButton
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="10dp"
                     android:id="@+id/cpr_dialog_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:text="@string/confirm"
+                    android:autoSizeMaxTextSize="55sp"
+                    android:autoSizeMinTextSize="5sp"
+                    android:autoSizeTextType="uniform"
+                    android:maxLines="1"
                     android:textColor="#FF7C2B"
-                    android:visibility="invisible"
+                    android:visibility="visible"
+                    android:layout_margin="20dp"
                     app:neumorph_shadowElevation="3dp"
                     app:neumorph_shadowColorLight="#444444"
                     app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
