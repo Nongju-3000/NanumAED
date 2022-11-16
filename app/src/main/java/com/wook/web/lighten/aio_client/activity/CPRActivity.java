@@ -129,9 +129,11 @@ import org.jitsi.meet.sdk.JitsiMeetUserInfo;
 import org.jitsi.meet.sdk.JitsiMeetView;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
+import java.net.SocketException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -520,13 +522,29 @@ public class CPRActivity extends AppCompatActivity {
                 .setShouldLogAttributeValues(true)
                 .build()
         );
-        RxJavaPlugins.setErrorHandler(throwable -> {
-            if (throwable instanceof UndeliverableException && throwable.getCause() instanceof BleException) {
-                Log.v("RxBleApplication", "Suppressed UndeliverableException: " + throwable.toString());
-                return; // ignore BleExceptions as they were surely delivered at least once
+        RxJavaPlugins.setErrorHandler(e -> {
+            if (e instanceof UndeliverableException) {
+                e = e.getCause();
             }
-            // add other custom handlers if needed
-            throw new RuntimeException("Unexpected Throwable in RxJavaPlugins error handler", throwable);
+            if ((e instanceof IOException) || (e instanceof SocketException)) {
+                // fine, irrelevant network problem or API that throws on cancellation
+                return;
+            }
+            if (e instanceof InterruptedException) {
+                // fine, some blocking code was interrupted by a dispose call
+                return;
+            }
+            if ((e instanceof NullPointerException) || (e instanceof IllegalArgumentException)) {
+                // that's likely a bug in the application
+                Log.e(TAG, e.getMessage());
+                return;
+            }
+            if (e instanceof IllegalStateException) {
+                // that's a bug in RxJava or in a custom operator
+                Log.e(TAG, e.getMessage());
+                return;
+            }
+            Log.e("Undeliverable exception received, not sure what to do", e.getMessage());
         });
 
         lung_list01 = new ArrayList<>();
@@ -2495,6 +2513,11 @@ public class CPRActivity extends AppCompatActivity {
             handler.postDelayed(this, 300);
         }
     };
+
+    protected void onDestroy(){
+        super.onDestroy();
+        unbindService(mServiceConnection);
+    }
 
     //TODO Timer
     private Runnable runnable = new Runnable() {

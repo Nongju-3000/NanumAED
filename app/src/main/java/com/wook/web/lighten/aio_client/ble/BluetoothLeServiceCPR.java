@@ -78,7 +78,7 @@ public class BluetoothLeServiceCPR extends Service {
 
     private static ArrayList<Boolean> isCharDRegistereds = new ArrayList<>();
     private static ArrayList<Boolean> isCharARegistereds = new ArrayList<>();
-    private RxBleClient rxBleClient;
+    private static RxBleClient rxBleClient;
 
     private Handler mHander = new Handler(Looper.getMainLooper());
     private boolean isStart = false;
@@ -358,8 +358,9 @@ public class BluetoothLeServiceCPR extends Service {
         if (mBluetoothAdapter == null) {
             return false;
         }
-        if(mRxBleConnections.size()!=2) {
+        if(rxBleClient == null)
             rxBleClient = RxBleClient.create(this);
+        if(mRxBleConnections.size()!=2) {
             for (int i = 0; i < 2; i++) {
                 mRxBleConnections.add(null);
                 isCharDRegistereds.add(false);
@@ -400,42 +401,52 @@ public class BluetoothLeServiceCPR extends Service {
     private void broadCastRxConnectionUpdate(final RxBleDevice device, int index){
         RxBleConnection rxBleConnection = mRxBleConnections.get(index);
 
-        Disposable disposable = rxBleConnection.setupNotification(CHAR_POSITION_UUID)
-                .doOnSubscribe(notificationObservable -> {rxEnableNotification(device, rxBleConnection, index);
-                    Print.e(TAG, "Position Notification Setup");
-                })
-                .flatMap(notificationObservable -> notificationObservable)
-                .subscribe(
-                        bytes -> onPositionReceived(device, bytes),
-                        this::onNotificationSetupFailure
-                );
-        compositeDisposable.add(disposable);
+        if(isConnected(device.getMacAddress())) {
+            Disposable disposable = rxBleConnection.setupNotification(CHAR_POSITION_UUID)
+                    .doOnSubscribe(notificationObservable -> {
+                        rxEnableNotification(device, rxBleConnection, index);
+                        Print.e(TAG, "Position Notification Setup");
+                    })
+                    .flatMap(notificationObservable -> notificationObservable)
+                    .subscribe(
+                            bytes -> onPositionReceived(device, bytes),
+                            this::onNotificationSetupFailure
+                    );
+            compositeDisposable.add(disposable);
+        }
     }
 
     private void rxEnableNotification(RxBleDevice device, RxBleConnection rxBleConnection, int index){
         if(!isCharDRegistereds.get(index)) {
             isCharDRegistereds.set(index, true);
-            Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
-                    .doOnSubscribe(notificationObservable -> {rxEnableNotification(device, rxBleConnection, index);
-                        Print.e(TAG, "Breath Notification Setup");
-                    })
-                    .flatMap(notificationObservable -> notificationObservable)
-                    .subscribe(
-                            bytes -> onBreathReceived(device, bytes),
-                            this::onNotificationSetupFailure
-                    );
-            compositeDisposable.add(disposable);
-        }else{
-            if(!isCharARegistereds.get(index)){
-                isCharARegistereds.set(index, true);
-                Disposable disposable = rxBleConnection.setupNotification(CHAR_DEPTH_UUID)
-                        .doOnNext(notificationObservable -> sendConnection(device, index))
+
+            if(isConnected(device.getMacAddress())) {
+                Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
+                        .doOnSubscribe(notificationObservable -> {
+                            rxEnableNotification(device, rxBleConnection, index);
+                            Print.e(TAG, "Breath Notification Setup");
+                        })
                         .flatMap(notificationObservable -> notificationObservable)
                         .subscribe(
-                                bytes -> onDepthReceived(device, bytes),
+                                bytes -> onBreathReceived(device, bytes),
                                 this::onNotificationSetupFailure
                         );
                 compositeDisposable.add(disposable);
+            }
+        }else{
+            if(!isCharARegistereds.get(index)){
+                isCharARegistereds.set(index, true);
+
+                if(isConnected(device.getMacAddress())) {
+                    Disposable disposable = rxBleConnection.setupNotification(CHAR_DEPTH_UUID)
+                            .doOnNext(notificationObservable -> sendConnection(device, index))
+                            .flatMap(notificationObservable -> notificationObservable)
+                            .subscribe(
+                                    bytes -> onDepthReceived(device, bytes),
+                                    this::onNotificationSetupFailure
+                            );
+                    compositeDisposable.add(disposable);
+                }
             }
         }
     }
