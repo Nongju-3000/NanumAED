@@ -383,6 +383,9 @@ public class CPRActivity extends AppCompatActivity {
     private View depthCPR_view01;
     private ArrayList<Float> bluetoothtime_list01;
     private boolean isReady = false;
+    private LinearLayout cpr_layout_01;
+    private ImageView device_disconnect_cpr_01;
+    private Handler handler_cpr01_disconnect = new Handler(Looper.getMainLooper());
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -482,6 +485,27 @@ public class CPRActivity extends AppCompatActivity {
                     }
                     ChatData chatData_ = new ChatData("연결/" + connected + "/" + mac, time, UserName);
                     databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+
+                    if(!isConnected){
+                        cpr_layout_01.setAlpha(0.2f);
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+                            handler_cpr01_disconnect.postDelayed(new Runnable(){
+                                @Override
+                                public void run(){
+                                    if(device_disconnect_cpr_01.getVisibility() == View.INVISIBLE){
+                                        device_disconnect_cpr_01.setVisibility(View.VISIBLE);
+                                    }else{
+                                        device_disconnect_cpr_01.setVisibility(View.INVISIBLE);
+                                    }
+                                    handler_cpr01_disconnect.postDelayed(this, 1000);
+                                }
+                            }, 0, 1000);
+                        }
+                    }else{
+                        handler_cpr01_disconnect.removeMessages(0);
+                        device_disconnect_cpr_01.setVisibility(View.INVISIBLE);
+                        cpr_layout_01.setAlpha(1f);
+                    }
                 }
             } else {
                 if (Objects.equals(Devices.get("Device_02"), mac)) {
@@ -492,6 +516,26 @@ public class CPRActivity extends AppCompatActivity {
                     }
                     ChatData chatData_ = new ChatData("연결/" + connected, time, UserName);
                     databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                }
+                if(!isConnected){
+                    cpr_layout_01.setAlpha(0.2f);
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+                        handler_cpr01_disconnect.postDelayed(new Runnable(){
+                            @Override
+                            public void run(){
+                                if(device_disconnect_cpr_01.getVisibility() == View.INVISIBLE){
+                                    device_disconnect_cpr_01.setVisibility(View.VISIBLE);
+                                }else{
+                                    device_disconnect_cpr_01.setVisibility(View.INVISIBLE);
+                                }
+                                handler_cpr01_disconnect.postDelayed(this, 1000);
+                            }
+                        }, 0, 1000);
+                    }
+                }else{
+                    handler_cpr01_disconnect.removeMessages(0);
+                    device_disconnect_cpr_01.setVisibility(View.INVISIBLE);
+                    cpr_layout_01.setAlpha(1f);
                 }
             }
         }
@@ -580,6 +624,9 @@ public class CPRActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+
+        device_disconnect_cpr_01 = findViewById(R.id.device_disconnect_cpr_01);
+        cpr_layout_01 = findViewById(R.id.cpr_layout_01);
 
         long now = System.currentTimeMillis();
         Date date = new Date(now);
@@ -1881,10 +1928,12 @@ public class CPRActivity extends AppCompatActivity {
                     if (Devices.get("Device_01").equals(device.getAddress())) {
                         mConnected = true;
                         device_btn01.setImageResource(R.drawable.band_on);
+                        de1Connect = 1;
                     } else if (Devices.get("Device_02").equals(device.getAddress())) {
                         mConnected = true;
                         device_btn02.setImageResource(R.drawable.cpr_on);
                         initialize();
+                        de2Connect = 1;
                         device2_connect = true;
                     }
                 }
@@ -1896,9 +1945,9 @@ public class CPRActivity extends AppCompatActivity {
         new Thread(() -> {
             while (isConnect) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(60);
                     scan_count++;
-                    if (scan_count == 40) {
+                    if (scan_count == 167) {
                         scanLeDevice(true);
                         scan_count = 0;
                     }
@@ -2782,7 +2831,7 @@ public class CPRActivity extends AppCompatActivity {
             if (permissionCheck()) {
                 startCamera();
             } else {
-                Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 //this.finish();
             }
         }

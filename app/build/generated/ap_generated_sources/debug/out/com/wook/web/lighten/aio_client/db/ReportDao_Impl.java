@@ -29,7 +29,7 @@ public final class ReportDao_Impl implements ReportDao {
     this.__insertionAdapterOfReport = new EntityInsertionAdapter<Report>(__db) {
       @Override
       public String createQuery() {
-        return "INSERT OR ABORT INTO `Report` (`report_id`,`report_name`,`report_end_time`,`report_interval_sec`,`report_cycle`,`report_depth_correct`,`report_up_depth`,`report_down_depth`,`report_bpm`,`report_angle`,`report_depth_list`,`report_presstimeList`,`report_breathtime`,`report_breathval`,`report_ventil_volume`,`to_day`,`min`,`max`,`depth_num`,`depth_correct`,`position_num`,`position_correct`,`lung_num`,`lung_correct`,`stop_time_list`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT OR ABORT INTO `Report` (`report_id`,`report_name`,`report_end_time`,`report_interval_sec`,`report_cycle`,`report_depth_correct`,`report_up_depth`,`report_down_depth`,`report_bpm`,`report_angle`,`report_depth_list`,`report_presstimeList`,`report_breathtime`,`report_breathval`,`report_ventil_volume`,`to_day`,`min`,`max`,`depth_num`,`depth_correct`,`position_num`,`position_correct`,`lung_num`,`lung_correct`,`stop_time_list`,`report_bluetoothtime`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -155,6 +155,11 @@ public final class ReportDao_Impl implements ReportDao {
         } else {
           stmt.bindString(25, value.stop_time_list);
         }
+        if (value.report_bluetoothtime == null) {
+          stmt.bindNull(26);
+        } else {
+          stmt.bindString(26, value.report_bluetoothtime);
+        }
       }
     };
     this.__deletionAdapterOfReport = new EntityDeletionOrUpdateAdapter<Report>(__db) {
@@ -226,6 +231,7 @@ public final class ReportDao_Impl implements ReportDao {
       final int _cursorIndexOfLungNum = CursorUtil.getColumnIndexOrThrow(_cursor, "lung_num");
       final int _cursorIndexOfLungCorrect = CursorUtil.getColumnIndexOrThrow(_cursor, "lung_correct");
       final int _cursorIndexOfStopTimeList = CursorUtil.getColumnIndexOrThrow(_cursor, "stop_time_list");
+      final int _cursorIndexOfReportBluetoothtime = CursorUtil.getColumnIndexOrThrow(_cursor, "report_bluetoothtime");
       final List<Report> _result = new ArrayList<Report>(_cursor.getCount());
       while(_cursor.moveToNext()) {
         final Report _item;
@@ -350,6 +356,11 @@ public final class ReportDao_Impl implements ReportDao {
           _item.stop_time_list = null;
         } else {
           _item.stop_time_list = _cursor.getString(_cursorIndexOfStopTimeList);
+        }
+        if (_cursor.isNull(_cursorIndexOfReportBluetoothtime)) {
+          _item.report_bluetoothtime = null;
+        } else {
+          _item.report_bluetoothtime = _cursor.getString(_cursorIndexOfReportBluetoothtime);
         }
         _result.add(_item);
       }
