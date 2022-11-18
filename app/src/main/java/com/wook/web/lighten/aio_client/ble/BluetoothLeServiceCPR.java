@@ -20,6 +20,7 @@ import com.wook.web.lighten.aio_client.utils.Print;
 import com.wook.web.lighten.aio_client.utils.SoundPoolHandler;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
 
 import io.reactivex.Observable;
@@ -420,18 +421,24 @@ public class BluetoothLeServiceCPR extends Service {
         if(!isCharDRegistereds.get(index)) {
             isCharDRegistereds.set(index, true);
 
-            if(isConnected(device.getMacAddress())) {
-                Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
-                        .doOnSubscribe(notificationObservable -> {
-                            rxEnableNotification(device, rxBleConnection, index);
-                            Print.e(TAG, "Breath Notification Setup");
-                        })
-                        .flatMap(notificationObservable -> notificationObservable)
-                        .subscribe(
-                                bytes -> onBreathReceived(device, bytes),
-                                this::onNotificationSetupFailure
-                        );
-                compositeDisposable.add(disposable);
+            if(Objects.requireNonNull(device.getName()).contains("AIO")) {
+                if (isConnected(device.getMacAddress())) {
+                    Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
+                            .doOnSubscribe(notificationObservable -> {
+                                rxEnableNotification(device, rxBleConnection, index);
+                                Print.e(TAG, "Breath Notification Setup");
+                            })
+                            .flatMap(notificationObservable -> notificationObservable)
+                            .subscribe(
+                                    bytes -> onBreathReceived(device, bytes),
+                                    this::onNotificationSetupFailure
+                            );
+                    compositeDisposable.add(disposable);
+                }
+            }else{
+                if(isConnected(device.getMacAddress())){
+                    angleHandler.postDelayed(getAngleRunnable(device, rxBleConnection), 0);
+                }
             }
         }else{
             if(!isCharARegistereds.get(index)){
@@ -449,6 +456,20 @@ public class BluetoothLeServiceCPR extends Service {
                 }
             }
         }
+    }
+
+    private Runnable getAngleRunnable(RxBleDevice device, RxBleConnection rxBleConnection){
+        return () -> {
+            if(isConnected(device.getMacAddress())){
+                Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
+                        .flatMap(notificationObservable -> notificationObservable)
+                        .subscribe(
+                                bytes -> onBreathReceived(device, bytes),
+                                this::onNotificationSetupFailure
+                        );
+                angleDisposables.add(disposable);
+            }
+        };
     }
 
     private void sendConnection(RxBleDevice device, int index){
@@ -479,6 +500,12 @@ public class BluetoothLeServiceCPR extends Service {
             intent.putExtra(EXTRA_DATA, stringBuilder.toString() + "," + CHAR_BREATH_UUID+ "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
+        if(Objects.requireNonNull(bleDevice.getName()).contains("CPR-BA")){
+            angleDisposables.clear();
+            if(isConnected(bleDevice.getMacAddress())){
+                angleHandler.postDelayed(getAngleRunnable(bleDevice, mRxBleConnections.get(0)), 2000);
+            }
+        }
     }
     private void onDepthReceived(RxBleDevice bleDevice, byte[] bytes){
         final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
@@ -500,6 +527,8 @@ public class BluetoothLeServiceCPR extends Service {
     private PublishSubject<Boolean> disconnectTriggerSubject = PublishSubject.create();
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private ArrayList<RxBleConnection.RxBleConnectionState> connectionChecking = new ArrayList<>();
+    private CompositeDisposable angleDisposables = new CompositeDisposable();
+    private Handler angleHandler = new Handler(Looper.getMainLooper());
 
     public boolean connect(final String macAddress, int index){
         RxBleDevice bleDevice = rxBleClient.getBleDevice(macAddress);

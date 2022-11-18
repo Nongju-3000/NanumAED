@@ -1125,21 +1125,20 @@ public class CPRActivity extends AppCompatActivity {
                             angle_remote.setImageResource(R.drawable.angle_green);
                         } else if (angle01 <= 60) {
                             angle_remote.setImageResource(R.drawable.angle_orange);
-                        } else if (61 <= angle01) {
+                        } else {
                             angle_remote.setImageResource(R.drawable.angle_red);
                         }
-                        if (!isOut) {
-                            handler.postDelayed(angleRunnable, 1000);
-                            /*if(angle01 > pre_angle + 2 || angle01 < pre_angle - 2) {
-                                long now_ = System.currentTimeMillis();
-                                Date date_ = new Date(now_);
-                                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
-                                String getTime_ = sdf_.format(date_);
-                                ChatData chatData_ = new ChatData("Angle/" + angle01, getTime_, UserName);
-                                databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
-                                pre_angle = angle01;
-                            }*/
+
+                        if(angle01 > pre_angle + 2 || angle01 < pre_angle - 2) {
+                            long now_ = System.currentTimeMillis();
+                            Date date_ = new Date(now_);
+                            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                            String getTime_ = sdf_.format(date_);
+                            ChatData chatData_ = new ChatData("Angle/" + angle01, getTime_, UserName);
+                            databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                            pre_angle = angle01;
                         }
+
                         break;
                 }
 
@@ -2502,18 +2501,6 @@ public class CPRActivity extends AppCompatActivity {
 
     float max_secs = 0.0f;
 
-    private Runnable angleRunnable = new Runnable(){
-        public void run(){
-            long now_ = System.currentTimeMillis();
-            Date date_ = new Date(now_);
-            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
-            String getTime_ = sdf_.format(date_);
-            ChatData chatData_ = new ChatData("Angle/" + angle01, getTime_, UserName);
-            databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
-            handler.postDelayed(this, 300);
-        }
-    };
-
     protected void onDestroy(){
         super.onDestroy();
         unbindService(mServiceConnection);
@@ -2537,10 +2524,9 @@ public class CPRActivity extends AppCompatActivity {
             MilliSeconds = (int) (UpdateTime % 1000);
 
             cpr_timer.setText("" + Minutes + ":"
-                    + String.format("%02d", Seconds) + ":"
-                    + String.format("%02d", MilliSeconds));
+                    + String.format("%02d", Seconds));
 
-            handler.postDelayed(this, 0);
+            handler.postDelayed(this, 10);
 
             // String[] timer_sec = cpr_timer.getText().toString().split(":");
 
@@ -2593,31 +2579,6 @@ public class CPRActivity extends AppCompatActivity {
             }
         }
     }
-
-    private Handler postHander;
-    private void runHander(boolean run) {
-        if (postHander != null) {
-            postHander.removeCallbacks(postRunned);
-            postHander = null;
-        }
-        if (run) {
-            postHander = new Handler();
-            postHander.postDelayed(postRunned, 250);
-        }
-        else{
-            times = 0;
-        }
-    }
-    long times = 0;
-    long mines = 0;
-    private Runnable postRunned = () -> {
-        times += 250;
-//            isHalf = !isHalf;
-        try {
-        } catch (Exception e) {}
-        mines += 250;
-        runHander(true);
-    };
 
     private void reset(int set) {
         TimeBuff += MillisecondTime;
