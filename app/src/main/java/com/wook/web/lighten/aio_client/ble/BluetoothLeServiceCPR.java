@@ -437,6 +437,7 @@ public class BluetoothLeServiceCPR extends Service {
                 }
             }else{
                 if(isConnected(device.getMacAddress())){
+                    sendConnection(device, index);
                     angleHandler.postDelayed(getAngleRunnable(device, rxBleConnection), 0);
                 }
             }

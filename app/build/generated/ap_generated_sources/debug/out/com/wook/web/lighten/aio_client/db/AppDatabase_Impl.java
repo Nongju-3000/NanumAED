@@ -30,12 +30,12 @@ public final class AppDatabase_Impl extends AppDatabase {
 
   @Override
   protected SupportSQLiteOpenHelper createOpenHelper(DatabaseConfiguration configuration) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(configuration, new RoomOpenHelper.Delegate(2) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(configuration, new RoomOpenHelper.Delegate(3) {
       @Override
       public void createAllTables(SupportSQLiteDatabase _db) {
-        _db.execSQL("CREATE TABLE IF NOT EXISTS `Report` (`report_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `report_name` TEXT, `report_end_time` TEXT, `report_interval_sec` TEXT, `report_cycle` TEXT, `report_depth_correct` TEXT, `report_up_depth` TEXT, `report_down_depth` TEXT, `report_bpm` TEXT, `report_angle` TEXT, `report_depth_list` TEXT, `report_presstimeList` TEXT, `report_breathtime` TEXT, `report_breathval` TEXT, `report_ventil_volume` TEXT, `to_day` TEXT, `min` TEXT, `max` TEXT, `depth_num` TEXT, `depth_correct` TEXT, `position_num` TEXT, `position_correct` TEXT, `lung_num` TEXT, `lung_correct` TEXT, `stop_time_list` TEXT)");
+        _db.execSQL("CREATE TABLE IF NOT EXISTS `Report` (`report_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `report_name` TEXT, `report_end_time` TEXT, `report_interval_sec` TEXT, `report_cycle` TEXT, `report_depth_correct` TEXT, `report_up_depth` TEXT, `report_down_depth` TEXT, `report_bpm` TEXT, `report_angle` TEXT, `report_depth_list` TEXT, `report_presstimeList` TEXT, `report_breathtime` TEXT, `report_breathval` TEXT, `report_ventil_volume` TEXT, `to_day` TEXT, `min` TEXT, `max` TEXT, `depth_num` TEXT, `depth_correct` TEXT, `position_num` TEXT, `position_correct` TEXT, `lung_num` TEXT, `lung_correct` TEXT, `stop_time_list` TEXT, `report_bluetoothtime` TEXT)");
         _db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        _db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c227a63f40d15911de7eede3986b9d5d')");
+        _db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1bacd982695e665c489b8a31fa3ae3c9')");
       }
 
       @Override
@@ -79,7 +79,7 @@ public final class AppDatabase_Impl extends AppDatabase {
 
       @Override
       protected RoomOpenHelper.ValidationResult onValidateSchema(SupportSQLiteDatabase _db) {
-        final HashMap<String, TableInfo.Column> _columnsReport = new HashMap<String, TableInfo.Column>(25);
+        final HashMap<String, TableInfo.Column> _columnsReport = new HashMap<String, TableInfo.Column>(26);
         _columnsReport.put("report_id", new TableInfo.Column("report_id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReport.put("report_name", new TableInfo.Column("report_name", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReport.put("report_end_time", new TableInfo.Column("report_end_time", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -105,6 +105,7 @@ public final class AppDatabase_Impl extends AppDatabase {
         _columnsReport.put("lung_num", new TableInfo.Column("lung_num", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReport.put("lung_correct", new TableInfo.Column("lung_correct", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReport.put("stop_time_list", new TableInfo.Column("stop_time_list", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsReport.put("report_bluetoothtime", new TableInfo.Column("report_bluetoothtime", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysReport = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesReport = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoReport = new TableInfo("Report", _columnsReport, _foreignKeysReport, _indicesReport);
@@ -116,7 +117,7 @@ public final class AppDatabase_Impl extends AppDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "c227a63f40d15911de7eede3986b9d5d", "20baa92e4b5794adae3fa58716b17777");
+    }, "1bacd982695e665c489b8a31fa3ae3c9", "da9acf7f1f4d6a6e498b55bad34db852");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(configuration.context)
         .name(configuration.name)
         .callback(_openCallback)
