@@ -2552,8 +2552,10 @@ public class CPRActivity extends AppCompatActivity {
                                     max_secs = secs;
                                 handOff_01 = Seconds_;
                             }
-                            cpr_arrow01_.setVisibility(View.VISIBLE);
-                            remote_arrow_down_text.setVisibility(View.VISIBLE);
+                            if(!isBreath01) {
+                                cpr_arrow01_.setVisibility(View.VISIBLE);
+                                remote_arrow_down_text.setVisibility(View.VISIBLE);
+                            }
                         } else {
                             if(max_secs != 0 )
                                 cprItem_01.add(new UserItem(Seconds_, max_secs, 0));
