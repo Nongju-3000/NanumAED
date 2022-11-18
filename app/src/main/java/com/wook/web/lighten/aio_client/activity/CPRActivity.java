@@ -360,6 +360,7 @@ public class CPRActivity extends AppCompatActivity {
 
     private Button depth_btn_cpr_up;
     private ArrayList<Integer> lung_list01;
+    private ArrayList<Float> lungtime_list01;
 
     private String address01;
     String[] address_array01;
@@ -548,6 +549,7 @@ public class CPRActivity extends AppCompatActivity {
         });
 
         lung_list01 = new ArrayList<>();
+        lungtime_list01 = new ArrayList<>();
 
         mac_list = new ArrayList<>();
 
@@ -1267,28 +1269,36 @@ public class CPRActivity extends AppCompatActivity {
 
                                 int size = lung_list01.size();
                                 if (size != 0) {
-                                    if (breath01 < lung_list01.get(size - 1) - 1 || breath01 > lung_list01.get(size - 1) + 1)
+                                    if (breath01 < lung_list01.get(size - 1) - 1 || breath01 > lung_list01.get(size - 1) + 1) {
                                         lung_list01.add(breath01);
+                                        lungtime_list01.add(current_time);
+                                    }
                                 } else {
                                     lung_list01.add(breath01);
+                                    lungtime_list01.add(current_time);
                                 }
 
-                                if (lung_list01.size() > 7) {
+                                if (lung_list01.size() > 3) {
                                     lung_list01.remove(0);
+                                    lungtime_list01.remove(0);
                                 }
 
-                                if (lung_list01.size() == 7) {
+                                if (lung_list01.size() == 3) {
                                     int left = lung_list01.get(0);
-                                    int center = lung_list01.get(3);
-                                    int right = lung_list01.get(6);
+                                    int center = lung_list01.get(1);
+                                    int right = lung_list01.get(2);
                                     if (center > left + 1 && center > right + 1) {
                                         int max = lung_list01.get(0);
+                                        float time = lungtime_list01.get(0);
                                         for (int i = 1; i < lung_list01.size(); i++) {
-                                            if (lung_list01.get(i) > lung_list01.get(i - 1))
+                                            if (lung_list01.get(i) > lung_list01.get(i - 1)) {
                                                 max = lung_list01.get(i);
+                                                time = lungtime_list01.get(i);
+                                            }
                                         }
-                                        setBreath01(max, current_time);
+                                        setBreath01(max, time);
                                         lung_list01.clear();
+                                        lungtime_list01.clear();
                                     }
                                 }
                                 if (isBreOver01) {
@@ -1362,6 +1372,7 @@ public class CPRActivity extends AppCompatActivity {
                         lung01.setVisibility(View.INVISIBLE);
                         test_lung01.setVisibility(View.INVISIBLE);
                         lung_list01.clear();
+                        lungtime_list01.clear();
 
                         final int depthSet = Integer.parseInt(getHexToDec(spil[0]));
 
