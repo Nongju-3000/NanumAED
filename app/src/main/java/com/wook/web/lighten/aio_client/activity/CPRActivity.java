@@ -817,9 +817,9 @@ public class CPRActivity extends AppCompatActivity {
     private int toLevel01 = 0;
     private boolean ispeak01 = false;
     public static final int MAX_LEVEL = 10000;
-    public static final int LEVEL_DIFF_UP = 250;
-    public static final int LEVEL_DIFF_DOWN = 100;
-    public static final int DELAY = 15;
+    public static final int LEVEL_DIFF_UP = 500;
+    public static final int LEVEL_DIFF_DOWN = 250;
+    public static final int DELAY = 8;
 
     private Handler mUpHandler01 = new Handler(Looper.getMainLooper());
 
