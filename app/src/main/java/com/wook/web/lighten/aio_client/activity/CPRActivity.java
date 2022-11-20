@@ -381,7 +381,9 @@ public class CPRActivity extends AppCompatActivity {
     boolean isCali01 = false;
     private ImageView anne;
     private View depthCPR_view01;
-    private ArrayList<Float> bluetoothtime_list01;
+    private ArrayList<Float> bluetoothtime_list01 = new ArrayList<Float>(){{
+        add(0f);
+    }};
     private boolean isReady = false;
     private LinearLayout cpr_layout_01;
     private ImageView device_disconnect_cpr_01;
@@ -2660,6 +2662,16 @@ public class CPRActivity extends AppCompatActivity {
             if(max_secs != 0)
                 cprItem_01.add(new UserItem(Seconds_, max_secs, 0));
 
+            if (!device2_connect) {
+                if(!bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))){
+                    bluetoothtime_list01.add((float) Seconds_);
+                }
+            } else {
+                if(!bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))){
+                    bluetoothtime_list01.add((float) Seconds_);
+                }
+            }
+
             isReset = true;
             ArrayList<ReportItem> reportItems = new ArrayList<>();
             Log.d("presstime", String.valueOf(presstime_list01));
@@ -2782,6 +2794,7 @@ public class CPRActivity extends AppCompatActivity {
         breathval_01.clear();
         presstime_list01.clear();
         peakTimes.clear();
+        bluetoothtime_list01.clear();
         total_count = 0;
         position_bpm = 0f;
         ventil_volume_01 = 0;
@@ -3021,6 +3034,7 @@ public class CPRActivity extends AppCompatActivity {
                 report.lung_num = reportItem.getReport_lung_num();
                 report.lung_correct = reportItem.getReport_lung_correct();
                 report.stop_time_list = converters.writingStringFromList(reportItem.getStop_time_list());
+                report.report_bluetoothtime = converters.writingStringFromList(reportItem.getReport_bletime_list());
 
                 database.reportDao().insert(report);
             }

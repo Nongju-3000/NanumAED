@@ -188,7 +188,7 @@ public class ReportActivity extends Activity {
 
         chart = findViewById(R.id.chart_img);
         recyclerView = findViewById(R.id.report_list);
-        ventil_score = findViewById(R.id.ventil_score);
+        ventil_score = findViewById(R.id.chart_img_02);
 
         report_end_time = (TextView) findViewById(R.id.report_end_time);
         report_interval_sec = (TextView) findViewById(R.id.report_interval_sec);
@@ -527,6 +527,7 @@ public class ReportActivity extends Activity {
 
             for (ReportItem reportItem : reportItems)
                 names.add("   " + reportItem.getReport_name() + "   ");
+
 
             setChart(0);
 
