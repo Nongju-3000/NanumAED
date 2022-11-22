@@ -60,6 +60,5 @@
             android:groupIndicator="@null"
             />
 
-
     </LinearLayout>
 </LinearLayout>

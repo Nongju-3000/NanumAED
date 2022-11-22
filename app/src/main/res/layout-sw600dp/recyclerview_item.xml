@@ -12,7 +12,10 @@
         android:id="@+id/text1"
         android:textColor="#ffffff"
         android:text="-"
-        android:textSize="40dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="10sp"
+        android:autoSizeMaxTextSize="50sp"
+        android:maxLines="1"
         tools:ignore="MissingConstraints" />
 
 

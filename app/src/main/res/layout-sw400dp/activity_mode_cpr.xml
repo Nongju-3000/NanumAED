@@ -187,8 +187,8 @@
                                     android:scaleType="centerCrop"
                                     android:src="@drawable/lung0"
                                     android:visibility="invisible"
-                                    app:layout_constraintStart_toStartOf="@id/anne"
-                                    app:layout_constraintEnd_toEndOf="@id/anne"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintHeight_percent="0.8"
@@ -201,8 +201,8 @@
                                     android:scaleType="centerCrop"
                                     android:src="@drawable/lung_normal_clip"
                                     android:visibility="invisible"
-                                    app:layout_constraintStart_toStartOf="@id/anne"
-                                    app:layout_constraintEnd_toEndOf="@id/anne"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintHeight_percent="0.8"
@@ -214,12 +214,38 @@
                                     android:layout_height="0dp"
                                     android:scaleType="centerCrop"
                                     android:src="@drawable/anne"
-                                    app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintDimensionRatio="100:35"
                                     app:layout_constraintWidth_percent="0.7"/>
+
+                                <ImageView
+                                    android:id="@+id/press_position"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:scaleType="fitCenter"
+                                    android:src="@drawable/sharp_img"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toStartOf="@id/anne"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintHeight_percent="0.37"
+                                    app:layout_constraintDimensionRatio="1:1"/>
+
+                                <ImageButton
+                                    android:id="@+id/press_point_btn"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/press_point"
+                                    android:visibility="invisible"
+                                    app:layout_constraintEnd_toStartOf="@id/anne"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintHeight_percent="0.37"
+                                    app:layout_constraintDimensionRatio="1:1"/>
 
                                 <LinearLayout
                                     android:layout_width="0dp"

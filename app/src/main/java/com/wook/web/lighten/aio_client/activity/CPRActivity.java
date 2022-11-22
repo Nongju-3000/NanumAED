@@ -309,7 +309,8 @@ public class CPRActivity extends AppCompatActivity {
 
     private ImageView ytb_img;
 
-    private ImageView angle_remote;
+    private ImageView angle_remote, press_position;
+    private ImageButton press_point_btn;
     private TextView mainName;
 
     private AutoFitTextureView cameraView;
@@ -642,6 +643,8 @@ public class CPRActivity extends AppCompatActivity {
         ytb_img = findViewById(R.id.ytb_img);
         YouTubePlayerView = findViewById(R.id.you_tube_player_view);
         getLifecycle().addObserver(YouTubePlayerView);
+        press_position = findViewById(R.id.press_position);
+        press_point_btn = findViewById(R.id.press_point_btn);
 
         sharedPreferences = getApplication().getSharedPreferences("DeviceCPR", MODE_PRIVATE);
         reenter = sharedPreferences.getInt("reenter", 0);
@@ -1200,6 +1203,7 @@ public class CPRActivity extends AppCompatActivity {
                 switch (spil[1]) {
                     case "0000fff1-0000-1000-8000-00805f9b34fb":
                         lung01.setVisibility(View.INVISIBLE);
+                        press_position.setVisibility(View.VISIBLE);
                         test_lung01.setVisibility(View.INVISIBLE);
                         intrval_01 = System.currentTimeMillis();
                         position01 = Integer.parseInt(getHexToDec(spil[0]));
@@ -1214,16 +1218,58 @@ public class CPRActivity extends AppCompatActivity {
                         if (position01 <= 11) {
                             switch (position01) {
                                 case 1:
-                                case 2:
-                                case 3:
-                                case 4:
-                                    if (!start_check)
+                                    final Animation animation0 = new TranslateAnimation(0, -100, 0, 0);
+                                    animation0.setDuration(200);
+                                    animation0.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation0);
+                                    if (!start_check) {
                                         position_num01++;
+                                    }
+                                    cpr_arrow01.setVisibility(View.INVISIBLE);
+                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                    break;
+                                case 2:
+                                    final Animation animation2 = new TranslateAnimation(0, 100, 0, 0);
+                                    animation2.setDuration(200);
+                                    animation2.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation2);
+                                    if (!start_check) {
+                                        position_num01++;
+                                    }
+                                    cpr_arrow01.setVisibility(View.INVISIBLE);
+                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                    break;
+                                case 3:
+                                    final Animation animation3 = new TranslateAnimation(0, 0, 0, -100);
+                                    animation3.setDuration(200);
+                                    animation3.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation3);
+                                    if (!start_check) {
+                                        position_num01++;
+                                    }
+                                    cpr_arrow01.setVisibility(View.INVISIBLE);
+                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                    break;
+                                case 4:
+                                    final Animation animation4 = new TranslateAnimation(0, 0, 0, 100);
+                                    animation4.setDuration(200);
+                                    animation4.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation4);
+                                    if (!start_check) {
+                                        position_num01++;
+                                    }
                                     cpr_arrow01.setVisibility(View.INVISIBLE);
                                     remote_arrow_up_text.setVisibility(View.INVISIBLE);
                                     depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
                                     break;
                                 case 5:
+                                    final Animation animation5 = new TranslateAnimation(0, 0, 0, 0);
+                                    animation5.setDuration(200);
+                                    animation5.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation5);
                                     if (!start_check) {
                                         position_num01++;
                                         position_correct01++;
@@ -1233,9 +1279,43 @@ public class CPRActivity extends AppCompatActivity {
                                     depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
                                     break;
                                 case 7:
+                                    final Animation animation7 = new TranslateAnimation(0, -100, 0, 0);
+                                    animation7.setDuration(200);
+                                    animation7.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation7);
+                                    if (!start_check)
+                                        position_num01++;
+                                    cpr_arrow01.setVisibility(View.VISIBLE);
+                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                    break;
                                 case 8:
+                                    final Animation animation8 = new TranslateAnimation(0, 100, 0, 0);
+                                    animation8.setDuration(200);
+                                    animation8.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation8);
+                                    if (!start_check)
+                                        position_num01++;
+                                    cpr_arrow01.setVisibility(View.VISIBLE);
+                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                    break;
                                 case 9:
+                                    final Animation animation9 = new TranslateAnimation(0, 0, 0, -100);
+                                    animation9.setDuration(200);
+                                    animation9.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation9);
+                                    if (!start_check)
+                                        position_num01++;
+                                    cpr_arrow01.setVisibility(View.VISIBLE);
+                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                    break;
                                 case 10:
+                                    final Animation animation10 = new TranslateAnimation(0, 0, 0, 100);
+                                    animation10.setDuration(200);
+                                    animation10.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation10);
                                     if (!start_check)
                                         position_num01++;
                                     cpr_arrow01.setVisibility(View.VISIBLE);
@@ -1243,6 +1323,10 @@ public class CPRActivity extends AppCompatActivity {
                                     depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
                                     break;
                                 case 11:
+                                    final Animation animation11 = new TranslateAnimation(0, 0, 0, 0);
+                                    animation11.setDuration(200);
+                                    animation11.setFillAfter(false);
+                                    press_point_btn.startAnimation(animation11);
                                     if (!start_check) {
                                         position_num01++;
                                         position_correct01++;
@@ -1283,6 +1367,8 @@ public class CPRActivity extends AppCompatActivity {
                                 }
 
                                 if (breath01 > min_lung01 + 5) {
+                                    cpr_arrow01_.setVisibility(View.INVISIBLE);
+                                    remote_arrow_down_text.setVisibility(View.INVISIBLE);
                                     lung01.setVisibility(View.VISIBLE);
                                     test_lung01.setVisibility(View.VISIBLE);
                                     anne.setVisibility(View.INVISIBLE);
@@ -1293,6 +1379,7 @@ public class CPRActivity extends AppCompatActivity {
                                     depth_btn01.setVisibility(View.INVISIBLE);
                                     depth_btn_cpr_up.setVisibility(View.INVISIBLE);
                                     depthCPR_view01.setVisibility(View.INVISIBLE);
+                                    press_position.setVisibility(View.INVISIBLE);
                                 }
 
                                 if (breath01 < bre_threshold01) {
