@@ -77,8 +77,8 @@ public class BluetoothLeServiceCPR extends Service {
     public static final String DATA1_NOT_KEY = "datanotkey1";
     public static final String DATA2_NOT_KEY = "datanotkey2";
 
-    private static ArrayList<Boolean> isCharDRegistereds = new ArrayList<>();
-    private static ArrayList<Boolean> isCharARegistereds = new ArrayList<>();
+    public static ArrayList<Boolean> isCharDRegistereds = new ArrayList<>();
+    public static ArrayList<Boolean> isCharARegistereds = new ArrayList<>();
     private static RxBleClient rxBleClient;
 
     private Handler mHander = new Handler(Looper.getMainLooper());
@@ -399,9 +399,9 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void broadCastRxConnectionUpdate(final RxBleDevice device, int index){
+    public void broadCastRxConnectionUpdate(final RxBleDevice device, int index){
         RxBleConnection rxBleConnection = mRxBleConnections.get(index);
-
+        Print.e(TAG, "broadCastRxConnectionUpdate");
         if(isConnected(device.getMacAddress())) {
             Disposable disposable = rxBleConnection.setupNotification(CHAR_POSITION_UUID)
                     .doOnSubscribe(notificationObservable -> {
@@ -413,7 +413,7 @@ public class BluetoothLeServiceCPR extends Service {
                             bytes -> onPositionReceived(device, bytes),
                             this::onNotificationSetupFailure
                     );
-            compositeDisposable.add(disposable);
+            notiDisposable.add(disposable);
         }
     }
 
@@ -433,7 +433,7 @@ public class BluetoothLeServiceCPR extends Service {
                                     bytes -> onBreathReceived(device, bytes),
                                     this::onNotificationSetupFailure
                             );
-                    compositeDisposable.add(disposable);
+                    notiDisposable.add(disposable);
                 }
             }else{
                 if(isConnected(device.getMacAddress())){
@@ -453,7 +453,7 @@ public class BluetoothLeServiceCPR extends Service {
                                     bytes -> onDepthReceived(device, bytes),
                                     this::onNotificationSetupFailure
                             );
-                    compositeDisposable.add(disposable);
+                    notiDisposable.add(disposable);
                 }
             }
         }
@@ -527,6 +527,7 @@ public class BluetoothLeServiceCPR extends Service {
     private ArrayList<RxBleConnection> mRxBleConnections = new ArrayList<>();
     private PublishSubject<Boolean> disconnectTriggerSubject = PublishSubject.create();
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    public CompositeDisposable notiDisposable = new CompositeDisposable();
     private ArrayList<RxBleConnection.RxBleConnectionState> connectionChecking = new ArrayList<>();
     private CompositeDisposable angleDisposables = new CompositeDisposable();
     private Handler angleHandler = new Handler(Looper.getMainLooper());

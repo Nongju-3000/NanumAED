@@ -550,6 +550,7 @@ public class CPRActivity extends AppCompatActivity {
 
     private RxBleClient rxBleClient;
     private Disposable scanDisposable;
+    private RxBleDevice bleDevice1, bleDevice2;
 
     //TODO onCreate
     public void onCreate(Bundle savedInstanceState) {
@@ -920,6 +921,21 @@ public class CPRActivity extends AppCompatActivity {
         //Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
         JitsiMeetActivityDelegate.onBackPressed();
+        bluetoothLeServiceCPR.notiDisposable.clear();
+        bluetoothLeServiceCPR.isCharDRegistereds.set(0, false);
+        bluetoothLeServiceCPR.isCharDRegistereds.set(1, false);
+        bluetoothLeServiceCPR.isCharARegistereds.set(0, false);
+        bluetoothLeServiceCPR.isCharARegistereds.set(1, false);
+        try{
+            bluetoothLeServiceCPR.broadCastRxConnectionUpdate(bleDevice1, 0);
+        } catch (Exception e){
+
+         }
+        try{
+            bluetoothLeServiceCPR.broadCastRxConnectionUpdate(bleDevice2, 1);
+        } catch (Exception e){
+
+         }
     }
 
     private void disconnectJitsi() {
@@ -1987,13 +2003,17 @@ public class CPRActivity extends AppCompatActivity {
             for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter.mLeDevices) {
                 String address = bluetoothDevice.getMacAddress();
                 if (Objects.equals(Devices.get("Device_01"), address)) {
-                    bluetoothLeServiceCPR.connect(address, 0);
+                    if(bluetoothLeServiceCPR.connect(address, 0)){
+                        bleDevice1 = rxBleClient.getBleDevice(address);
+                    }
                 }
             }
             for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter02.mLeDevices) {
                 String address = bluetoothDevice.getMacAddress();
                 if (Objects.equals(Devices.get("Device_02"), address)) {
-                    bluetoothLeServiceCPR.connect(address, 1);
+                    if(bluetoothLeServiceCPR.connect(address, 1)){
+                        bleDevice2 = rxBleClient.getBleDevice(address);
+                    }
                 }
             }
         }
@@ -2047,7 +2067,10 @@ public class CPRActivity extends AppCompatActivity {
                                     if (Devices.get("Device_01").equals(bluetoothDevice.getMacAddress())) {
                                         if (bluetoothLeServiceCPR != null) {
                                             if (!bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
-                                                bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 0);
+                                                if(bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 0)){
+                                                    bleDevice1 = bluetoothDevice;
+
+                                                }
                                             }
                                         }
                                     }
@@ -2058,7 +2081,9 @@ public class CPRActivity extends AppCompatActivity {
                                         if (Devices.get("Device_02").equals(bluetoothDevice.getMacAddress())) {
                                             if (bluetoothLeServiceCPR != null) {
                                                 if (!bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
-                                                    bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 1);
+                                                    if(bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 1)){
+                                                        bleDevice2 = bluetoothDevice;
+                                                    }
                                                 }
                                             }
                                         }
@@ -2839,7 +2864,8 @@ public class CPRActivity extends AppCompatActivity {
                     + reportItems.get(0).getReport_position_correct() + "/"
                     + reportItems.get(0).getReport_lung_num() + "/"
                     + reportItems.get(0).getReport_lung_correct() + "/"
-                    + stopList
+                    + stopList + "/"
+                    + converters.writingStringFromList(reportItems.get(0).getReport_bletime_list())
                     , getTime_
                     , UserName);
 
