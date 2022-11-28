@@ -367,7 +367,7 @@ public class CPRActivity extends AppCompatActivity {
     String[] address_array01;
     double max_lung01 = 100;
     double min_lung01 = 64;
-    private final int BREOVERTIME = 16;
+    private final int BREOVERTIME = 8;
 
     int ventil_volume_01 = 0;
 
@@ -2700,7 +2700,7 @@ public class CPRActivity extends AppCompatActivity {
             cpr_timer.setText("" + Minutes + ":"
                     + String.format("%02d", Seconds));
 
-            handler.postDelayed(this, 10);
+            handler.postDelayed(this, 0);
 
             // String[] timer_sec = cpr_timer.getText().toString().split(":");
 
