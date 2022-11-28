@@ -139,6 +139,7 @@ public class RoomActivity extends AppCompatActivity {
     private RxBleClient rxBleClient;
     private Disposable scanDisposable;
     private TextView manual_tv;
+    private boolean trainercheck = false;
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -392,6 +393,7 @@ public class RoomActivity extends AppCompatActivity {
                 intent1.putExtras(bundle);
             }
 
+
             if(room.getText().toString().length() == 0){
                 Toast.makeText(getApplication(), getString(R.string.enter_room), Toast.LENGTH_SHORT).show();
             }else{
@@ -406,6 +408,24 @@ public class RoomActivity extends AppCompatActivity {
                                 if(datas.getKey().equals(room.getText().toString()))
                                     roomCheck = true;
                             }if(roomCheck){
+
+                                databaseReference.child("Room").child(room.getText().toString()).child("trainer").orderByChild("name").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot datas: dataSnapshot.getChildren()){
+                                            if(name.getText().toString().equals(datas.child("name").getValue().toString())){
+                                                trainercheck = false;
+                                            } else {
+                                                trainercheck = true;
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                                 databaseReference.child("Room").child(room.getText().toString()).child("user").orderByChild("name").equalTo(name.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -419,7 +439,7 @@ public class RoomActivity extends AppCompatActivity {
                                                 count2++;
                                             }
                                           }
-                                        if(count == 0){
+                                        if(count == 0 && trainercheck){
                                             if(roomCheck) {
                                                 NameData nameData = new NameData(name.getText().toString(), token);
                                                 databaseReference.child("Room").child(room.getText().toString()).child("user").push().setValue(nameData);
@@ -431,11 +451,11 @@ public class RoomActivity extends AppCompatActivity {
                                                 finish();
                                             }
                                         }else{
-                                            if(count2 == 0){
+                                            if(count2 == 0 || databaseReference.child("Room").child(room.getText().toString()).child("trainer").orderByChild("name").equals(name.getText().toString())){
                                                 Toast.makeText(getApplication(), getString(R.string.exist_name), Toast.LENGTH_SHORT).show();
                                                 Log.e("Test", "token = "+FirebaseMessaging.getInstance().getToken());
                                             }
-                                            else{
+                                            else if(trainercheck){
                                                 NameData nameData = new NameData(name.getText().toString(), token);
                                          //       databaseReference.child("Room").child(room.getText().toString()).child("user").push().setValue(nameData);
                                                 ChatData chatData = new ChatData("입장했습니다.", getTime, name.getText().toString());  // 유저 이름과 메세지로 chatData 만들기

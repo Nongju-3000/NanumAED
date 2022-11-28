@@ -865,7 +865,7 @@ public class CPRActivity extends AppCompatActivity {
             return;
         }
         toLevel01 = temp_level;
-        if (toLevel01 > fromLevel01) {
+        if (toLevel01 > fromLevel01 && toLevel01 > 4000) {
             // cancel previous process first
             mDownHandler01.removeCallbacks(animateDownImage01);
             fromLevel01 = toLevel01;
