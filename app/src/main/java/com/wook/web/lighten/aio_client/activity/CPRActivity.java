@@ -367,7 +367,7 @@ public class CPRActivity extends AppCompatActivity {
     String[] address_array01;
     double max_lung01 = 100;
     double min_lung01 = 64;
-    private final int BREOVERTIME = 8;
+    private final int BREOVERTIME = 16;
 
     int ventil_volume_01 = 0;
 
@@ -928,11 +928,13 @@ public class CPRActivity extends AppCompatActivity {
         bluetoothLeServiceCPR.isCharARegistereds.set(1, false);
         try{
             bluetoothLeServiceCPR.broadCastRxConnectionUpdate(bleDevice1, 0);
+            Log.e(TAG, "bleDevice1_broadCastRxConnectionUpdate");
         } catch (Exception e){
 
          }
         try{
             bluetoothLeServiceCPR.broadCastRxConnectionUpdate(bleDevice2, 1);
+            Log.e(TAG, "bleDevice2_broadCastRxConnectionUpdate");
         } catch (Exception e){
 
          }
@@ -1232,6 +1234,7 @@ public class CPRActivity extends AppCompatActivity {
                         databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
 
                         if (position01 <= 11) {
+                            isBreath01 = false;
                             switch (position01) {
                                 case 1:
                                     final Animation animation0 = new TranslateAnimation(0, -100, 0, 0);
@@ -1375,7 +1378,7 @@ public class CPRActivity extends AppCompatActivity {
                                 if (breath01 < bre_threshold01 && isBreath01) {
                                     breathval_01.add(71.0f);
                                     breathtime_01.add(current_time);
-                                    isBreath01 = false;
+
                                 }
 
                                 if (cycle_01 == Integer.parseInt(mode_cpr_value.getText().toString())) {
