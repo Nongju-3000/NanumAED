@@ -2785,6 +2785,7 @@ public class CPRActivity extends AppCompatActivity {
             }
 
             isReset = true;
+            try{
             ArrayList<ReportItem> reportItems = new ArrayList<>();
             Log.d("presstime", String.valueOf(presstime_list01));
             reportItems.add(report_setting(cprItem_01, UserName, presstime_list01, breathval_01, breathtime_01, String.valueOf(ventil_volume_01),
@@ -2817,6 +2818,7 @@ public class CPRActivity extends AppCompatActivity {
                     depth_count++;
                 }
             }
+
             double avg_depth = depth_sum / depth_count;
             String avg_depth_s = String.format("%.2f", avg_depth);
             String bpm = reportItems.get(0).getReport_bpm();
@@ -2870,6 +2872,9 @@ public class CPRActivity extends AppCompatActivity {
                     , UserName);
 
             databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
         MillisecondTime = 0L;
