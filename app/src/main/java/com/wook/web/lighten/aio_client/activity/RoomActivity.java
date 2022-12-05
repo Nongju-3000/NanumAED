@@ -191,14 +191,14 @@ public class RoomActivity extends AppCompatActivity {
                 .setShouldLogAttributeValues(true)
                 .build()
         );
-        RxJavaPlugins.setErrorHandler(throwable -> {
+        /*RxJavaPlugins.setErrorHandler(throwable -> {
             if (throwable instanceof UndeliverableException && throwable.getCause() instanceof BleException) {
                 Log.v("RxBleApplication", "Suppressed UndeliverableException: " + throwable.toString());
                 return; // ignore BleExceptions as they were surely delivered at least once
             }
             // add other custom handlers if needed
             throw new RuntimeException("Unexpected Throwable in RxJavaPlugins error handler", throwable);
-        });
+        });*/
 
        // Intent gattServiceIntent = new Intent(this, BluetoothLeServiceCPR.class);
        // bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
@@ -521,6 +521,7 @@ public class RoomActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
+        bluetoothLeServiceCPR.disconnect();
         bluetoothLeServiceCPR = null;
     }
 

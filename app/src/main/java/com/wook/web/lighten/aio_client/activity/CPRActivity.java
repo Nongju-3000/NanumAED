@@ -1898,6 +1898,8 @@ public class CPRActivity extends AppCompatActivity {
                     sender.setAction(BluetoothLeServiceCPR.ACTION_READY);
                     startService(sender);
 
+                    bluetoothLeServiceCPR.disconnect();
+
                     long now = System.currentTimeMillis();
                     Date date = new Date(now);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -2681,6 +2683,8 @@ public class CPRActivity extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         unbindService(mServiceConnection);
+        bluetoothLeServiceCPR.disconnect();
+        bluetoothLeServiceCPR = null;
     }
 
     //TODO Timer
@@ -2790,7 +2794,7 @@ public class CPRActivity extends AppCompatActivity {
             isReset = true;
             try{
             ArrayList<ReportItem> reportItems = new ArrayList<>();
-            Log.d("presstime", String.valueOf(presstime_list01));
+            Log.e("bluetoothtime", String.valueOf(bluetoothtime_list01));
             reportItems.add(report_setting(cprItem_01, UserName, presstime_list01, breathval_01, breathtime_01, String.valueOf(ventil_volume_01),
                     String.valueOf(cycle_01), String.valueOf(score_01),
                     String.valueOf(minDepth), String.valueOf(maxDepth),
@@ -3236,6 +3240,9 @@ public class CPRActivity extends AppCompatActivity {
             bpm = add_bpm / gBpm.size();
         }
         int angle = (int) (((double) angleSum / (double) Depth_size));
+        if(bluetoothtime_list.isEmpty()){
+            bluetoothtime_list.add(0f);
+        }
 
         reportItem = new ReportItem(name
                 , String.valueOf(Seconds_)

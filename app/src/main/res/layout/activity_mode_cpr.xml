@@ -400,7 +400,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
                                     android:scaleType="centerCrop"
-                                    android:src="@drawable/angle_orange"
+                                    android:src="@drawable/angle_gray"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintStart_toStartOf="parent"

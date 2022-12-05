@@ -9,6 +9,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 
 import com.jakewharton.rx.ReplayingShare;
 import com.polidea.rxandroidble2.RxBleClient;
@@ -495,6 +496,7 @@ public class BluetoothLeServiceCPR extends Service {
     private void onBreathReceived(RxBleDevice bleDevice, byte[] bytes){
         final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
         if (bytes != null && bytes.length > 0) {
+            Log.e("Breathreceived","on");
             final StringBuilder stringBuilder = new StringBuilder(bytes.length);
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
@@ -527,6 +529,8 @@ public class BluetoothLeServiceCPR extends Service {
     private ArrayList<RxBleConnection> mRxBleConnections = new ArrayList<>();
     private PublishSubject<Boolean> disconnectTriggerSubject = PublishSubject.create();
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final CompositeDisposable statecompositeDisposable = new CompositeDisposable();
+    private Boolean isregisterstateDisposable = false;
     public CompositeDisposable notiDisposable = new CompositeDisposable();
     private ArrayList<RxBleConnection.RxBleConnectionState> connectionChecking = new ArrayList<>();
     private CompositeDisposable angleDisposables = new CompositeDisposable();
@@ -553,10 +557,14 @@ public class BluetoothLeServiceCPR extends Service {
                 );
         compositeDisposable.add(connectionDisposable);
 
-        Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(newState -> sendNewState(bleDevice, newState, index));
-        compositeDisposable.add(stateDisposable);
+        if(!isregisterstateDisposable) {
+            Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(newState -> sendNewState(bleDevice, newState, index));
+            statecompositeDisposable.add(stateDisposable);
+            isregisterstateDisposable = true;
+        }
+
         return true;
     }
     private void dispose(){
@@ -566,6 +574,7 @@ public class BluetoothLeServiceCPR extends Service {
 
     private void onConnectionFailure(Throwable throwable) {
         //noinspection ConstantConditions
+        Print.e(TAG, "Connection Failure : " +throwable.getMessage());
     }
 
     public void writeCharacteristic(int index, String data) {
