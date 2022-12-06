@@ -2629,6 +2629,9 @@ public class CPRActivity extends AppCompatActivity {
                             //YouTubePlayerView.play(data, null);
                         }*/
                     }
+                    if(chatData.getMessage().contains("화면최소화")){
+                        JitsiMeetActivityDelegate.onBackPressed();
+                    }
                     if(chatData.getMessage().contains("pause")){
                         if(youTubePlayer != null)
                             youTubePlayer.pause();
