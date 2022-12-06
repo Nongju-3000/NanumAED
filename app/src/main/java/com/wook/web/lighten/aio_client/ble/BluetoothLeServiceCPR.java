@@ -481,6 +481,9 @@ public class BluetoothLeServiceCPR extends Service {
         if(isStart){
             writeCharacteristic(index, mode);
         }
+        if(Objects.requireNonNull(device.getName()).contains("AIO")){
+            writeCharacteristic(index, "e0");
+        }
         final Intent intent = new Intent(ACTION_BLE_CONNECTED);
         intent.putExtra(EXTRA_BLE_DEVICE_ADDRESS, device.getMacAddress());
         sendBroadcast(intent);
@@ -499,7 +502,6 @@ public class BluetoothLeServiceCPR extends Service {
     private void onBreathReceived(RxBleDevice bleDevice, byte[] bytes){
         final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
         if (bytes != null && bytes.length > 0) {
-            Log.e("Breathreceived","on");
             final StringBuilder stringBuilder = new StringBuilder(bytes.length);
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
