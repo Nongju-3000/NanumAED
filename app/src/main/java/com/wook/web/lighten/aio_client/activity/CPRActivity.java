@@ -367,6 +367,7 @@ public class CPRActivity extends AppCompatActivity {
     String[] address_array01;
     double max_lung01 = 100;
     double min_lung01 = 64;
+
     private final int BREOVERTIME = 16;
 
     int ventil_volume_01 = 0;
@@ -2004,25 +2005,6 @@ public class CPRActivity extends AppCompatActivity {
         Devices.put("Device_01", Device01);
         Devices.put("Device_02", Device02);
 
-        if (!Devices.isEmpty()) {
-            for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter.mLeDevices) {
-                String address = bluetoothDevice.getMacAddress();
-                if (Objects.equals(Devices.get("Device_01"), address)) {
-                    if(bluetoothLeServiceCPR.connect(address, 0)){
-                        bleDevice1 = rxBleClient.getBleDevice(address);
-                    }
-                }
-            }
-            for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter02.mLeDevices) {
-                String address = bluetoothDevice.getMacAddress();
-                if (Objects.equals(Devices.get("Device_02"), address)) {
-                    if(bluetoothLeServiceCPR.connect(address, 1)){
-                        bleDevice2 = rxBleClient.getBleDevice(address);
-                    }
-                }
-            }
-        }
-
         final NeumorphButton band_dialog_reset = (NeumorphButton) view.findViewById(R.id.cpr_dialog_reset);
         final NeumorphButton band_dialog_layout = (NeumorphButton) view.findViewById(R.id.cpr_dialog_layout);
         device_btn01 = (NeumorphImageButton) view.findViewById(R.id.device_btn_cpr01);
@@ -2034,6 +2016,7 @@ public class CPRActivity extends AppCompatActivity {
         band_dialog_layout.setVisibility(View.VISIBLE);
 
         if (!Devices.isEmpty()) {
+            Log.e(TAG, "devices is not empty");
             List<BluetoothDevice> devices = bluetoothManager.getConnectedDevices(BluetoothGatt.GATT);
             int status = -1;
             for (BluetoothDevice device : devices) {
@@ -2052,54 +2035,29 @@ public class CPRActivity extends AppCompatActivity {
                     }
                 }
             }
+
+            handler.postDelayed(() -> {
+                for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter.mLeDevices) {
+                    String address = bluetoothDevice.getMacAddress();
+                    Log.e(TAG, "address = "+address);
+                    if (Objects.equals(Devices.get("Device_01"), address)) {
+                        bluetoothLeServiceCPR.connect(address, 0);
+                        bleDevice1 = rxBleClient.getBleDevice(address);
+                    }
+                }
+                for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter02.mLeDevices) {
+                    String address = bluetoothDevice.getMacAddress();
+                    Log.e(TAG, "address2 = "+address);
+                    if (Objects.equals(Devices.get("Device_02"), address)) {
+                        bluetoothLeServiceCPR.connect(address, 1);
+                        bleDevice2 = rxBleClient.getBleDevice(address);
+                    }
+                }
+            }, 2000);
         }
 
+
         final AlertDialog dialog = builder.create();
-
-        new Thread(() -> {
-            while (isConnect) {
-                try {
-                    Thread.sleep(60);
-                    scan_count++;
-                    if (scan_count == 167) {
-                        scanLeDevice(true);
-                        scan_count = 0;
-                    }
-                    if (!Devices.isEmpty()) {
-                        if (bluetoothLeServiceCPR != null) {
-                            for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter.mLeDevices) {
-                                if ((Devices.get("Device_01") != null))
-                                    if (Devices.get("Device_01").equals(bluetoothDevice.getMacAddress())) {
-                                        if (bluetoothLeServiceCPR != null) {
-                                            if (!bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
-                                                if(bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 0)){
-                                                    bleDevice1 = bluetoothDevice;
-
-                                                }
-                                            }
-                                        }
-                                    }
-                            }
-                            if (!Devices.isEmpty())
-                                for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter02.mLeDevices) {
-                                    if ((Devices.get("Device_02") != null))
-                                        if (Devices.get("Device_02").equals(bluetoothDevice.getMacAddress())) {
-                                            if (bluetoothLeServiceCPR != null) {
-                                                if (!bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
-                                                    if(bluetoothLeServiceCPR.connect(bluetoothDevice.getMacAddress(), 1)){
-                                                        bleDevice2 = bluetoothDevice;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                }
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
 
         device_btn01.setOnClickListener(v -> {
             if ((Devices.get("Device_01") != null))
@@ -2790,7 +2748,6 @@ public class CPRActivity extends AppCompatActivity {
                     bluetoothtime_list01.add((float) Seconds_);
                 }
             }
-
             isReset = true;
             try{
             ArrayList<ReportItem> reportItems = new ArrayList<>();
@@ -2830,7 +2787,6 @@ public class CPRActivity extends AppCompatActivity {
             String avg_depth_s = String.format("%.2f", avg_depth);
             String bpm = reportItems.get(0).getReport_bpm();
             String score;
-
             int sum_depth = Integer.parseInt(reportItems.get(0).getReport_depth_correct())
                     + Integer.parseInt(reportItems.get(0).getReport_up_depth())
                     + Integer.parseInt(reportItems.get(0).getReport_down_depth());
@@ -2853,7 +2809,6 @@ public class CPRActivity extends AppCompatActivity {
 
             ChatData chatData__ = new ChatData("score/"+score+"/"+avg_depth_s+"/"+bpm, getTime_, UserName);
             databaseReference.child("Room").child(room).child("message").push().setValue(chatData__);
-
             ChatData chatData_ = new ChatData("report/" + reportItems.get(0).getReport_end_time() + "/"
                     + reportItems.get(0).getReport_interval_sec() + "/"
                     + reportItems.get(0).getReport_cycle() + "/"
@@ -3165,7 +3120,6 @@ public class CPRActivity extends AppCompatActivity {
             }
         }
     }
-
 
     private ReportItem report_setting(ArrayList<UserItem> Useritem, String name, ArrayList<Float> presstimeList,
                                       ArrayList<Float> breathval, ArrayList<Float> breathtime, String ventil_volume,

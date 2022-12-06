@@ -368,6 +368,7 @@ public class BluetoothLeServiceCPR extends Service {
                 isCharDRegistereds.add(false);
                 isCharARegistereds.add(false);
                 connectionChecking.add(RxBleConnection.RxBleConnectionState.DISCONNECTED);
+                connectionDisposables.add(null);
             }
         }
         return true;
@@ -403,7 +404,9 @@ public class BluetoothLeServiceCPR extends Service {
     public void broadCastRxConnectionUpdate(final RxBleDevice device, int index){
         RxBleConnection rxBleConnection = mRxBleConnections.get(index);
         Print.e(TAG, "broadCastRxConnectionUpdate");
+
         if(isConnected(device.getMacAddress())) {
+            connectCompositeDisposable.add(connectionDisposables.get(index));
             Disposable disposable = rxBleConnection.setupNotification(CHAR_POSITION_UUID)
                     .doOnSubscribe(notificationObservable -> {
                         rxEnableNotification(device, rxBleConnection, index);
@@ -535,6 +538,8 @@ public class BluetoothLeServiceCPR extends Service {
     private ArrayList<RxBleConnection.RxBleConnectionState> connectionChecking = new ArrayList<>();
     private CompositeDisposable angleDisposables = new CompositeDisposable();
     private Handler angleHandler = new Handler(Looper.getMainLooper());
+    private ArrayList<Disposable> connectionDisposables = new ArrayList<>();
+    private CompositeDisposable connectCompositeDisposable = new CompositeDisposable();
 
     public boolean connect(final String macAddress, int index){
         RxBleDevice bleDevice = rxBleClient.getBleDevice(macAddress);
@@ -544,36 +549,37 @@ public class BluetoothLeServiceCPR extends Service {
                 .takeUntil(disconnectTriggerSubject)
                 .compose(ReplayingShare.instance());
 
-        final Disposable connectionDisposable = connectionObservable
+        connectionDisposables.set(index, connectionObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(this::dispose)
                 .subscribe(
                         connection -> {
                             mRxBleConnections.set(index, connection);
+                            connectionChecking.set(index, RxBleConnection.RxBleConnectionState.CONNECTED);
+                            Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(newState -> sendNewState(bleDevice, newState, index));
+                            statecompositeDisposable.add(stateDisposable);
+
                             broadCastRxConnectionUpdate(bleDevice, index);
                         },
-                        this::onConnectionFailure,
+                        throwable -> {
+                            onConnectionFailure(throwable, macAddress, index);
+                        },
                         this::onConnectionFinished
-                );
-        compositeDisposable.add(connectionDisposable);
-
-        if(!isregisterstateDisposable) {
-            Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(newState -> sendNewState(bleDevice, newState, index));
-            statecompositeDisposable.add(stateDisposable);
-            isregisterstateDisposable = true;
-        }
+                )
+        );
 
         return true;
     }
+
     private void dispose(){
     }
     private void onConnectionFinished() {
     }
 
-    private void onConnectionFailure(Throwable throwable) {
-        //noinspection ConstantConditions
+    private void onConnectionFailure(Throwable throwable, String mac, int index) {
+        connect(mac, index);
         Print.e(TAG, "Connection Failure : " +throwable.getMessage());
     }
 
@@ -587,6 +593,7 @@ public class BluetoothLeServiceCPR extends Service {
         byte[] sender = HexString.hexToBytes(data);
         if(connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
             mRxBleConnections.get(index).writeCharacteristic(UUID_WRITE, sender).subscribe();
+            Log.e(TAG, "write characteristic, data = "+data);
         }
     }
 

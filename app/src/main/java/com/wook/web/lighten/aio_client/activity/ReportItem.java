@@ -78,7 +78,7 @@ public class ReportItem implements Serializable {
     private String report_interval_sec;
     private String report_cycle;
     private String report_depth_correct;
-    private String report_up_depth;
+    private String report_up_depth;     
     private String report_down_depth;
     private String report_bpm;
     private String report_angle;
