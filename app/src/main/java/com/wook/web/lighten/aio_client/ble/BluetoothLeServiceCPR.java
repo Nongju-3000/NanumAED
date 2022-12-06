@@ -368,7 +368,7 @@ public class BluetoothLeServiceCPR extends Service {
                 isCharDRegistereds.add(false);
                 isCharARegistereds.add(false);
                 connectionChecking.add(RxBleConnection.RxBleConnectionState.DISCONNECTED);
-                connectionDisposables.add(null);
+                //connectionDisposables.add(null);
             }
         }
         return true;
@@ -406,7 +406,7 @@ public class BluetoothLeServiceCPR extends Service {
         Print.e(TAG, "broadCastRxConnectionUpdate");
 
         if(isConnected(device.getMacAddress())) {
-            connectCompositeDisposable.add(connectionDisposables.get(index));
+            //connectCompositeDisposable.add(connectionDisposables.get(index));
             Disposable disposable = rxBleConnection.setupNotification(CHAR_POSITION_UUID)
                     .doOnSubscribe(notificationObservable -> {
                         rxEnableNotification(device, rxBleConnection, index);
@@ -417,7 +417,7 @@ public class BluetoothLeServiceCPR extends Service {
                             bytes -> onPositionReceived(device, bytes),
                             this::onNotificationSetupFailure
                     );
-            notiDisposable.add(disposable);
+            compositeDisposable.add(disposable);
         }
     }
 
@@ -437,7 +437,7 @@ public class BluetoothLeServiceCPR extends Service {
                                     bytes -> onBreathReceived(device, bytes),
                                     this::onNotificationSetupFailure
                             );
-                    notiDisposable.add(disposable);
+                    compositeDisposable.add(disposable);
                 }
             }else{
                 if(isConnected(device.getMacAddress())){
@@ -457,7 +457,7 @@ public class BluetoothLeServiceCPR extends Service {
                                     bytes -> onDepthReceived(device, bytes),
                                     this::onNotificationSetupFailure
                             );
-                    notiDisposable.add(disposable);
+                    compositeDisposable.add(disposable);
                 }
             }
         }
@@ -472,7 +472,7 @@ public class BluetoothLeServiceCPR extends Service {
                                 bytes -> onBreathReceived(device, bytes),
                                 this::onNotificationSetupFailure
                         );
-                angleDisposables.add(disposable);
+                compositeDisposable.add(disposable);
             }
         };
     }
@@ -535,7 +535,10 @@ public class BluetoothLeServiceCPR extends Service {
     private PublishSubject<Boolean> disconnectTriggerSubject = PublishSubject.create();
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final CompositeDisposable statecompositeDisposable = new CompositeDisposable();
-    private Boolean isregisterstateDisposable = false;
+    private ArrayList<Boolean> isregisterstateDisposable = new ArrayList<Boolean>(){{
+        add(false);
+        add(false);
+    }};
     public CompositeDisposable notiDisposable = new CompositeDisposable();
     private ArrayList<RxBleConnection.RxBleConnectionState> connectionChecking = new ArrayList<>();
     private CompositeDisposable angleDisposables = new CompositeDisposable();
@@ -551,26 +554,26 @@ public class BluetoothLeServiceCPR extends Service {
                 .takeUntil(disconnectTriggerSubject)
                 .compose(ReplayingShare.instance());
 
-        connectionDisposables.set(index, connectionObservable
+        final Disposable connectionDisposable = connectionObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(this::dispose)
                 .subscribe(
                         connection -> {
                             mRxBleConnections.set(index, connection);
-                            connectionChecking.set(index, RxBleConnection.RxBleConnectionState.CONNECTED);
-                            Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(newState -> sendNewState(bleDevice, newState, index));
-                            statecompositeDisposable.add(stateDisposable);
-
                             broadCastRxConnectionUpdate(bleDevice, index);
                         },
-                        throwable -> {
-                            onConnectionFailure(throwable, macAddress, index);
-                        },
+                        this::onConnectionFailure,
                         this::onConnectionFinished
-                )
-        );
+                );
+        compositeDisposable.add(connectionDisposable);
+
+        if(!isregisterstateDisposable.get(index)) {
+            Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(newState -> sendNewState(bleDevice, newState, index));
+            statecompositeDisposable.add(stateDisposable);
+            isregisterstateDisposable.set(index, true);
+        }
 
         return true;
     }
@@ -580,8 +583,8 @@ public class BluetoothLeServiceCPR extends Service {
     private void onConnectionFinished() {
     }
 
-    private void onConnectionFailure(Throwable throwable, String mac, int index) {
-        connect(mac, index);
+    private void onConnectionFailure(Throwable throwable) {
+        //connect(mac, index);
         Print.e(TAG, "Connection Failure : " +throwable.getMessage());
     }
 
@@ -601,6 +604,7 @@ public class BluetoothLeServiceCPR extends Service {
 
     public void disconnect(){
         compositeDisposable.clear();
+        statecompositeDisposable.clear();
         for(int i=0; i< isCharARegistereds.size(); i++){
             isCharDRegistereds.set(i, false);
             isCharARegistereds.set(i, false);

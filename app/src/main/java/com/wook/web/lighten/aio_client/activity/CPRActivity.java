@@ -933,11 +933,11 @@ public class CPRActivity extends AppCompatActivity {
         //Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
         JitsiMeetActivityDelegate.onBackPressed();
-        bluetoothLeServiceCPR.notiDisposable.clear();
+        /*bluetoothLeServiceCPR.notiDisposable.clear();
         bluetoothLeServiceCPR.isCharDRegistereds.set(0, false);
         bluetoothLeServiceCPR.isCharDRegistereds.set(1, false);
         bluetoothLeServiceCPR.isCharARegistereds.set(0, false);
-        bluetoothLeServiceCPR.isCharARegistereds.set(1, false);
+        bluetoothLeServiceCPR.isCharARegistereds.set(1, false);*/
         try{
             bluetoothLeServiceCPR.broadCastRxConnectionUpdate(bleDevice1, 0);
             Log.e(TAG, "bleDevice1_broadCastRxConnectionUpdate");
@@ -2787,6 +2787,9 @@ public class CPRActivity extends AppCompatActivity {
         unbindService(mServiceConnection);
         bluetoothLeServiceCPR.disconnect();
         bluetoothLeServiceCPR = null;
+        Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
+
     }
 
     //TODO Timer

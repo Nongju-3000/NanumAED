@@ -95,6 +95,8 @@ import com.wook.web.lighten.aio_client.utils.LocationPermission;
 import com.wook.web.lighten.aio_client.utils.Print;
 import com.wook.web.lighten.aio_client.utils.ScanExceptionHandler;
 
+import org.jitsi.meet.sdk.BroadcastIntentHelper;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -523,6 +525,8 @@ public class RoomActivity extends AppCompatActivity {
         unbindService(mServiceConnection);
         bluetoothLeServiceCPR.disconnect();
         bluetoothLeServiceCPR = null;
+        Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
     }
 
     @Override
