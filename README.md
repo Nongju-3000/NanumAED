@@ -3,8 +3,8 @@ AIO Client Android
 
 ### 12/06 개선사항
   >메인 화면으로 돌아갈 때 disconnect\n
-  -어플 종료할때 Jitsi 방 나가기
-  -BPM 바 범위밖으로 안나가게 하기
+  >어플 종료할때 Jitsi 방 나가기
+  >BPM 바 범위밖으로 안나가게 하기
   -Event Time Countdown으로 변경
   -AIO만 연결할 경우 Angle게이지 회색
   -count 표시(평가땐 표시x)
