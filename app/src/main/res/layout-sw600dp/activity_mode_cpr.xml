@@ -192,6 +192,17 @@
                                     app:layout_constraintDimensionRatio="1:1"/>
 
                                 <ImageView
+                                    android:id="@+id/babyCircle"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    app:layout_constraintTop_toTopOf="@id/anne"
+                                    app:layout_constraintBottom_toBottomOf="@id/anne"
+                                    app:layout_constraintStart_toStartOf="@id/anne"
+                                    app:layout_constraintEnd_toEndOf="@id/anne"
+                                    app:layout_constraintDimensionRatio="1:1"/>
+
+
+                                <ImageView
                                     android:id="@+id/test_lung01"
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
@@ -258,6 +269,46 @@
                                         android:layout_height="match_parent"
                                         android:alpha="0.5"
                                         android:background="#777777" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/countlayout"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:orientation="horizontal"
+                                    android:visibility="invisible"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintWidth_percent="0.25"
+                                    app:layout_constraintHeight_percent="0.13"
+                                    app:layout_constraintVertical_bias="0.05">
+                                    <TextView
+                                        android:id="@+id/correctCount"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="0"
+                                        android:gravity="center|end"
+                                        android:autoSizeTextType="uniform"
+                                        android:textColor="@color/white"/>
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="0.2"
+                                        android:autoSizeTextType="uniform"
+                                        android:text="/"
+                                        android:textColor="@color/white"/>
+                                    <TextView
+                                        android:id="@+id/totalCount"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="0"
+                                        android:gravity="center|start"
+                                        android:autoSizeTextType="uniform"
+                                        android:textColor="@color/white"/>
                                 </LinearLayout>
 
 

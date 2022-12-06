@@ -201,18 +201,15 @@ public class CPRActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD = 20000; //scan time 4000
 
     private Button depth_btn01;
-
-
     private Button press_ave_btn01;
 
     private View view01;
 
-
     private Button standard_btn01;
-
 
     private ImageView lung01;
     private ImageView test_lung01;
+    private ImageView babyCircle;
     ClipDrawable lung_clip01;
 
     private Switch start_mode_cpr;
@@ -237,7 +234,7 @@ public class CPRActivity extends AppCompatActivity {
 
     private int score_01, cycle_01 = 0;
 
-    private int Seconds_, Seconds, Minutes, MilliSeconds;
+    private int Seconds_, Seconds, Minutes, MilliSeconds, mSeconds_, mSeconds;
 
     private int handOff_01;
 
@@ -284,6 +281,8 @@ public class CPRActivity extends AppCompatActivity {
     ArrayList<Float> bpm1 = new ArrayList<>();
     ArrayList<Float> tmp_bpm1 = new ArrayList<>();
 
+    private int event_time = 0;
+
     float position_bpm = 0f;
     private int position_num01 = 0;
     private int position_correct01 = 0;
@@ -299,6 +298,7 @@ public class CPRActivity extends AppCompatActivity {
     private TextView remote_depth_text;
     private TextView remote_arrow_down_text;
     private TextView remote_arrow_up_text;
+    private LinearLayout count_layout;
 
     private ImageView cpr_ani01, cpr_ani02;
 
@@ -311,7 +311,10 @@ public class CPRActivity extends AppCompatActivity {
 
     private ImageView angle_remote, press_position;
     private ImageButton press_point_btn;
-    private TextView mainName;
+    private TextView mainName, correctCount, totalCount;
+
+    private int correct_position = 0;
+    private int total_position = 0;
 
     private AutoFitTextureView cameraView;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.ACCESS_FINE_LOCATION"};
@@ -676,6 +679,10 @@ public class CPRActivity extends AppCompatActivity {
 
         depth_btn_cpr_01 = findViewById(R.id.depth_btn_cpr_01);
 
+        correctCount = findViewById(R.id.correctCount);
+        totalCount = findViewById(R.id.totalCount);
+        count_layout = findViewById(R.id.countlayout);
+
         start_mode_cpr.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPreferences.edit().putBoolean("starModeCPR", isChecked).apply();
             start_mode = isChecked;
@@ -728,7 +735,7 @@ public class CPRActivity extends AppCompatActivity {
         positionLayout.post(() -> {
             int layout2_width = layout120.getWidth();
             press_width = press_ave_btn01.getWidth();
-            frame_width = positionLayout.getWidth();
+            frame_width = positionLayout.getWidth()-press_width;
 
             frame_interval = (frame_width - press_width) / 4;
             int text_interval = (int) frame_interval + layout2_width / 2;
@@ -759,6 +766,8 @@ public class CPRActivity extends AppCompatActivity {
 
         cpr_ani01 = findViewById(R.id.cpr_ani01);
         cpr_ani02 = findViewById(R.id.cpr_ani02);
+
+        babyCircle = findViewById(R.id.babyCircle);
 
         backPressCloseHandler = new BackPressCloseHandler(this);
 
@@ -1525,6 +1534,7 @@ public class CPRActivity extends AppCompatActivity {
                         ChatData chatData__ = new ChatData("Depth/" + getHexToDec(spil[0]), getTime__, UserName);
                         databaseReference.child("Room").child(room).child("message").push().setValue(chatData__);
 
+
                         lung01.setVisibility(View.INVISIBLE);
                         test_lung01.setVisibility(View.INVISIBLE);
                         lung_list01.clear();
@@ -1541,8 +1551,9 @@ public class CPRActivity extends AppCompatActivity {
                         new Thread(() -> runOnUiThread(() -> {
                             remote_depth_text.setText(String.valueOf(depthSet));
                             if ((0 < depthSet && depthSet < minDepth) || (maxDepth < depthSet)) {
-                                if (!start_check)
+                                if (!start_check) {
                                     cprItem_01.add(new UserItem(Seconds_, depthSet, 0, angle01, position01));
+                                }
                                 view01.setBackgroundColor(Color.parseColor("#FF4D4D"));
                             } else if (depthSet >= minDepth && depthSet <= maxDepth) {
                                 if (!start_check)
@@ -1562,6 +1573,9 @@ public class CPRActivity extends AppCompatActivity {
                                 if (userItem.getDepth_correct() != 0 || userItem.getDepth() != 0)
                                     Depth_size = Depth_size + 1;
                             }
+
+                            correctCount.setText(String.valueOf(Depth_correct_sum01));
+                            totalCount.setText(String.valueOf(Depth_size));
                             total_count = Depth_size;
                             while (peakTimes.size() > 2) {
                                 peakTimes.remove(0);
@@ -1634,6 +1648,8 @@ public class CPRActivity extends AppCompatActivity {
 
                             cpr_ani01.startAnimation(animation1);
                             cpr_ani02.startAnimation(animation2);
+
+
                         }
 
                         depth_btn01.startAnimation(animation);
@@ -1753,19 +1769,34 @@ public class CPRActivity extends AppCompatActivity {
         }
 
         Animation animation = null;
-        if (currentBpm != 0) {
+        Log.e("BPM", "BPM : " + currentBpm);
+        Log.e("POSITION_BPM", "POSITION_BPM : " + position_bpm);
+        Log.e("frame_width_BPM", frame_width+ "");
+        if (currentBpm > 0) {
             if (currentBpm > 140) {
-                animation = new TranslateAnimation(position_bpm, frame_interval * 4, 0, 0);
-                position_bpm = frame_interval * 4;
-            } else if (currentBpm > 120) {
-                animation = new TranslateAnimation(position_bpm, frame_interval * 3 + (currentBpm - 120) * div_interval, 0, 0);
-                position_bpm = frame_interval * 3 + (currentBpm - 120) * div_interval;
+                float XDelta = frame_interval * 4;
+                if(XDelta > frame_width)
+                    XDelta = frame_width;
+                animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
+                position_bpm = XDelta;
+            } else if (currentBpm >= 120) {
+                float XDelta = frame_interval * 3 + (currentBpm - 120) * div_interval;
+                if(XDelta > frame_width)
+                    XDelta = frame_width;
+                animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
+                position_bpm = XDelta;
             } else if (currentBpm >= 110) {
-                animation = new TranslateAnimation(position_bpm, frame_interval * 2 + (currentBpm - 110) * div_interval, 0, 0);
-                position_bpm = frame_interval * 2 + (currentBpm - 110) * div_interval;
+                float XDelta = frame_interval * 2 + (currentBpm - 110) * div_interval;
+                if(XDelta > frame_width)
+                    XDelta = frame_width;
+                animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
+                position_bpm = XDelta;
             } else if (currentBpm >= 100) {
-                animation = new TranslateAnimation(position_bpm, frame_interval + (currentBpm - 100) * div_interval, 0, 0);
-                position_bpm = frame_interval + (currentBpm - 100) * div_interval;
+                float XDelta = frame_interval + (currentBpm - 100) * div_interval;
+                if(XDelta > frame_width)
+                    XDelta = frame_width;
+                animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
+                position_bpm = XDelta;
             } else {
                 animation = new TranslateAnimation(position_bpm, currentBpm * div_interval / 10, 0, 0);
                 position_bpm = currentBpm * div_interval / 10;
@@ -1898,8 +1929,6 @@ public class CPRActivity extends AppCompatActivity {
                     Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
                     sender.setAction(BluetoothLeServiceCPR.ACTION_READY);
                     startService(sender);
-
-                    bluetoothLeServiceCPR.disconnect();
 
                     long now = System.currentTimeMillis();
                     Date date = new Date(now);
@@ -2276,10 +2305,13 @@ public class CPRActivity extends AppCompatActivity {
                             try {
                                 if (cmd != null) {
                                     if(!mode){
+                                        count_layout.setVisibility(View.VISIBLE);
                                         Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
                                         sender.setAction(BluetoothLeServiceCPR.ACTION_SOUND);
                                         sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, interval);
                                         startService(sender);
+                                    } else {
+                                        count_layout.setVisibility(View.INVISIBLE);
                                     }
                                     if (!Devices.isEmpty()) { //TODO BAND SET
                                         if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
@@ -2323,6 +2355,8 @@ public class CPRActivity extends AppCompatActivity {
                         Seconds_ = 0;
                         score_01 = 0;
                         cycle_01 = 0;
+                        correct_position = 0;
+                        total_position = 0;
 
                         isReset = false;
 
@@ -2434,7 +2468,7 @@ public class CPRActivity extends AppCompatActivity {
                     if(chatData.getMessage().contains("시간/")){
                         String data[] = chatData.getMessage().split("/");
                         mode_cpr_value.setText(data[1]);
-
+                        event_time = Integer.parseInt(data[1]);
                     }
                     if(chatData.getMessage().contains("starttime/")){
                         String data[] = chatData.getMessage().split("/");
@@ -2649,18 +2683,29 @@ public class CPRActivity extends AppCompatActivity {
     private Runnable runnable = new Runnable() {
 
         public void run() {
+            int event_time = CPRActivity.this.event_time;
+            Log.e("event_time", String.valueOf(event_time));
 
             MillisecondTime = SystemClock.uptimeMillis() - StartTime;
 
             UpdateTime = TimeBuff + MillisecondTime;
 
+            Log.e("update_time", String.valueOf(UpdateTime / 1000));
+
+            //Seconds_ = event_time - (int) (UpdateTime / 1000);
+
             Seconds_ = (int) (UpdateTime / 1000);
 
-            Minutes = Seconds_ / 60;
+            //MilliSeconds = (int) (UpdateTime % 1000);
 
-            Seconds = Seconds_ % 60;
+            mSeconds_ = event_time - (int) (UpdateTime / 1000);
 
-            MilliSeconds = (int) (UpdateTime % 1000);
+            Minutes = mSeconds_ / 60;
+
+            Seconds = mSeconds_ % 60;
+
+            Log.e("Minutes_time", String.valueOf(Minutes));
+            Log.e("Seconds_time", String.valueOf(Seconds));
 
             cpr_timer.setText("" + Minutes + ":"
                     + String.format("%02d", Seconds));
@@ -2681,8 +2726,11 @@ public class CPRActivity extends AppCompatActivity {
                                 handOff_01 = Seconds_;
                             }
                             if(!isBreath01) {
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
                                 cpr_arrow01_.setVisibility(View.VISIBLE);
                                 remote_arrow_down_text.setVisibility(View.VISIBLE);
+                                cpr_arrow01.setVisibility(View.INVISIBLE);
+                                remote_arrow_up_text.setVisibility(View.INVISIBLE);
                             }
                         } else {
                             if(max_secs != 0 )
@@ -2848,6 +2896,8 @@ public class CPRActivity extends AppCompatActivity {
         Minutes = 0;
         MilliSeconds = 0;
         angle01 = 0;
+        mSeconds_ = 0;
+        mSeconds = 0;
 
         position01 = 0;
 

@@ -108,6 +108,11 @@ public class ReportActivity extends Activity {
     private ImageView report_angleguage;
     private LinearLayout up_frame;
     private NeumorphCardView cprCardView, sessionCardView, ventilationCardView, switchCardView, timeCardView;
+    private Dialog ventilDialog;
+    private Dialog cprDialog;
+    private Dialog sessionDialog;
+    private boolean isOpen = false;
+    private boolean isVentil = false;
 
     private ImageView lung;
     private ClipDrawable lung_clip;
@@ -232,7 +237,44 @@ public class ReportActivity extends Activity {
         depth_break = findViewById(R.id.depth_break);
         depth_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
 
+        cprCardView.post(()->{
+            createDialog();
+        });
+
         sessionCardView.setOnClickListener(v -> {
+            createDialog();
+            if(!isOpen){
+                if(isVentil) {
+                    ventilDialog.show();
+                }
+                cprDialog.show();
+                sessionDialog.show();
+                isOpen = true;
+            }
+        });
+
+        cprCardView.setOnClickListener(v -> {
+            createDialog();
+            if(!isOpen){
+                sessionDialog.show();
+                if(isVentil) {
+                    ventilDialog.show();
+                }
+                cprDialog.show();
+                isOpen = true;
+            }
+        });
+        ventilationCardView.setOnClickListener(v -> {
+            createDialog();
+            if(!isOpen){
+                sessionDialog.show();
+                ventilDialog.show();
+                cprDialog.show();
+                isOpen = true;
+            }
+        });
+
+        /*sessionCardView.setOnClickListener(v -> {
             Dialog dialog = new Dialog(ReportActivity.this);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -299,7 +341,7 @@ public class ReportActivity extends Activity {
             info_ventilationCardView.setOnClickListener(ev -> {
                 dialog.dismiss();
             });
-        });
+        });*/
 
         Intent intent = getIntent();
 
@@ -579,6 +621,9 @@ public class ReportActivity extends Activity {
         super.onDestroy();
         unbindService(mServiceConnection);
         bluetoothLeServiceCPR = null;
+        sessionDialog.dismiss();
+        ventilDialog.dismiss();
+        cprDialog.dismiss();
     }
 
     private void ReportSave(ArrayList<ReportItem> reportItems) {
@@ -633,6 +678,114 @@ public class ReportActivity extends Activity {
                 time.setText(split[1] + " - " + hour +":"+ min +":"+ sec);
             }
         }
+    }
+
+    private TextView ventil_count;
+    private TextView ventil_volume;
+    private TextView ave_volume;
+
+    private void createDialog(){
+        ventilDialog = new Dialog(ReportActivity.this);
+        ventilDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        ventilDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        ventilDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ventilDialog.setContentView(R.layout.info_ventil);
+
+        ventilDialog.setOnDismissListener(dialog -> {
+            if(sessionDialog.isShowing())
+                sessionDialog.dismiss();
+            if(cprDialog.isShowing())
+                cprDialog.dismiss();
+            isOpen = false;
+        });
+
+        NeumorphCardView info_ventilationCardView = ventilDialog.findViewById(R.id.info_ventilationCardView);
+        ventil_count = ventilDialog.findViewById(R.id.ventil_count);
+        ventil_volume = ventilDialog.findViewById(R.id.ventil_volume);
+        ave_volume = ventilDialog.findViewById(R.id.ave_volume);
+        info_ventilationCardView.setLayoutParams(new FrameLayout.LayoutParams(ventilationCardView.getWidth(), ventilationCardView.getHeight()));
+        Log.e("ventilDialog", "ventilDialog");
+
+        ventil_count.setText(reportItems.get(0).getReport_lung_num());
+        ventil_volume.setText(reportItems.get(0).getReport_ventil_volume() + "ml");
+        int num = Integer.parseInt(reportItems.get(0).getReport_lung_num());
+        int volume = Integer.parseInt(reportItems.get(0).getReport_ventil_volume());
+        if(num != 0)
+            ave_volume.setText((volume / num)+ "ml");
+        WindowManager.LayoutParams wmlp = ventilDialog.getWindow().getAttributes();
+        wmlp.gravity = Gravity.TOP | Gravity.LEFT;
+        wmlp.x = 10000;
+        wmlp.y = up_frame.getHeight();
+
+        ventilDialog.setCanceledOnTouchOutside(true);
+        //       ventilDialog.show();
+        info_ventilationCardView.setOnClickListener(ev -> {
+            sessionDialog.hide();
+            ventilDialog.hide();
+            cprDialog.hide();
+            isOpen = false;
+        });
+
+        cprDialog = new Dialog(ReportActivity.this);
+        cprDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        cprDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        cprDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        cprDialog.setContentView(R.layout.info_accuracy);
+
+        cprDialog.setOnDismissListener(dialog -> {
+            if(sessionDialog.isShowing())
+                sessionDialog.dismiss();
+            if(ventilDialog.isShowing())
+                ventilDialog.dismiss();
+            isOpen = false;
+        });
+
+        TextView all_accuracy = cprDialog.findViewById(R.id.all_accuracy);
+        all_accuracy.setText(total_score + "%");
+        NeumorphCardView info_cprCardView = cprDialog.findViewById(R.id.info_cprCardView);
+        info_cprCardView.setLayoutParams(new FrameLayout.LayoutParams(cprCardView.getWidth(), cprCardView.getHeight()));
+        wmlp = cprDialog.getWindow().getAttributes();
+        wmlp.gravity = Gravity.TOP | Gravity.LEFT;
+        wmlp.x = 0;
+        wmlp.y = up_frame.getHeight();
+        cprDialog.setCanceledOnTouchOutside(true);
+        // cprDialog.show();
+        info_cprCardView.setOnClickListener(ev -> {
+            sessionDialog.hide();
+            ventilDialog.hide();
+            cprDialog.hide();
+            isOpen = false;
+        });
+
+        sessionDialog = new Dialog(ReportActivity.this);
+        sessionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        sessionDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        sessionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        sessionDialog.setContentView(R.layout.info_session);
+        NeumorphCardView info_sessionCardView = sessionDialog.findViewById(R.id.info_sessionCardView);
+
+        sessionDialog.setOnDismissListener(dialog -> {
+            if(ventilDialog.isShowing())
+                ventilDialog.dismiss();
+            if(cprDialog.isShowing())
+                cprDialog.dismiss();
+            isOpen = false;
+        });
+
+        info_sessionCardView.setLayoutParams(new FrameLayout.LayoutParams(sessionCardView.getWidth(), sessionCardView.getHeight()));
+        wmlp = sessionDialog.getWindow().getAttributes();
+        wmlp.gravity = Gravity.TOP | Gravity.LEFT;
+        wmlp.x = cprCardView.getWidth();
+        wmlp.y = up_frame.getHeight();
+
+        sessionDialog.setCanceledOnTouchOutside(true);
+        //sessionDialog.show();
+        info_sessionCardView.setOnClickListener(ev -> {
+            sessionDialog.hide();
+            ventilDialog.hide();
+            cprDialog.hide();
+            isOpen = false;
+        });
     }
 
     private void setChart(int position) {
@@ -949,6 +1102,7 @@ public class ReportActivity extends Activity {
             //breath_accuracy.invalidate();
             ventil_score.invalidate();
             //breath_break.invalidate();
+            isVentil = true;
         }
 
         if (breath_ != 0) {
@@ -956,8 +1110,13 @@ public class ReportActivity extends Activity {
             all_accuracy.setText(all_score + "%");
             total_score = all_score;
         } else {
-            all_accuracy.setText(reportItems.get(position).getReport_down_depth() + "%");
-            total_score = Integer.parseInt(reportItems.get(position).getReport_down_depth());
+            if(Integer.parseInt(reportItems.get(position).getReport_up_depth()) != 0) {
+                total_score = depth_accuracy_;
+                all_accuracy.setText(total_score + "%");
+            } else {
+                all_accuracy.setText(reportItems.get(position).getReport_down_depth() + "%");
+                total_score = Integer.parseInt(reportItems.get(position).getReport_down_depth());
+            }
         }
 
         XAxis xAxis = chart.getXAxis();
@@ -1347,7 +1506,7 @@ public class ReportActivity extends Activity {
                     if(Integer.parseInt(report.lung_num) != 0){
                         all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
                     }else
-                        all_score = Integer.parseInt(report.report_down_depth);
+                        all_score = depth_accuracy_;
                     item.add(report.report_name + "," + report.report_depth_correct+ ","+report.to_day +","+all_score);
                 }
             }
