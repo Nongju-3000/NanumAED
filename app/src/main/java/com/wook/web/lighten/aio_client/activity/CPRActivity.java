@@ -371,7 +371,7 @@ public class CPRActivity extends AppCompatActivity {
     double max_lung01 = 100;
     double min_lung01 = 64;
 
-    private final int BREOVERTIME = 16;
+    private final int BREOVERTIME = 8;
 
     int ventil_volume_01 = 0;
 
@@ -395,6 +395,7 @@ public class CPRActivity extends AppCompatActivity {
     private Handler handler_cpr01_disconnect = new Handler(Looper.getMainLooper());
     private boolean isAdult = true;
     private boolean isReversed = false;
+    private boolean isLungDrawing = false;
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -1241,7 +1242,7 @@ public class CPRActivity extends AppCompatActivity {
                         }
                         intrval_01 = System.currentTimeMillis();
                         position01 = Integer.parseInt(getHexToDec(spil[0]));
-
+                        Log.e(TAG, "position = "+position01);
 
                         Date date = new Date(now);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -1249,164 +1250,165 @@ public class CPRActivity extends AppCompatActivity {
                         ChatData chatData = new ChatData("Position/" + position01, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
 
-                        if (position01 <= 11) {
-                            isBreath01 = false;
-                            switch (position01) {
-                                case 1:
-                                    final Animation animation0 = new TranslateAnimation(0, -100, 0, 0);
-                                    animation0.setDuration(200);
-                                    animation0.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation0);
-                                    if (!start_check) {
-                                        position_num01++;
-                                    }
-                                    cpr_arrow01.setVisibility(View.INVISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
-                                    break;
-                                case 2:
-                                    final Animation animation2 = new TranslateAnimation(0, 100, 0, 0);
-                                    animation2.setDuration(200);
-                                    animation2.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation2);
-                                    if (!start_check) {
-                                        position_num01++;
-                                    }
-                                    cpr_arrow01.setVisibility(View.INVISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
-                                    break;
-                                case 3:
-                                    final Animation animation3 = new TranslateAnimation(0, 0, 0, -100);
-                                    animation3.setDuration(200);
-                                    animation3.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation3);
-                                    if (!start_check) {
-                                        position_num01++;
-                                    }
-                                    cpr_arrow01.setVisibility(View.INVISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
-                                    break;
-                                case 4:
-                                    final Animation animation4 = new TranslateAnimation(0, 0, 0, 100);
-                                    animation4.setDuration(200);
-                                    animation4.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation4);
-                                    if (!start_check) {
-                                        position_num01++;
-                                    }
-                                    cpr_arrow01.setVisibility(View.INVISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
-                                    break;
-                                case 5:
-                                    final Animation animation5 = new TranslateAnimation(0, 0, 0, 0);
-                                    animation5.setDuration(200);
-                                    animation5.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation5);
-                                    if (!start_check) {
-                                        position_num01++;
-                                        position_correct01++;
-                                    }
-                                    cpr_arrow01.setVisibility(View.INVISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.INVISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
-                                    break;
-                                case 7:
-                                    final Animation animation7 = new TranslateAnimation(0, -100, 0, 0);
-                                    animation7.setDuration(200);
-                                    animation7.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation7);
-                                    if (!start_check)
-                                        position_num01++;
-                                    cpr_arrow01.setVisibility(View.VISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
-                                    break;
-                                case 8:
-                                    final Animation animation8 = new TranslateAnimation(0, 100, 0, 0);
-                                    animation8.setDuration(200);
-                                    animation8.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation8);
-                                    if (!start_check)
-                                        position_num01++;
-                                    cpr_arrow01.setVisibility(View.VISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
-                                    break;
-                                case 9:
-                                    final Animation animation9 = new TranslateAnimation(0, 0, 0, -100);
-                                    animation9.setDuration(200);
-                                    animation9.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation9);
-                                    if (!start_check)
-                                        position_num01++;
-                                    cpr_arrow01.setVisibility(View.VISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
-                                    break;
-                                case 10:
-                                    final Animation animation10 = new TranslateAnimation(0, 0, 0, 100);
-                                    animation10.setDuration(200);
-                                    animation10.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation10);
-                                    if (!start_check)
-                                        position_num01++;
-                                    cpr_arrow01.setVisibility(View.VISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
-                                    break;
-                                case 11:
-                                    final Animation animation11 = new TranslateAnimation(0, 0, 0, 0);
-                                    animation11.setDuration(200);
-                                    animation11.setFillAfter(false);
-                                    press_point_btn.startAnimation(animation11);
-                                    if (!start_check) {
-                                        position_num01++;
-                                        position_correct01++;
-                                    }
-                                    cpr_arrow01.setVisibility(View.VISIBLE);
-                                    remote_arrow_up_text.setVisibility(View.VISIBLE);
-                                    depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
-                                    break;
-                                case 225:
-                                    isAdult = true;
-                                    anne.setImageResource(R.drawable.anne);
-                                    babyCircle.setVisibility(View.GONE);
-                                    break;
-                                case 226:
-                                    isAdult = false;
-                                    anne.setImageResource(R.drawable.baby01);
-                                    babyCircle.setVisibility(View.GONE);
-                                    break;
-                                case 233:
-                                    anne.setImageResource(R.drawable.baby02);
-                                    babyCircle.setVisibility(View.GONE);
-                                    isReversed = true;
-                                    anne.setVisibility(View.VISIBLE);
-                                    remote_depth_text.setVisibility(View.INVISIBLE);
-                                    cpr_ani01.setVisibility(View.INVISIBLE);
-                                    cpr_ani02.setVisibility(View.INVISIBLE);
-                                    standardCPR_btn01.setVisibility(View.INVISIBLE);
-                                    depth_btn01.setVisibility(View.INVISIBLE);
-                                    depth_btn_cpr_up.setVisibility(View.INVISIBLE);
-                                    depthCPR_view01.setVisibility(View.INVISIBLE);
-                                    lung01.setVisibility(View.INVISIBLE);
-                                    test_lung01.setVisibility(View.INVISIBLE);
-                                    break;
-                                case 234:
-                                    anne.setImageResource(R.drawable.baby01);
-                                    babyCircle.setVisibility(View.GONE);
-                                    isReversed = false;
-                                    break;
-                                case 235:
-                                    if(isReversed){
-                                        babyCircle.setVisibility(View.VISIBLE);
-                                        new Handler(Looper.getMainLooper()).postDelayed(() -> babyCircle.setVisibility(View.GONE), 1000);
-                                    }
-                                    break;
-                            }
+                        isBreath01 = false;
+                        switch (position01) {
+                            case 1:
+                                final Animation animation0 = new TranslateAnimation(0, -100, 0, 0);
+                                animation0.setDuration(200);
+                                animation0.setFillAfter(false);
+                                press_point_btn.startAnimation(animation0);
+                                if (!start_check) {
+                                    position_num01++;
+                                }
+                                cpr_arrow01.setVisibility(View.INVISIBLE);
+                                remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                break;
+                            case 2:
+                                final Animation animation2 = new TranslateAnimation(0, 100, 0, 0);
+                                animation2.setDuration(200);
+                                animation2.setFillAfter(false);
+                                press_point_btn.startAnimation(animation2);
+                                if (!start_check) {
+                                    position_num01++;
+                                }
+                                cpr_arrow01.setVisibility(View.INVISIBLE);
+                                remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                break;
+                            case 3:
+                                final Animation animation3 = new TranslateAnimation(0, 0, 0, -100);
+                                animation3.setDuration(200);
+                                animation3.setFillAfter(false);
+                                press_point_btn.startAnimation(animation3);
+                                if (!start_check) {
+                                    position_num01++;
+                                }
+                                cpr_arrow01.setVisibility(View.INVISIBLE);
+                                remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                break;
+                            case 4:
+                                final Animation animation4 = new TranslateAnimation(0, 0, 0, 100);
+                                animation4.setDuration(200);
+                                animation4.setFillAfter(false);
+                                press_point_btn.startAnimation(animation4);
+                                if (!start_check) {
+                                    position_num01++;
+                                }
+                                cpr_arrow01.setVisibility(View.INVISIBLE);
+                                remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                break;
+                            case 5:
+                                final Animation animation5 = new TranslateAnimation(0, 0, 0, 0);
+                                animation5.setDuration(200);
+                                animation5.setFillAfter(false);
+                                press_point_btn.startAnimation(animation5);
+                                if (!start_check) {
+                                    position_num01++;
+                                    position_correct01++;
+                                }
+                                cpr_arrow01.setVisibility(View.INVISIBLE);
+                                remote_arrow_up_text.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point));
+                                break;
+                            case 7:
+                                final Animation animation7 = new TranslateAnimation(0, -100, 0, 0);
+                                animation7.setDuration(200);
+                                animation7.setFillAfter(false);
+                                press_point_btn.startAnimation(animation7);
+                                if (!start_check)
+                                    position_num01++;
+                                cpr_arrow01.setVisibility(View.VISIBLE);
+                                remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                break;
+                            case 8:
+                                final Animation animation8 = new TranslateAnimation(0, 100, 0, 0);
+                                animation8.setDuration(200);
+                                animation8.setFillAfter(false);
+                                press_point_btn.startAnimation(animation8);
+                                if (!start_check)
+                                    position_num01++;
+                                cpr_arrow01.setVisibility(View.VISIBLE);
+                                remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                break;
+                            case 9:
+                                final Animation animation9 = new TranslateAnimation(0, 0, 0, -100);
+                                animation9.setDuration(200);
+                                animation9.setFillAfter(false);
+                                press_point_btn.startAnimation(animation9);
+                                if (!start_check)
+                                    position_num01++;
+                                cpr_arrow01.setVisibility(View.VISIBLE);
+                                remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                break;
+                            case 10:
+                                final Animation animation10 = new TranslateAnimation(0, 0, 0, 100);
+                                animation10.setDuration(200);
+                                animation10.setFillAfter(false);
+                                press_point_btn.startAnimation(animation10);
+                                if (!start_check)
+                                    position_num01++;
+                                cpr_arrow01.setVisibility(View.VISIBLE);
+                                remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                break;
+                            case 11:
+                                final Animation animation11 = new TranslateAnimation(0, 0, 0, 0);
+                                animation11.setDuration(200);
+                                animation11.setFillAfter(false);
+                                press_point_btn.startAnimation(animation11);
+                                if (!start_check) {
+                                    position_num01++;
+                                    position_correct01++;
+                                }
+                                cpr_arrow01.setVisibility(View.VISIBLE);
+                                remote_arrow_up_text.setVisibility(View.VISIBLE);
+                                depth_btn_cpr_up.setBackground(getDrawable(R.drawable.anne_point_red));
+                                break;
+                            case 225:
+                                isAdult = true;
+                                anne.setImageResource(R.drawable.anne);
+                                babyCircle.setVisibility(View.GONE);
+                                remote_depth_text.setVisibility(View.VISIBLE);
+                                break;
+                            case 226:
+                                isAdult = false;
+                                anne.setImageResource(R.drawable.baby01);
+                                babyCircle.setVisibility(View.GONE);
+                                remote_depth_text.setVisibility(View.INVISIBLE);
+                                break;
+                            case 233:
+                                anne.setImageResource(R.drawable.baby02);
+                                babyCircle.setVisibility(View.GONE);
+                                isReversed = true;
+                                anne.setVisibility(View.VISIBLE);
+                                remote_depth_text.setVisibility(View.INVISIBLE);
+                                cpr_ani01.setVisibility(View.INVISIBLE);
+                                cpr_ani02.setVisibility(View.INVISIBLE);
+                                standardCPR_btn01.setVisibility(View.INVISIBLE);
+                                depth_btn01.setVisibility(View.INVISIBLE);
+                                depth_btn_cpr_up.setVisibility(View.INVISIBLE);
+                                depthCPR_view01.setVisibility(View.INVISIBLE);
+                                lung01.setVisibility(View.INVISIBLE);
+                                test_lung01.setVisibility(View.INVISIBLE);
+                                break;
+                            case 234:
+                                anne.setImageResource(R.drawable.baby01);
+                                babyCircle.setVisibility(View.GONE);
+                                isReversed = false;
+                                break;
+                            case 235:
+                                if(isReversed){
+                                    babyCircle.setVisibility(View.VISIBLE);
+                                    new Handler(Looper.getMainLooper()).postDelayed(() -> babyCircle.setVisibility(View.GONE), 1000);
+                                }
+                                break;
+
                         }
                         break;
 
@@ -1552,8 +1554,48 @@ public class CPRActivity extends AppCompatActivity {
                                             percent = 100;
                                         peakLungClip01();
                                     }
-                                }else{
-                                    if(breath >= 86){
+                                }else {
+                                    if (!isLungDrawing) {
+                                        if (breath >= 82) {
+                                            cpr_arrow01_.setVisibility(View.INVISIBLE);
+                                            remote_arrow_down_text.setVisibility(View.INVISIBLE);
+                                            lung01.setVisibility(View.VISIBLE);
+                                            test_lung01.setVisibility(View.VISIBLE);
+                                            anne.setVisibility(View.INVISIBLE);
+                                            remote_depth_text.setVisibility(View.INVISIBLE);
+                                            cpr_ani01.setVisibility(View.INVISIBLE);
+                                            cpr_ani02.setVisibility(View.INVISIBLE);
+                                            standardCPR_btn01.setVisibility(View.INVISIBLE);
+                                            depth_btn01.setVisibility(View.INVISIBLE);
+                                            depth_btn_cpr_up.setVisibility(View.INVISIBLE);
+                                            depthCPR_view01.setVisibility(View.INVISIBLE);
+                                            press_position.setVisibility(View.INVISIBLE);
+
+                                            lung_clip01 = (ClipDrawable) getDrawable(R.drawable.lung_normal_clip);
+                                            test_lung01.setImageDrawable(lung_clip01);
+                                            lung_clip01.setLevel(10000);
+                                            isLungDrawing = true;
+                                            moveLungClip01(100);
+                                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                                moveLungClip01(0);
+                                                isLungDrawing = false;
+                                            }, 1000);
+                                        }
+                                    }
+                                }
+
+                                long now_ = System.currentTimeMillis();
+                                Date date_ = new Date(now_);
+                                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                                String getTime_ = sdf_.format(date_);
+                                ChatData chatData_ = new ChatData("breath/" + breath01, getTime_, UserName);
+                                databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                            }
+                        }else{
+                            if(!isAdult){
+                                int breath = Integer.parseInt(getHexToDec(spil[0]));
+                                if(!isLungDrawing) {
+                                    if (breath >= 82) {
                                         cpr_arrow01_.setVisibility(View.INVISIBLE);
                                         remote_arrow_down_text.setVisibility(View.INVISIBLE);
                                         lung01.setVisibility(View.VISIBLE);
@@ -1571,46 +1613,13 @@ public class CPRActivity extends AppCompatActivity {
                                         lung_clip01 = (ClipDrawable) getDrawable(R.drawable.lung_normal_clip);
                                         test_lung01.setImageDrawable(lung_clip01);
                                         lung_clip01.setLevel(10000);
-                                        moveLungClip01(100);
+                                        isLungDrawing = true;
+                                        moveLungClip01((int) 100);
                                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                                             moveLungClip01(0);
+                                            isLungDrawing = false;
                                         }, 1000);
                                     }
-                                }
-
-                                long now_ = System.currentTimeMillis();
-                                Date date_ = new Date(now_);
-                                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
-                                String getTime_ = sdf_.format(date_);
-                                ChatData chatData_ = new ChatData("breath/" + breath01, getTime_, UserName);
-                                databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
-                            }
-                        }else{
-                            if(!isAdult){
-                                int breath = Integer.parseInt(getHexToDec(spil[0]));
-                                if(breath >= 86){
-                                    cpr_arrow01_.setVisibility(View.INVISIBLE);
-                                    remote_arrow_down_text.setVisibility(View.INVISIBLE);
-                                    lung01.setVisibility(View.VISIBLE);
-                                    test_lung01.setVisibility(View.VISIBLE);
-                                    anne.setVisibility(View.INVISIBLE);
-                                    remote_depth_text.setVisibility(View.INVISIBLE);
-                                    cpr_ani01.setVisibility(View.INVISIBLE);
-                                    cpr_ani02.setVisibility(View.INVISIBLE);
-                                    standardCPR_btn01.setVisibility(View.INVISIBLE);
-                                    depth_btn01.setVisibility(View.INVISIBLE);
-                                    depth_btn_cpr_up.setVisibility(View.INVISIBLE);
-                                    depthCPR_view01.setVisibility(View.INVISIBLE);
-                                    press_position.setVisibility(View.INVISIBLE);
-
-                                    lung_clip01 = (ClipDrawable) getDrawable(R.drawable.lung_normal_clip);
-                                    test_lung01.setImageDrawable(lung_clip01);
-                                    lung_clip01.setLevel(10000);
-
-                                    moveLungClip01((int) 100);
-                                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                                        moveLungClip01(0);
-                                    }, 1000);
                                 }
                                 long now_ = System.currentTimeMillis();
                                 Date date_ = new Date(now_);
@@ -1625,7 +1634,9 @@ public class CPRActivity extends AppCompatActivity {
                     case "0000fff3-0000-1000-8000-00805f9b34fb":
                         if(!isReversed) {
                             anne.setVisibility(View.VISIBLE);
-                            remote_depth_text.setVisibility(View.VISIBLE);
+                            if(isAdult) {
+                                remote_depth_text.setVisibility(View.VISIBLE);
+                            }
                             cpr_ani01.setVisibility(View.VISIBLE);
                             cpr_ani02.setVisibility(View.VISIBLE);
                             standardCPR_btn01.setVisibility(View.VISIBLE);
@@ -1655,6 +1666,11 @@ public class CPRActivity extends AppCompatActivity {
                         String[] timer_sec = cpr_timer.getText().toString().split(":");
 
                         intrval_01 = System.currentTimeMillis();
+
+                        if(!isAdult){
+                            minDepth = 30;
+                            maxDepth = 40;
+                        }
 
                         Animation animation = new TranslateAnimation(0, 0, 0, depth_true);
 
@@ -2236,6 +2252,7 @@ public class CPRActivity extends AppCompatActivity {
                     }
                     if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
                         bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
+                        bluetoothLeServiceCPR.writeCharacteristic(1, "e0");
                     }
                 }
             } catch (Exception e) {
@@ -2913,7 +2930,23 @@ public class CPRActivity extends AppCompatActivity {
             try{
             ArrayList<ReportItem> reportItems = new ArrayList<>();
             Log.e("bluetoothtime", String.valueOf(bluetoothtime_list01));
-            reportItems.add(report_setting(cprItem_01, UserName, presstime_list01, breathval_01, breathtime_01, String.valueOf(ventil_volume_01),
+
+            String reName = UserName;
+            if (!start_mode) {
+                if(isAdult){
+                    reName += "(연습/성인)";
+                }else{
+                    reName += "(연습/소아)";
+                }
+            } else {
+                if(isAdult){
+                    reName += "(평가/성인)";
+                }else{
+                    reName += "(평가/소아)";
+                }
+            }
+
+            reportItems.add(report_setting(cprItem_01, reName, presstime_list01, breathval_01, breathtime_01, String.valueOf(ventil_volume_01),
                     String.valueOf(cycle_01), String.valueOf(score_01),
                     String.valueOf(minDepth), String.valueOf(maxDepth),
                     String.valueOf(depth_num), String.valueOf(depth_correct), String.valueOf(position_num01), String.valueOf(position_correct01),
