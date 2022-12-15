@@ -2033,25 +2033,47 @@ public class CPRActivity extends AppCompatActivity {
         public void onBackPressed() {
             if (mConnected) {
                 if (start_check) {
-                    Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
-                    sender.setAction(BluetoothLeServiceCPR.ACTION_READY);
-                    startService(sender);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    LayoutInflater inflater = activity.getLayoutInflater();
+                    View view = inflater.inflate(R.layout.done_layout, null);
+                    builder.setView(view);
 
-                    long now = System.currentTimeMillis();
-                    Date date = new Date(now);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
-                    String getTime = sdf.format(date);
+                    final Button appbtnCancel = (Button) view.findViewById(R.id.appbtnCancel);
+                    final Button appbtnExit = (Button) view.findViewById(R.id.appbtnExit);
 
-                    sharedPreferences.edit().putInt("reenter", 0).apply();
-                    sharedPreferences.edit().putInt("onGoing", 0).apply();
-                    sharedPreferences.edit().putString("video_uuid", "-").apply();
-                    hangUp();
-                    LocalBroadcastManager.getInstance(CPRActivity.this).unregisterReceiver(broadcastReceiver);
+                    final AlertDialog dialog = builder.create();
 
-                    ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-                    databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                    appbtnCancel.setOnClickListener(v -> dialog.dismiss());
+                    appbtnExit.setOnClickListener(v -> {
 
-                    reset(1);
+                        dialog.setCancelable(false);
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        dialog.show();
+
+                        Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
+                        sender.setAction(BluetoothLeServiceCPR.ACTION_READY);
+                        startService(sender);
+
+                        long now = System.currentTimeMillis();
+                        Date date = new Date(now);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                        String getTime = sdf.format(date);
+
+                        sharedPreferences.edit().putInt("reenter", 0).apply();
+                        sharedPreferences.edit().putInt("onGoing", 0).apply();
+                        sharedPreferences.edit().putString("video_uuid", "-").apply();
+                        hangUp();
+                        LocalBroadcastManager.getInstance(CPRActivity.this).unregisterReceiver(broadcastReceiver);
+
+                        ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+                        databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+
+                        reset(1);
+
+                        dialog.dismiss();
+                    });
+
+
                 } else {
                     Toast toast = Toast.makeText(CPRActivity.this, "Disconnect the device.", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, Gravity.BOTTOM);
@@ -2060,21 +2082,41 @@ public class CPRActivity extends AppCompatActivity {
 
             } else {
                 if (System.currentTimeMillis() > this.backKeyPressedTime + 2000) {
-                    sharedPreferences.edit().putString("video_uuid", "-").apply();
-                    sharedPreferences.edit().putInt("onGoing", 0).apply();
-                    long now = System.currentTimeMillis();
-                    Date date = new Date(now);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
-                    String getTime = sdf.format(date);
-                    ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-                    databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
-                    reset(1);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    LayoutInflater inflater = activity.getLayoutInflater();
+                    View view = inflater.inflate(R.layout.done_layout, null);
+                    builder.setView(view);
 
-                    this.backKeyPressedTime = System.currentTimeMillis();
-                    Intent main = new Intent(CPRActivity.this, RoomActivity.class);
-                    startActivity(main);
-                    finish();
-                    overridePendingTransition(R.anim.fadeout, R.anim.fadein);
+                    final Button appbtnCancel = (Button) view.findViewById(R.id.appbtnCancel);
+                    final Button appbtnExit = (Button) view.findViewById(R.id.appbtnExit);
+
+                    final AlertDialog dialog = builder.create();
+
+                    appbtnCancel.setOnClickListener(v -> dialog.dismiss());
+                    appbtnExit.setOnClickListener(v -> {
+
+                        sharedPreferences.edit().putString("video_uuid", "-").apply();
+                        sharedPreferences.edit().putInt("onGoing", 0).apply();
+                        long now = System.currentTimeMillis();
+                        Date date = new Date(now);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                        String getTime = sdf.format(date);
+                        ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+                        databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                        reset(1);
+
+                        this.backKeyPressedTime = System.currentTimeMillis();
+                        Intent main = new Intent(CPRActivity.this, RoomActivity.class);
+                        startActivity(main);
+                        finish();
+                        overridePendingTransition(R.anim.fadeout, R.anim.fadein);
+
+                        dialog.dismiss();
+                    });
+
+                    dialog.setCancelable(false);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
                 }
             }
         }
