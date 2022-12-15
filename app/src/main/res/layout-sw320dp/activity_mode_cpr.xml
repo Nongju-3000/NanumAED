@@ -181,6 +181,8 @@
                                     android:id="@+id/babyCircle"
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
+                                    android:visibility="invisible"
+                                    android:src="@drawable/babycircle"
                                     app:layout_constraintTop_toTopOf="@id/anne"
                                     app:layout_constraintBottom_toBottomOf="@id/anne"
                                     app:layout_constraintStart_toStartOf="@id/anne"

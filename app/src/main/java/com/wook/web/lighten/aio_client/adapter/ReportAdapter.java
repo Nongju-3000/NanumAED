@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +108,6 @@ public class ReportAdapter extends BaseExpandableListAdapter {
 
         childText.setText(item[0]);
         chilScore.setText(item[3]);
-
         return convertView;
     }
 

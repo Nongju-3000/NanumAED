@@ -1188,6 +1188,7 @@ public class RoomActivity extends AppCompatActivity {
                         all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
                     }else
                         all_score = depth_accuracy_;
+                    Log.e("Test", "name = "+report.report_name);
                     item.add(report.report_name + "," + report.report_depth_correct+ ","+report.to_day +","+all_score);
                 }
             }
