@@ -79,6 +79,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -319,7 +320,7 @@ public class CPRActivity extends AppCompatActivity {
     private AutoFitTextureView cameraView;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.ACCESS_FINE_LOCATION"};
 
-    private ChildEventListener childEventListener;
+    private ChildEventListener childEventListener, conferenceEventListener;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -346,16 +347,11 @@ public class CPRActivity extends AppCompatActivity {
     private int scan_count = 0;
     private boolean isConnect = true;
 
-    private int reenter = 0;
-    private double enter_time;
-
     private int frame_width;
     private int frame_interval;
     private float div_interval;
     int press_width;
     String token;
-
-    private boolean isConference = false;
 
     private int pre_angle = 0;
     private int hand_off_time = 0;
@@ -639,12 +635,6 @@ public class CPRActivity extends AppCompatActivity {
         device_disconnect_cpr_01 = findViewById(R.id.device_disconnect_cpr_01);
         cpr_layout_01 = findViewById(R.id.cpr_layout_01);
 
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
-        String getTime = sdf.format(date);
-        enter_time = Double.parseDouble(getTime);
-
         mainName = findViewById(R.id.mainName);
         mainName.setText("CPR(" + room + "," + UserName + ")");
 
@@ -655,7 +645,6 @@ public class CPRActivity extends AppCompatActivity {
         press_point_btn = findViewById(R.id.press_point_btn);
 
         sharedPreferences = getApplication().getSharedPreferences("DeviceCPR", MODE_PRIVATE);
-        reenter = sharedPreferences.getInt("reenter", 0);
 
         handler = new Handler(Looper.getMainLooper());
 
@@ -778,6 +767,7 @@ public class CPRActivity extends AppCompatActivity {
         mHandler = new Handler(Looper.getMainLooper());
 
         setChildEventListener();
+        setConferenceEventListener();
 
         locationPermissionCheck();
 
@@ -923,7 +913,6 @@ public class CPRActivity extends AppCompatActivity {
             BroadcastEvent event = new BroadcastEvent(intent);
             switch (event.getType()) {
                 case CONFERENCE_TERMINATED:
-                    isConference = false;
                     break;
             }
         }
@@ -988,8 +977,6 @@ public class CPRActivity extends AppCompatActivity {
     class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-            sharedPreferences.edit().putString("video_uuid", "-").apply();
-            sharedPreferences.edit().putInt("onGoing", 0).apply();
             long now = System.currentTimeMillis();
             Date date = new Date(now);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -2058,9 +2045,6 @@ public class CPRActivity extends AppCompatActivity {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                     String getTime = sdf.format(date);
 
-                    sharedPreferences.edit().putInt("reenter", 0).apply();
-                    sharedPreferences.edit().putInt("onGoing", 0).apply();
-                    sharedPreferences.edit().putString("video_uuid", "-").apply();
                     hangUp();
                     LocalBroadcastManager.getInstance(CPRActivity.this).unregisterReceiver(broadcastReceiver);
 
@@ -2076,8 +2060,6 @@ public class CPRActivity extends AppCompatActivity {
 
             } else {
                 if (System.currentTimeMillis() > this.backKeyPressedTime + 2000) {
-                    sharedPreferences.edit().putString("video_uuid", "-").apply();
-                    sharedPreferences.edit().putInt("onGoing", 0).apply();
                     long now = System.currentTimeMillis();
                     Date date = new Date(now);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -2244,6 +2226,7 @@ public class CPRActivity extends AppCompatActivity {
             ChatData chatData__ = new ChatData("밴드/" + de1Connect + de2Connect, time, UserName_);
             databaseReference.child("Room").child(room_).child("message").push().setValue(chatData__);
             isReady = true;
+            databaseReference.child("Room").child(room).child("conference").addChildEventListener(conferenceEventListener);
 
             try {
                 if (!Devices.isEmpty()) { //TODO BAND SET
@@ -2259,7 +2242,6 @@ public class CPRActivity extends AppCompatActivity {
             }
 
             dialog.dismiss();
-
         });
 
         cpr_scan_reset.setOnClickListener(v -> {
@@ -2566,7 +2548,40 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    void setChildEventListener(){
+    private void setConferenceEventListener(){
+        conferenceEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                ChatData chatData = snapshot.getValue(ChatData.class);
+
+                JitsiMeetConferenceOptions options
+                        = new JitsiMeetConferenceOptions.Builder()
+                        .setRoom(chatData.getMessage())
+                        // Settings for audio and video
+                        .setAudioMuted(true)
+                        //.setVideoMuted(true)
+                        .build();
+                // Launch the new activity with the given options. The launch() method takes care
+                // of creating the required Intent and passing the options.
+                JitsiMeetActivity.launch(CPRActivity.this, options);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+    }
+
+    private void setChildEventListener(){
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -2580,10 +2595,7 @@ public class CPRActivity extends AppCompatActivity {
                     if( chatData.getMessage().contains("시작"))
                         if (mConnected)
                             if (start_check) {
-                                if(enter_time < Double.parseDouble(chatData.getPostDate())) {
-                                    showStart(CPRActivity.this);
-                                    // runHander(true);
-                                }
+                                showStart(CPRActivity.this);
                             } else {
                                 Toast toast = Toast.makeText(CPRActivity.this, "Running...", Toast.LENGTH_SHORT);
                                 toast.setGravity(Gravity.CENTER, 0, Gravity.BOTTOM);
@@ -2664,72 +2676,8 @@ public class CPRActivity extends AppCompatActivity {
                     if(chatData.getMessage().contains("중지")){
                         reset(2);
                     }
-                    if(chatData.getMessage().contains("화상회의/")){
-                        String data[] = chatData.getMessage().split("/");
-                        if(!isConference) {
-                            if (reenter == 1) {
-                                if (sharedPreferences.getInt("onGoing", 0) == 1) {
-                                    if (data[1].equals(sharedPreferences.getString("video_uuid", "-"))) {
-                                        final Dialog dialog = new Dialog(CPRActivity.this);
-                                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                        dialog.setContentView(R.layout.conference_dialog);
-                                        Button yesBtn = dialog.findViewById(R.id.yesConferenceBtn);
-                                        Button noBtn = dialog.findViewById(R.id.noConferenceBtn);
-                                        yesBtn.setOnClickListener(v -> {
-                                            reenter = 0;
-                                            isConference = true;
-                                            JitsiMeetConferenceOptions options
-                                                    = new JitsiMeetConferenceOptions.Builder()
-                                                    .setRoom(data[1])
-                                                    .setAudioMuted(true)
-                                                    .build();
-                                            JitsiMeetActivity.launch(CPRActivity.this, options);
-                                            dialog.dismiss();
-                                        });
 
-                                        noBtn.setOnClickListener(v -> {
-                                            dialog.dismiss();
-                                            reenter = 0;
-                                        });
-                                        dialog.show();
-                                    }
-                                } else if (enter_time < Double.parseDouble(chatData.getPostDate())) {
-                                    isConference = true;
-                                    sharedPreferences.edit().putInt("onGoing", 1).apply();
-                                    sharedPreferences.edit().putString("video_uuid", data[1]).apply();
-                                    JitsiMeetConferenceOptions options
-                                            = new JitsiMeetConferenceOptions.Builder()
-                                            .setRoom(data[1])
-                                            // Settings for audio and video
-                                            .setAudioMuted(true)
-                                            //.setVideoMuted(true)
-                                            .build();
-                                    // Launch the new activity with the given options. The launch() method takes care
-                                    // of creating the required Intent and passing the options.
-                                    JitsiMeetActivity.launch(CPRActivity.this, options);
-                                }
-                            }
-                            if (enter_time < Double.parseDouble(chatData.getPostDate())) {
-                                isConference = true;
-                                reenter = 0;
-                                sharedPreferences.edit().putInt("onGoing", 1).apply();
-                                sharedPreferences.edit().putString("video_uuid", data[1]).apply();
-                                JitsiMeetConferenceOptions options
-                                        = new JitsiMeetConferenceOptions.Builder()
-                                        .setRoom(data[1])
-                                        // Settings for audio and video
-                                        .setAudioMuted(true)
-                                        //.setVideoMuted(true)
-                                        .build();
-                                // Launch the new activity with the given options. The launch() method takes care
-                                // of creating the required Intent and passing the options.
-                                JitsiMeetActivity.launch(CPRActivity.this, options);
-                            }
-                        }
-                    }
                     if(chatData.getMessage().contains("화상아웃")){
-                        sharedPreferences.edit().putInt("onGoing", 0).apply();
                         hangUp();
                     }
                     if(chatData.getMessage().contains("깊이/")){
@@ -2753,9 +2701,6 @@ public class CPRActivity extends AppCompatActivity {
 
                         unbindService(finishConnection);
                         isOut = true;
-                        sharedPreferences.edit().putInt("reenter", 0).apply();
-                        sharedPreferences.edit().putInt("onGoing", 0).apply();
-                        sharedPreferences.edit().putString("video_uuid", "-").apply();
                         databaseReference.child("Room").child(room).setValue(null);
 
                         //hangUp();
@@ -3093,6 +3038,7 @@ public class CPRActivity extends AppCompatActivity {
             });
 
             databaseReference.child("Room").child(room).child("message").removeEventListener(childEventListener);
+            databaseReference.child("Room").child(room).child("conference").removeEventListener(conferenceEventListener);
 
             intent = new Intent(CPRActivity.this, RoomActivity.class);
             startActivity(intent);

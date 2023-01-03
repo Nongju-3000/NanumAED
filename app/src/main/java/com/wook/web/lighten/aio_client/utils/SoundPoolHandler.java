@@ -12,7 +12,6 @@ public class SoundPoolHandler {
     Context context;
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private AudioManager audioManager;
-    private int currentVolumeIndex;
     private int maxVolumeIndex;
     private float volume;
     private SoundPool soundPool;
@@ -22,9 +21,9 @@ public class SoundPoolHandler {
     public SoundPoolHandler(Context context){
         this.context = context;
         audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-        currentVolumeIndex = audioManager.getStreamVolume(streamType);
+        int currentVolumeIndex = audioManager.getStreamVolume(streamType);
         maxVolumeIndex = audioManager.getStreamMaxVolume(streamType);
-        volume = (float)currentVolumeIndex / (float)maxVolumeIndex;
+        volume = (float) currentVolumeIndex / (float)maxVolumeIndex;
         if(Build.VERSION.SDK_INT >= 21){
             AudioAttributes attr =  new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_GAME)
