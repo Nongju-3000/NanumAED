@@ -2618,7 +2618,6 @@ public class CPRActivity extends AppCompatActivity {
 
                 }else {
                     Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.icon);
-
                     if( chatData.getMessage().contains("시작"))
                         if (mConnected)
                             if (start_check) {

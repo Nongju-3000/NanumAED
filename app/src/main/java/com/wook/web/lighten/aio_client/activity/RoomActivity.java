@@ -120,6 +120,7 @@ import soup.neumorphism.NeumorphImageButton;
 
 public class RoomActivity extends AppCompatActivity {
 
+    private BackPressCloseHandler backPressCloseHandler;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     EditText room;
@@ -142,6 +143,22 @@ public class RoomActivity extends AppCompatActivity {
     private Disposable scanDisposable;
     private TextView manual_tv;
     private boolean trainercheck = false;
+
+    public class BackPressCloseHandler{
+        private Activity activity;
+
+        public BackPressCloseHandler(Activity context){
+            this.activity = context;
+        }
+
+        public void onBackPressed(){
+            activity.finish();
+        }
+    }
+
+    public void onBackPressed() {
+        this.backPressCloseHandler.onBackPressed();
+    }
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -184,6 +201,8 @@ public class RoomActivity extends AppCompatActivity {
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
         locationPermissionCheck();
+
+        this.backPressCloseHandler = new BackPressCloseHandler(this);
 
         rxBleClient = RxBleClient.create(this);
         RxBleClient.updateLogOptions(new LogOptions.Builder()
