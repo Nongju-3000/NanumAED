@@ -94,38 +94,6 @@
                 </soup.neumorphism.NeumorphCardView>
 
                 <LinearLayout
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
-
-                    <soup.neumorphism.NeumorphCardView
-                        android:layout_width="300dp"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        app:neumorph_backgroundColor="#292929"
-                        app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-                        app:neumorph_shadowColorLight="#444444"
-                        app:neumorph_shadowElevation="3dp"
-                        app:neumorph_shapeType="pressed">
-
-                        <EditText
-                            android:id="@+id/room"
-                            android:layout_gravity="center"
-                            android:layout_width="200dp"
-                            android:layout_height="100dp"
-                            android:textColorHint="#c8c8c8"
-                            android:textColor="#ffffff"
-                            android:layout_marginTop="10dp"
-                            android:hint="@string/enter_room"
-                            android:inputType="text"
-                            />
-
-                    </soup.neumorphism.NeumorphCardView>
-
-                </LinearLayout>
-                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">

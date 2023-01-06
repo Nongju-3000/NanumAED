@@ -266,6 +266,7 @@ public class CPRActivity extends AppCompatActivity {
 
     private String room;
     private String UserName;
+    private String intokey;
 
     private boolean checkMagnet[] = {true, true, true};
 
@@ -614,6 +615,7 @@ public class CPRActivity extends AppCompatActivity {
         Intent intent = getIntent();
         room = intent.getStringExtra("room");
         UserName = intent.getStringExtra("name");
+        intokey = intent.getStringExtra("intokey");
 
         databaseReference.child("Room").child(room).child("user").orderByChild("name").equalTo(UserName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -996,6 +998,7 @@ public class CPRActivity extends AppCompatActivity {
             String getTime = sdf.format(date);
             ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
             databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+            databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
             e.printStackTrace();
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);
@@ -2037,7 +2040,7 @@ public class CPRActivity extends AppCompatActivity {
     }
 
     public class BackPressCloseHandler {
-        private Activity activity;
+        private final Activity activity;
         private long backKeyPressedTime;
         private Toast toast;
 
@@ -2047,8 +2050,11 @@ public class CPRActivity extends AppCompatActivity {
         }
 
         public void onBackPressed() {
+            Log.e("mConnected",mConnected+"");
+            Log.e("start_check",start_check+"");
             if (mConnected) {
                 if (start_check) {
+                    Log.e("back", "back");
                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                     LayoutInflater inflater = activity.getLayoutInflater();
                     View view = inflater.inflate(R.layout.done_layout, null);
@@ -2061,10 +2067,6 @@ public class CPRActivity extends AppCompatActivity {
 
                     appbtnCancel.setOnClickListener(v -> dialog.dismiss());
                     appbtnExit.setOnClickListener(v -> {
-
-                        dialog.setCancelable(false);
-                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        dialog.show();
 
                         Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
                         sender.setAction(BluetoothLeServiceCPR.ACTION_READY);
@@ -2083,13 +2085,15 @@ public class CPRActivity extends AppCompatActivity {
 
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                        databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
 
                         reset(1);
 
                         dialog.dismiss();
                     });
-
-
+                    dialog.setCancelable(false);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
                 } else {
                     Toast toast = Toast.makeText(CPRActivity.this, "Disconnect the device.", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, Gravity.BOTTOM);
@@ -2119,10 +2123,12 @@ public class CPRActivity extends AppCompatActivity {
                         String getTime = sdf.format(date);
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                        databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
                         reset(1);
 
                         this.backKeyPressedTime = System.currentTimeMillis();
-                        Intent main = new Intent(CPRActivity.this, RoomActivity.class);
+                        Intent main = new Intent(CPRActivity.this, LobbyActivity.class);
+                        main.putExtra("Name",UserName);
                         startActivity(main);
                         finish();
                         overridePendingTransition(R.anim.fadeout, R.anim.fadein);
@@ -2615,7 +2621,6 @@ public class CPRActivity extends AppCompatActivity {
                 ChatData chatData = dataSnapshot.getValue(ChatData.class);
 
                 if(chatData.getUserName().equals(UserName)){
-
                 }else {
                     Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.icon);
                     if( chatData.getMessage().contains("시작"))
@@ -2847,6 +2852,7 @@ public class CPRActivity extends AppCompatActivity {
         bluetoothLeServiceCPR = null;
         Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
+        databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
 
     }
 
@@ -3135,7 +3141,9 @@ public class CPRActivity extends AppCompatActivity {
 
             databaseReference.child("Room").child(room).child("message").removeEventListener(childEventListener);
 
-            intent = new Intent(CPRActivity.this, RoomActivity.class);
+            intent = new Intent(CPRActivity.this, LobbyActivity.class);
+            intent.putExtra("Name",UserName);
+            Log.e("Name",UserName);
             startActivity(intent);
             finish();
             overridePendingTransition(R.anim.fadeout, R.anim.fadein);
