@@ -16,6 +16,7 @@
     <string name="score">점수</string>
     <string name="menu">메뉴</string>
     <string name="video_conference">화상회의</string>
+    <string name="number_of_people">인원수</string>
     <string name="out">나가기</string>
     <string name="start">시작</string>
     <string name="stop">중지</string>

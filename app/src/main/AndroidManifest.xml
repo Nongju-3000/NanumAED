@@ -64,6 +64,11 @@
         <activity android:name=".activity.OpenSourceActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             />
+        <activity
+            android:name=".activity.LobbyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            />
 
         <service android:name=".ble.BluetoothLeServiceCPR"
             android:exported="false"

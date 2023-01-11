@@ -120,6 +120,7 @@ import soup.neumorphism.NeumorphImageButton;
 
 public class RoomActivity extends AppCompatActivity {
 
+    private BackPressCloseHandler backPressCloseHandler;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     EditText room;
@@ -142,6 +143,22 @@ public class RoomActivity extends AppCompatActivity {
     private Disposable scanDisposable;
     private TextView manual_tv;
     private boolean trainercheck = false;
+
+    public class BackPressCloseHandler{
+        private Activity activity;
+
+        public BackPressCloseHandler(Activity context){
+            this.activity = context;
+        }
+
+        public void onBackPressed(){
+            activity.finish();
+        }
+    }
+
+    public void onBackPressed() {
+        this.backPressCloseHandler.onBackPressed();
+    }
 
     //TODO BLE SERVICE CONNECTION
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -184,6 +201,8 @@ public class RoomActivity extends AppCompatActivity {
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
         locationPermissionCheck();
+
+        this.backPressCloseHandler = new BackPressCloseHandler(this);
 
         rxBleClient = RxBleClient.create(this);
         RxBleClient.updateLogOptions(new LogOptions.Builder()
@@ -276,7 +295,7 @@ public class RoomActivity extends AppCompatActivity {
             }
         });
 
-        room = (EditText) findViewById(R.id.room);
+        //room = (EditText) findViewById(R.id.room);
         name = (EditText) findViewById(R.id.name);
         into = (Button) findViewById(R.id.into);
         linear = (LinearLayout) findViewById(R.id.linear);
@@ -291,10 +310,10 @@ public class RoomActivity extends AppCompatActivity {
         bitmap = StringToBitMap(image);
 
         Intent intent = getIntent();
-        roomName = intent.getStringExtra("roomName");
+        //roomName = intent.getStringExtra("roomName");
         userName = prefs.getString("userName", "");
 
-        room.setText(roomName);
+        //room.setText(roomName);
         name.setText(userName);
 
         bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -337,7 +356,7 @@ public class RoomActivity extends AppCompatActivity {
             }
         });
 
-        room.addTextChangedListener(new TextValidator(room) {
+        /*room.addTextChangedListener(new TextValidator(room) {
             @Override
             public void validate(TextView textView, String text) {
                 if(text.length() == 0){
@@ -349,7 +368,7 @@ public class RoomActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
 
         NotificationManager notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notifManager.cancelAll();
@@ -358,7 +377,7 @@ public class RoomActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(room.getWindowToken(), 0);
+                //imm.hideSoftInputFromWindow(room.getWindowToken(), 0);
                 imm.hideSoftInputFromWindow(name.getWindowToken(), 0);
             }
         });
@@ -381,7 +400,20 @@ public class RoomActivity extends AppCompatActivity {
             editor.putString("userName", name.getText().toString());
             editor.commit();
 
-            final Intent intent1 = new Intent(RoomActivity.this, CPRActivity.class);
+            final Intent intent1 = new Intent(RoomActivity.this, LobbyActivity.class);
+
+            if(name.getText().toString().equals("")) {
+                Toast.makeText(RoomActivity.this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            } else {
+                intent1.putExtra("Name", name.getText().toString());
+                intent1.putExtra("Token", token);
+
+                intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent1);
+                finish();
+            }
+
+            /*final Intent intent1 = new Intent(RoomActivity.this, CPRActivity.class);
 
             Bundle bundle = new Bundle();
 
@@ -488,7 +520,7 @@ public class RoomActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }
+            }*/
         });
 
     } // onCreate end
