@@ -425,7 +425,7 @@ public class BluetoothLeServiceCPR extends Service {
         if(!isCharDRegistereds.get(index)) {
             isCharDRegistereds.set(index, true);
 
-            if(Objects.requireNonNull(device.getName()).contains("AIO")) {
+            /*if(Objects.requireNonNull(device.getName()).contains("AIO")) {
                 if (isConnected(device.getMacAddress())) {
                     Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
                             .doOnSubscribe(notificationObservable -> {
@@ -444,6 +444,19 @@ public class BluetoothLeServiceCPR extends Service {
                     sendConnection(device, index);
                     angleHandler.postDelayed(getAngleRunnable(device, rxBleConnection), 0);
                 }
+            }*/
+            if (isConnected(device.getMacAddress())) {
+                Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
+                        .doOnSubscribe(notificationObservable -> {
+                            rxEnableNotification(device, rxBleConnection, index);
+                            Print.e(TAG, "Breath Notification Setup");
+                        })
+                        .flatMap(notificationObservable -> notificationObservable)
+                        .subscribe(
+                                bytes -> onBreathReceived(device, bytes),
+                                this::onNotificationSetupFailure
+                        );
+                compositeDisposable.add(disposable);
             }
         }else{
             if(!isCharARegistereds.get(index)){
@@ -508,12 +521,12 @@ public class BluetoothLeServiceCPR extends Service {
             intent.putExtra(EXTRA_DATA, stringBuilder.toString() + "," + CHAR_BREATH_UUID+ "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
-        if(Objects.requireNonNull(bleDevice.getName()).contains("CPR-BA")){
+        /*if(Objects.requireNonNull(bleDevice.getName()).contains("CPR-BA")){
             angleDisposables.clear();
             if(isConnected(bleDevice.getMacAddress())){
                 angleHandler.postDelayed(getAngleRunnable(bleDevice, mRxBleConnections.get(0)), 2000);
             }
-        }
+        }*/
     }
     private void onDepthReceived(RxBleDevice bleDevice, byte[] bytes){
         final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
@@ -559,6 +572,7 @@ public class BluetoothLeServiceCPR extends Service {
                 .doFinally(this::dispose)
                 .subscribe(
                         connection -> {
+                            Log.e("connect", macAddress);
                             mRxBleConnections.set(index, connection);
                             broadCastRxConnectionUpdate(bleDevice, index);
                         },
@@ -598,7 +612,7 @@ public class BluetoothLeServiceCPR extends Service {
         byte[] sender = HexString.hexToBytes(data);
         if(connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
             mRxBleConnections.get(index).writeCharacteristic(UUID_WRITE, sender).subscribe();
-            Log.e(TAG, "write characteristic, data = "+data);
+            Log.e(TAG, "write characteristic, data = "+data + ", index = "+index);
         }
     }
 

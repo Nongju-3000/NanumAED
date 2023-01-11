@@ -1126,6 +1126,8 @@ public class CPRActivity extends AppCompatActivity {
                                         Depth_size = Depth_size + 1;
                                 }
 
+                                correctCount.setText(String.valueOf(Depth_correct_sum01));
+                                totalCount.setText(String.valueOf(Depth_size));
                                 total_count = Depth_size;
                                 while (peakTimes.size() > 2) {
                                     peakTimes.remove(0);
@@ -2458,6 +2460,12 @@ public class CPRActivity extends AppCompatActivity {
 
         final AlertDialog dialog = builder.create();
 
+        if(!mode) {
+            count_layout.setVisibility(View.VISIBLE);
+        } else {
+            count_layout.setVisibility(View.INVISIBLE);
+        }
+
         new Thread(() -> {
             for (int i = 5; i >= 0; i--) {
                 try {
@@ -2472,19 +2480,17 @@ public class CPRActivity extends AppCompatActivity {
                         } else {
                             cmd = "f4";
                         }
-
                         if (mConnected) {
                             try {
                                 if (cmd != null) {
+                                    Log.e("cmd", cmd);
                                     if(!mode){
-                                        count_layout.setVisibility(View.VISIBLE);
                                         Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
                                         sender.setAction(BluetoothLeServiceCPR.ACTION_SOUND);
                                         sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, interval);
                                         startService(sender);
-                                    } else {
-                                        count_layout.setVisibility(View.INVISIBLE);
                                     }
+
                                     if (!Devices.isEmpty()) { //TODO BAND SET
                                         if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
                                             bluetoothLeServiceCPR.writeCharacteristic(0, cmd);
@@ -2504,8 +2510,9 @@ public class CPRActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
-
                             } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.e("Exception", e.toString());
                                 if(playCheck) {
                                     playCheck = false;
                                 }
@@ -2620,7 +2627,7 @@ public class CPRActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 ChatData chatData = dataSnapshot.getValue(ChatData.class);
 
-                if(chatData.getUserName().equals(UserName)){
+                if(chatData.getUserName().equals(UserName) || Double.parseDouble(chatData.getPostDate()) < enter_time){
                 }else {
                     Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.icon);
                     if( chatData.getMessage().contains("시작"))
@@ -2861,13 +2868,13 @@ public class CPRActivity extends AppCompatActivity {
 
         public void run() {
             int event_time = CPRActivity.this.event_time;
-            Log.e("event_time", String.valueOf(event_time));
+            //Log.e("event_time", String.valueOf(event_time));
 
             MillisecondTime = SystemClock.uptimeMillis() - StartTime;
 
             UpdateTime = TimeBuff + MillisecondTime;
 
-            Log.e("update_time", String.valueOf(UpdateTime / 1000));
+            //Log.e("update_time", String.valueOf(UpdateTime / 1000));
 
             //Seconds_ = event_time - (int) (UpdateTime / 1000);
 
@@ -2881,8 +2888,8 @@ public class CPRActivity extends AppCompatActivity {
 
             Seconds = mSeconds_ % 60;
 
-            Log.e("Minutes_time", String.valueOf(Minutes));
-            Log.e("Seconds_time", String.valueOf(Seconds));
+            /*Log.e("Minutes_time", String.valueOf(Minutes));
+            Log.e("Seconds_time", String.valueOf(Seconds));*/
 
             cpr_timer.setText("" + Minutes + ":"
                     + String.format("%02d", Seconds));
