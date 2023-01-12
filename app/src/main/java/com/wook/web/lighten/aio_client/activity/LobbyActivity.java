@@ -156,7 +156,7 @@ public class LobbyActivity extends Activity {
                     NameData nameData = new NameData(name, token);
                     databaseReference.child("Room").child(room).child("user").push().setValue(nameData);
                     ChatData chatData = new ChatData("입장했습니다.", getTime, name);  // 유저 이름과 메세지로 chatData 만들기
-                    databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                    databaseReference.child("Room").child(room).child("message").child(name).push().setValue(chatData);
                     DatabaseReference into = databaseReference.child("Room").child(room).child("into").push();
                     String intokey = into.getKey();
                     into.setValue(chatData.getUserName());

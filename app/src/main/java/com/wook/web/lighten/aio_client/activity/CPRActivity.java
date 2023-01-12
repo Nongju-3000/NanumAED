@@ -347,6 +347,7 @@ public class CPRActivity extends AppCompatActivity {
     private int request_num = 0;
     private int scan_count = 0;
     private boolean isConnect = true;
+    private Double enter_time;
 
     private int frame_width;
     private int frame_interval;
@@ -439,6 +440,7 @@ public class CPRActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            Log.e("action", action);
             if (bluetoothLeServiceCPR.ACTION_BLE_CONNECTED.equals(action)) {
                 connection_on(intent.getStringExtra(bluetoothLeServiceCPR.EXTRA_BLE_DEVICE_ADDRESS));
             } else if (bluetoothLeServiceCPR.ACTION_DATA_AVAILABLE.equals(action)) {
@@ -491,7 +493,7 @@ public class CPRActivity extends AppCompatActivity {
                         connected = 0;
                     }
                     ChatData chatData_ = new ChatData("연결/" + connected + "/" + mac, time, UserName);
-                    databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                    databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
 
                     if(!isConnected){
                         cpr_layout_01.setAlpha(0.2f);
@@ -522,7 +524,7 @@ public class CPRActivity extends AppCompatActivity {
                         connected = 0;
                     }
                     ChatData chatData_ = new ChatData("연결/" + connected, time, UserName);
-                    databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                    databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
                 }
                 if(!isConnected){
                     cpr_layout_01.setAlpha(0.2f);
@@ -566,6 +568,10 @@ public class CPRActivity extends AppCompatActivity {
         startService(destroy);
         setContentView(R.layout.activity_mode_cpr);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+        enter_time = Double.parseDouble(sdf.format(date));
 
         rxBleClient = RxBleClient.create(this);
         RxBleClient.updateLogOptions(new LogOptions.Builder()
@@ -818,7 +824,7 @@ public class CPRActivity extends AppCompatActivity {
         // Initialize default options for Jitsi Meet conferences.
         initialize_jitsi();
 
-        databaseReference.child("Room").child(room).child("message").limitToLast(10).addChildEventListener(childEventListener);
+        databaseReference.child("Room").child(room).child("트레이너").limitToLast(10).addChildEventListener(childEventListener);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
 
     }
@@ -984,8 +990,9 @@ public class CPRActivity extends AppCompatActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
             String getTime = sdf.format(date);
             ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-            databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
             databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
+            databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
             e.printStackTrace();
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);
@@ -1072,7 +1079,7 @@ public class CPRActivity extends AppCompatActivity {
                             SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                             String getTime_ = sdf_.format(date_);
                             ChatData chatData_ = new ChatData("Depth/" + getHexToDec(spil[0]), getTime_, UserName);
-                            databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
                             lung01.setVisibility(View.INVISIBLE);
 
                             final int depthSet = Integer.parseInt(getHexToDec(spil[0]));
@@ -1214,7 +1221,7 @@ public class CPRActivity extends AppCompatActivity {
                             SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                             String getTime_ = sdf_.format(date_);
                             ChatData chatData_ = new ChatData("Angle/" + angle01, getTime_, UserName);
-                            databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
                             pre_angle = angle01;
                         }
 
@@ -1240,7 +1247,7 @@ public class CPRActivity extends AppCompatActivity {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                         String getTime = sdf.format(date);
                         ChatData chatData = new ChatData("Position/" + position01, getTime, UserName);
-                        databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
 
                         isBreath01 = false;
                         switch (position01) {
@@ -1421,11 +1428,6 @@ public class CPRActivity extends AppCompatActivity {
                                     breathtime_01.add(current_time);
                                     isBreath01 = true;
                                 }
-                                if (breath01 < bre_threshold01 && isBreath01) {
-                                    breathval_01.add(71.0f);
-                                    breathtime_01.add(current_time);
-
-                                }
 
                                 if (cycle_01 == Integer.parseInt(mode_cpr_value.getText().toString())) {
                                     reset(1);
@@ -1505,6 +1507,13 @@ public class CPRActivity extends AppCompatActivity {
                                             lungtime_list01.clear();
                                         }
                                     }
+
+                                    if (breath01 < bre_threshold01 && isBreath01) {
+                                        breathval_01.add(71.0f);
+                                        breathtime_01.add(current_time);
+
+                                    }
+
                                     if (isBreOver01) {
                                         if (isImageNormal01) {
                                             int level = lung_clip01.getLevel();
@@ -1581,7 +1590,7 @@ public class CPRActivity extends AppCompatActivity {
                                 SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                                 String getTime_ = sdf_.format(date_);
                                 ChatData chatData_ = new ChatData("breath/" + breath01, getTime_, UserName);
-                                databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                                databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
                             }
                         }else{
                             if(!isAdult){
@@ -1618,7 +1627,7 @@ public class CPRActivity extends AppCompatActivity {
                                 SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                                 String getTime_ = sdf_.format(date_);
                                 ChatData chatData_ = new ChatData("breath/" + breath, getTime_, UserName);
-                                databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                                databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
                             }
                         }
                         break;
@@ -1645,7 +1654,7 @@ public class CPRActivity extends AppCompatActivity {
                         SimpleDateFormat sdf__ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                         String getTime__ = sdf__.format(date__);
                         ChatData chatData__ = new ChatData("Depth/" + getHexToDec(spil[0]), getTime__, UserName);
-                        databaseReference.child("Room").child(room).child("message").push().setValue(chatData__);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData__);
 
 
                         lung01.setVisibility(View.INVISIBLE);
@@ -1925,7 +1934,7 @@ public class CPRActivity extends AppCompatActivity {
             SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
             String getTime_ = sdf_.format(date_);
             ChatData chatData_ = new ChatData("Bpm/" + currentBpm, getTime_, UserName);
-            databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
         }
     }
 
@@ -2070,8 +2079,9 @@ public class CPRActivity extends AppCompatActivity {
                     LocalBroadcastManager.getInstance(CPRActivity.this).unregisterReceiver(broadcastReceiver);
 
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-                        databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
                         databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
 
                         reset(1);
 
@@ -2108,8 +2118,9 @@ public class CPRActivity extends AppCompatActivity {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                         String getTime = sdf.format(date);
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-                        databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
                         databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
                         reset(1);
 
                         this.backKeyPressedTime = System.currentTimeMillis();
@@ -2274,9 +2285,9 @@ public class CPRActivity extends AppCompatActivity {
             SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
             String time = sdf_.format(date_);
             ChatData chatData_ = new ChatData("준비", time, UserName_);
-            databaseReference.child("Room").child(room_).child("message").push().setValue(chatData_);
+            databaseReference.child("Room").child(room_).child("message").child(UserName).push().setValue(chatData_);
             ChatData chatData__ = new ChatData("밴드/" + de1Connect + de2Connect, time, UserName_);
-            databaseReference.child("Room").child(room_).child("message").push().setValue(chatData__);
+            databaseReference.child("Room").child(room_).child("message").child(UserName).push().setValue(chatData__);
             isReady = true;
             databaseReference.child("Room").child(room).child("conference").addChildEventListener(conferenceEventListener);
 
@@ -2644,7 +2655,7 @@ public class CPRActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 ChatData chatData = dataSnapshot.getValue(ChatData.class);
 
-                if(chatData.getUserName().equals(UserName) || Double.parseDouble(chatData.getPostDate()) < enter_time){
+                if(Double.parseDouble(chatData.getPostDate()) < enter_time){
                 }else {
                     Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.icon);
                     if( chatData.getMessage().contains("시작"))
@@ -2732,9 +2743,9 @@ public class CPRActivity extends AppCompatActivity {
                         reset(2);
                     }
 
-                    if(chatData.getMessage().contains("화상아웃")){
+                    /*if(chatData.getMessage().contains("화상아웃")){
                         hangUp();
-                    }
+                    }*/
                     if(chatData.getMessage().contains("깊이/")){
                         String data[] = chatData.getMessage().split("/");
                         minDepth = (int)(Float.parseFloat(data[1]) * 10);
@@ -3003,7 +3014,7 @@ public class CPRActivity extends AppCompatActivity {
             }
 
             ChatData chatData__ = new ChatData("score/"+score+"/"+avg_depth_s+"/"+bpm, getTime_, UserName);
-            databaseReference.child("Room").child(room).child("message").push().setValue(chatData__);
+            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData__);
             ChatData chatData_ = new ChatData("report/" + reportItems.get(0).getReport_end_time() + "/"
                     + reportItems.get(0).getReport_interval_sec() + "/"
                     + reportItems.get(0).getReport_cycle() + "/"
@@ -3028,7 +3039,7 @@ public class CPRActivity extends AppCompatActivity {
                     , getTime_
                     , UserName);
 
-            databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -3093,7 +3104,7 @@ public class CPRActivity extends AppCompatActivity {
                 }
             });
 
-            databaseReference.child("Room").child(room).child("message").removeEventListener(childEventListener);
+            databaseReference.child("Room").child(room).child("트레이너").removeEventListener(childEventListener);
             databaseReference.child("Room").child(room).child("conference").removeEventListener(conferenceEventListener);
 
             intent = new Intent(CPRActivity.this, LobbyActivity.class);
@@ -3453,7 +3464,7 @@ public class CPRActivity extends AppCompatActivity {
         String getTime = sdf.format(date);
         String message = min_lung01+"/"+max_lung01;
         ChatData chatData = new ChatData("cali/"+message, getTime, UserName);
-        databaseReference.child("Room").child(room).child("message").push().setValue(chatData);
+        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
     }
 
 }
