@@ -731,11 +731,14 @@ public class CPRActivity extends AppCompatActivity {
         LinearLayout layout120 = findViewById(R.id.cpr_layout120);
 
         FrameLayout positionLayout = findViewById(R.id.position_layout);
-        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.position);
+        LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.position_press);
         positionLayout.post(() -> {
             int layout2_width = layout120.getWidth();
+            frame_width = positionLayout.getWidth();
+            ViewGroup.LayoutParams btn_params = (ViewGroup.LayoutParams) press_ave_btn01.getLayoutParams();
+            btn_params.width = frame_width / 9;
+            press_ave_btn01.setLayoutParams(btn_params);
             press_width = press_ave_btn01.getWidth();
-            frame_width = positionLayout.getWidth()-press_width;
 
             frame_interval = (frame_width - press_width) / 4;
             int text_interval = (int) frame_interval + layout2_width / 2;
@@ -746,10 +749,13 @@ public class CPRActivity extends AppCompatActivity {
             ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams) layout120.getLayoutParams();
             params2.setMargins(0, 0, text_interval, 0);
             layout120.setLayoutParams(params2);
+            LinearLayout.LayoutParams params_layout01 = (LinearLayout.LayoutParams)positionLayout.getLayoutParams();
+            params_layout01.setMargins(frame_interval,0,frame_interval,0);
+            positionLayout.setLayoutParams(params_layout01);
 
             div_interval = (float) frame_interval / (float) 10;
 
-            layerDrawable.setLayerInset(2, frame_interval, 5, frame_interval, 5);
+            //layerDrawable.setLayerInset(2, frame_interval, 5, frame_interval, 5);
             positionLayout.setBackground(layerDrawable);
         });
 
@@ -1897,37 +1903,43 @@ public class CPRActivity extends AppCompatActivity {
 
         Animation animation = null;
         if (currentBpm != 0) {
-            if (currentBpm > 140) {
+            /*if (currentBpm > 140) {
                 float XDelta = frame_interval * 4;
                 if(XDelta > frame_width)
                     XDelta = frame_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
-            } else if (currentBpm >= 120) {
-                float XDelta = frame_interval * 3 + (currentBpm - 120) * div_interval;
+            } else*/ if (currentBpm >= 120) {
+                float XDelta = (float) frame_interval * 2 - 1;
                 if(XDelta > frame_width)
                     XDelta = frame_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
             } else if (currentBpm >= 110) {
-                float XDelta = frame_interval * 2 + (currentBpm - 110) * div_interval;
+                float XDelta = (float) frame_interval + (currentBpm - 110) * div_interval;
                 if(XDelta > frame_width)
                     XDelta = frame_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
             } else if (currentBpm >= 100) {
-                float XDelta = frame_interval + (currentBpm - 100) * div_interval;
+                float XDelta = (float) 0 + (currentBpm - 100) * div_interval;
                 if(XDelta > frame_width)
                     XDelta = frame_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
             } else {
-                animation = new TranslateAnimation(position_bpm, currentBpm * div_interval / 10, 0, 0);
-                position_bpm = currentBpm * div_interval / 10;
+                animation = new TranslateAnimation(position_bpm, (float) 0, 0, 0);
+                position_bpm = (float) 0;
             }
             animation.setDuration(200);
             animation.setFillAfter(true);
             press_ave_btn01.startAnimation(animation);
+
+            if(currentBpm > 115 || currentBpm < 95) {
+                press_ave_btn01.setBackgroundResource(R.drawable.position_press_red);
+            } else {
+                press_ave_btn01.setBackgroundResource(R.drawable.position_press_red);
+            }
 
             long now_ = System.currentTimeMillis();
             Date date_ = new Date(now_);
@@ -2621,17 +2633,18 @@ public class CPRActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 ChatData chatData = snapshot.getValue(ChatData.class);
-
-                JitsiMeetConferenceOptions options
-                        = new JitsiMeetConferenceOptions.Builder()
-                        .setRoom(chatData.getMessage())
-                        // Settings for audio and video
-                        .setAudioMuted(true)
-                        //.setVideoMuted(true)
-                        .build();
-                // Launch the new activity with the given options. The launch() method takes care
-                // of creating the required Intent and passing the options.
-                JitsiMeetActivity.launch(CPRActivity.this, options);
+                if(enter_time > Double.parseDouble(chatData.getPostDate())) {
+                    JitsiMeetConferenceOptions options
+                            = new JitsiMeetConferenceOptions.Builder()
+                            .setRoom(chatData.getMessage())
+                            // Settings for audio and video
+                            .setAudioMuted(true)
+                            //.setVideoMuted(true)
+                            .build();
+                    // Launch the new activity with the given options. The launch() method takes care
+                    // of creating the required Intent and passing the options.
+                    JitsiMeetActivity.launch(CPRActivity.this, options);
+                }
             }
 
             @Override

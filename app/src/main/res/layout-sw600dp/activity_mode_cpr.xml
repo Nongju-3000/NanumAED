@@ -545,9 +545,7 @@
                                 <Button
                                     android:layout_width="80dp"
                                     android:layout_height="wrap_content"
-                                    android:background="@drawable/position_press"
-                                    android:layout_marginTop="5dp"
-                                    android:layout_marginBottom="5dp"
+                                    android:background="@drawable/position_press_red"
                                     android:id="@+id/press_ave_btn_cpr_01"
                                     />
 
