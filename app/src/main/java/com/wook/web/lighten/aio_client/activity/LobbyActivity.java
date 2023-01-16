@@ -157,13 +157,11 @@ public class LobbyActivity extends Activity {
                     databaseReference.child("Room").child(room).child("user").push().setValue(nameData);
                     ChatData chatData = new ChatData("입장했습니다.", getTime, name);  // 유저 이름과 메세지로 chatData 만들기
                     databaseReference.child("Room").child(room).child("message").child(name).push().setValue(chatData);
-                    DatabaseReference into = databaseReference.child("Room").child(room).child("into").push();
-                    String intokey = into.getKey();
+                    DatabaseReference into = databaseReference.child("Room").child(room).child("into").child(name);
                     into.setValue(chatData.getUserName());
                     Intent intent = new Intent(LobbyActivity.this, CPRActivity.class);
                     intent.putExtra("room", room);
                     intent.putExtra("name", name);
-                    intent.putExtra("intokey", intokey);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();

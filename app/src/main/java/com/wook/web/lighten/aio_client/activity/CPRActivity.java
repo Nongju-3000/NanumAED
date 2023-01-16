@@ -267,7 +267,6 @@ public class CPRActivity extends AppCompatActivity {
 
     private String room;
     private String UserName;
-    private String intokey;
 
     private boolean checkMagnet[] = {true, true, true};
 
@@ -617,7 +616,6 @@ public class CPRActivity extends AppCompatActivity {
         Intent intent = getIntent();
         room = intent.getStringExtra("room");
         UserName = intent.getStringExtra("name");
-        intokey = intent.getStringExtra("intokey");
 
         databaseReference.child("Room").child(room).child("user").orderByChild("name").equalTo(UserName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -997,7 +995,7 @@ public class CPRActivity extends AppCompatActivity {
             String getTime = sdf.format(date);
             ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
             databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-            databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
+            databaseReference.child("Room").child(room).child("into").child(UserName).setValue(null);
             databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
             e.printStackTrace();
             android.os.Process.killProcess(android.os.Process.myPid());
@@ -1935,10 +1933,10 @@ public class CPRActivity extends AppCompatActivity {
             animation.setFillAfter(true);
             press_ave_btn01.startAnimation(animation);
 
-            if(currentBpm > 115 || currentBpm < 95) {
+            if(currentBpm > 115 || currentBpm < 105) {
                 press_ave_btn01.setBackgroundResource(R.drawable.position_press_red);
             } else {
-                press_ave_btn01.setBackgroundResource(R.drawable.position_press_red);
+                press_ave_btn01.setBackgroundResource(R.drawable.position_press_green);
             }
 
             long now_ = System.currentTimeMillis();
@@ -2092,7 +2090,7 @@ public class CPRActivity extends AppCompatActivity {
 
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-                        databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
+                        databaseReference.child("Room").child(room).child("into").child(UserName).setValue(null);
                         databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
 
                         reset(1);
@@ -2131,7 +2129,7 @@ public class CPRActivity extends AppCompatActivity {
                         String getTime = sdf.format(date);
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-                        databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
+                        databaseReference.child("Room").child(room).child("into").child(UserName).setValue(null);
                         databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
                         reset(1);
 
@@ -2830,7 +2828,7 @@ public class CPRActivity extends AppCompatActivity {
         bluetoothLeServiceCPR = null;
         Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
-        databaseReference.child("Room").child(room).child("into").child(intokey).setValue(null);
+        databaseReference.child("Room").child(room).child("into").child(UserName).setValue(null);
 
     }
 
