@@ -1990,7 +1990,7 @@ public class CPRActivity extends AppCompatActivity {
             return mLeDevices.size();
         }
 
-        @Override
+        @Override   //리스트뷰의 아이템을 가져옴
         public Object getItem(int i) {
             return mLeDevices.get(i);
         }
