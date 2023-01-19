@@ -107,7 +107,7 @@
                             android:fontFamily="@font/sandolgothic"
                             android:autoSizeTextType="uniform"
                             android:layout_marginHorizontal="10dp"
-                            android:hint="Input Message here"
+                            android:hint="@string/input_message_here"
                             android:alpha="0.7"
                             android:maxLines="1"
                             android:inputType="text"
