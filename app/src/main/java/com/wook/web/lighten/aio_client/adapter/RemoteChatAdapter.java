@@ -58,6 +58,12 @@ public class RemoteChatAdapter extends RecyclerView.Adapter<RemoteChatAdapter.Vi
 
     public void addChatItem(RemoteChatData remoteChatData){
         mChatList.add(remoteChatData);
+        mChatList.sort((o1, o2) -> o1.getTime().compareTo(o2.getTime()));
+        notifyDataSetChanged();
+    }
+
+    public void clearChatList(){
+        mChatList.clear();
         notifyDataSetChanged();
     }
 }

@@ -68,6 +68,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -86,6 +87,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -109,8 +112,10 @@ import com.polidea.rxandroidble2.exceptions.BleScanException;
 import com.polidea.rxandroidble2.scan.ScanFilter;
 import com.polidea.rxandroidble2.scan.ScanSettings;
 import com.wook.web.lighten.aio_client.R;
+import com.wook.web.lighten.aio_client.adapter.RemoteChatAdapter;
 import com.wook.web.lighten.aio_client.ble.BluetoothLeServiceCPR;
 import com.wook.web.lighten.aio_client.data.GattAttributes;
+import com.wook.web.lighten.aio_client.data.RemoteChatData;
 import com.wook.web.lighten.aio_client.db.AppDatabase;
 import com.wook.web.lighten.aio_client.db.Converters;
 import com.wook.web.lighten.aio_client.db.Report;
@@ -227,6 +232,10 @@ public class CPRActivity extends AppCompatActivity {
     private TextView mode_cpr_value;
     private TextView cpr_timer;
 
+    private RecyclerView chatroom_recyclerview;
+    private EditText chatroom_edittext;
+    private ImageButton chatroom_sendbutton;
+
     private Button cpr_sub, cpr_add, standardCPR_btn01, depth_btn_cpr_01;
 
     private long MillisecondTime, StartTime, TimeBuff, UpdateTime, intrval_01, StartTime_L, position_intrval = 0L;
@@ -264,6 +273,8 @@ public class CPRActivity extends AppCompatActivity {
 
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
+
+    private RemoteChatAdapter remoteChatAdapter;
 
     private String room;
     private String UserName;
@@ -317,7 +328,7 @@ public class CPRActivity extends AppCompatActivity {
     private int correct_position = 0;
     private int total_position = 0;
 
-    private AutoFitTextureView cameraView;
+    //private AutoFitTextureView cameraView;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.ACCESS_FINE_LOCATION"};
 
     private ChildEventListener childEventListener, conferenceEventListener;
@@ -571,6 +582,9 @@ public class CPRActivity extends AppCompatActivity {
         Date date = new Date(now);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
         enter_time = Double.parseDouble(sdf.format(date));
+        Intent intent = getIntent();
+        room = intent.getStringExtra("room");
+        UserName = intent.getStringExtra("name");
 
         rxBleClient = RxBleClient.create(this);
         RxBleClient.updateLogOptions(new LogOptions.Builder()
@@ -610,12 +624,8 @@ public class CPRActivity extends AppCompatActivity {
 
         mac_list = new ArrayList<>();
 
-        cameraView = findViewById(R.id.cameraView);
+        //cameraView = findViewById(R.id.cameraView);
         bluetoothtime_list01 = new ArrayList<>();
-
-        Intent intent = getIntent();
-        room = intent.getStringExtra("room");
-        UserName = intent.getStringExtra("name");
 
         databaseReference.child("Room").child(room).child("user").orderByChild("name").equalTo(UserName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -638,17 +648,23 @@ public class CPRActivity extends AppCompatActivity {
             }
         });
 
+
+
         device_disconnect_cpr_01 = findViewById(R.id.device_disconnect_cpr_01);
         cpr_layout_01 = findViewById(R.id.cpr_layout_01);
 
         mainName = findViewById(R.id.mainName);
         mainName.setText("CPR(" + room + "," + UserName + ")");
 
-        ytb_img = findViewById(R.id.ytb_img);
-        YouTubePlayerView = findViewById(R.id.you_tube_player_view);
-        getLifecycle().addObserver(YouTubePlayerView);
+        //ytb_img = findViewById(R.id.ytb_img);
+        //YouTubePlayerView = findViewById(R.id.you_tube_player_view);
+        //getLifecycle().addObserver(YouTubePlayerView);
         press_position = findViewById(R.id.press_position);
         press_point_btn = findViewById(R.id.press_point_btn);
+
+        chatroom_recyclerview = findViewById(R.id.chatroom_recyclerview);
+        chatroom_edittext = findViewById(R.id.chatroom_edittext);
+        chatroom_sendbutton = findViewById(R.id.chatroom_sendbutton);
 
         sharedPreferences = getApplication().getSharedPreferences("DeviceCPR", MODE_PRIVATE);
 
@@ -680,6 +696,50 @@ public class CPRActivity extends AppCompatActivity {
         correctCount = findViewById(R.id.correctCount);
         totalCount = findViewById(R.id.totalCount);
         count_layout = findViewById(R.id.countlayout);
+
+        remoteChatAdapter = new RemoteChatAdapter();
+        chatroom_recyclerview.setAdapter(remoteChatAdapter);
+        chatroom_recyclerview.setLayoutManager(new LinearLayoutManager(this));
+
+        databaseReference.child("Chat").child(room).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                RemoteChatData remoteChatData = snapshot.getValue(RemoteChatData.class);
+                remoteChatAdapter.addChatItem(remoteChatData);
+                chatroom_recyclerview.scrollToPosition(remoteChatAdapter.getItemCount() - 1);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        chatroom_sendbutton.setOnClickListener(v -> {
+            if(chatroom_edittext.getText().toString().equals("")){
+                Toast.makeText(getApplicationContext(), "메세지를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                long mnow = System.currentTimeMillis();
+                Date mdate = new Date(mnow);
+                SimpleDateFormat msdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                String getTime = msdf.format(mdate);
+                RemoteChatData chatData = new RemoteChatData(UserName, chatroom_edittext.getText().toString(), getTime);  // 유저 이름과 메세지로 chatData 만들기
+                databaseReference.child("Chat").child(room).push().setValue(chatData);
+                chatroom_edittext.setText("");
+            }
+        });
 
         start_mode_cpr.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPreferences.edit().putBoolean("starModeCPR", isChecked).apply();
@@ -1010,7 +1070,7 @@ public class CPRActivity extends AppCompatActivity {
 
         startBackgroundThread();
 
-        if (cameraView.isAvailable()) {
+        /*if (cameraView.isAvailable()) {
             try {
                 openCamera();
             } catch (CameraAccessException e) {
@@ -1018,7 +1078,7 @@ public class CPRActivity extends AppCompatActivity {
             }
         } else {
             cameraView.setSurfaceTextureListener(textureListener);
-        }
+        }*/
     }
 
     private final static String expression = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*";
@@ -2698,7 +2758,7 @@ public class CPRActivity extends AppCompatActivity {
                             videoId = data;
                         if(!isInit){
                             ytb_img.setVisibility(View.GONE);
-                            cameraView.setVisibility(View.GONE);
+                            //cameraView.setVisibility(View.GONE);
                             YouTubePlayerView.setVisibility(View.VISIBLE);
                             AbstractYouTubePlayerListener youTubePlayerListener = new AbstractYouTubePlayerListener() {
                                 @Override
@@ -2785,7 +2845,7 @@ public class CPRActivity extends AppCompatActivity {
                         LocalBroadcastManager.getInstance(CPRActivity.this).unregisterReceiver(broadcastReceiver);
                         reset(1);
                     }
-                    if(chatData.getMessage().contains("카메라/")){
+                    /*if(chatData.getMessage().contains("카메라/")){
                         String data[] = chatData.getMessage().split("/");
                         if(data[1].equals("on")){
                             ytb_img.setVisibility(View.GONE);
@@ -2801,7 +2861,7 @@ public class CPRActivity extends AppCompatActivity {
                             }
                             cameraView.setVisibility(View.GONE);
                         }
-                    }
+                    }*/
                 }
             }
             @Override
@@ -3160,10 +3220,10 @@ public class CPRActivity extends AppCompatActivity {
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
     private void startCamera() {
-        cameraView.setSurfaceTextureListener(textureListener);
+        //cameraView.setSurfaceTextureListener(textureListener);
     }
 
-    private void openCamera() throws CameraAccessException {
+    /*private void openCamera() throws CameraAccessException {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
         cameraId = manager.getCameraIdList()[1];
@@ -3178,8 +3238,8 @@ public class CPRActivity extends AppCompatActivity {
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, 1001);
         }
-    }
-    private void createCameraPreview() throws CameraAccessException {
+    }*/
+    /*private void createCameraPreview() throws CameraAccessException {
         SurfaceTexture texture = cameraView.getSurfaceTexture();
         texture.setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
         Surface surface = new Surface(texture);
@@ -3207,7 +3267,7 @@ public class CPRActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Configuration Changed", Toast.LENGTH_LONG).show();
             }
         }, null);
-    }
+    }*/
 
     private void updatePreview() throws CameraAccessException {
         if (cameraDevice == null) {
@@ -3226,7 +3286,7 @@ public class CPRActivity extends AppCompatActivity {
     }
 
     // 리스너 콜백 함수
-    private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
+    /*private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
             try {
@@ -3250,14 +3310,14 @@ public class CPRActivity extends AppCompatActivity {
         public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
 
         }
-    };
+    };*/
 
-    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
+    /*private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             cameraDevice = camera;
             try {
-                createCameraPreview();
+                //createCameraPreview();
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -3273,7 +3333,7 @@ public class CPRActivity extends AppCompatActivity {
             cameraDevice.close();
             cameraDevice = null;
         }
-    };
+    };*/
     private void locationPermissionCheck(){
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
             requestPermissions(

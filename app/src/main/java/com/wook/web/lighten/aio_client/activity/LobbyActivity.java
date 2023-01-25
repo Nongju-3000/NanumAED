@@ -85,7 +85,32 @@ public class LobbyActivity extends Activity {
 
         Log.e("Name", name);
 
-        databaseReference.child("Chat").addChildEventListener(new ChildEventListener() {
+        databaseReference.child("Chat").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                remoteChatAdapter.clearChatList();
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    for(DataSnapshot mdataSnapshot : dataSnapshot.getChildren()){
+                        RemoteChatData remoteChatData = mdataSnapshot.getValue(RemoteChatData.class);
+                        Log.e("remoteChatData", remoteChatData.toString());
+                        if(!dataSnapshot.getKey().equals("대기실")){
+                            remoteChatData.setName(remoteChatData.getName() + "(" + dataSnapshot.getKey() + ")");
+                            remoteChatAdapter.addChatItem(remoteChatData);
+                        } else {
+                            remoteChatAdapter.addChatItem(remoteChatData);
+                        }
+                    }
+                }
+                chat_recyclerview.scrollToPosition(remoteChatAdapter.getItemCount()-1);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        /*databaseReference.child("Chat").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 RemoteChatData remoteChatData = dataSnapshot.getValue(RemoteChatData.class);
@@ -112,7 +137,7 @@ public class LobbyActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         chat_sendbutton.setOnClickListener(v -> {
             if(chat_edittext.getText().toString().equals("")){
@@ -124,7 +149,7 @@ public class LobbyActivity extends Activity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
                 String getTime = sdf.format(date);
                 RemoteChatData chatData = new RemoteChatData(name, chat_edittext.getText().toString(), getTime);  // 유저 이름과 메세지로 chatData 만들기
-                databaseReference.child("Chat").push().setValue(chatData);
+                databaseReference.child("Chat").child("대기실").push().setValue(chatData);
                 chat_edittext.setText("");
             }
         });
@@ -208,7 +233,7 @@ public class LobbyActivity extends Activity {
             startActivity(main);
 
             overridePendingTransition(R.anim.fadeout, R.anim.fadein);
-            finish();
+            activity.finish();
         }
     }
 }
