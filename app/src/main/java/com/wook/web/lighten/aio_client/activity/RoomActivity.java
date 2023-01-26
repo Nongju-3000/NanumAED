@@ -393,7 +393,7 @@ public class RoomActivity extends AppCompatActivity {
 
             long now = System.currentTimeMillis();
             Date date = new Date(now);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             final String getTime = sdf.format(date);
 
             SharedPreferences.Editor editor = prefs.edit();

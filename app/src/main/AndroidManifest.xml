@@ -47,6 +47,7 @@
             android:name=".activity.CPRActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
             />
 
         <activity

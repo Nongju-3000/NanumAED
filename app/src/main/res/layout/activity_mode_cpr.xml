@@ -36,6 +36,24 @@
                 android:maxLines="1"
                 android:textColor="#FF6A0D" />
 
+            <soup.neumorphism.NeumorphButton
+                android:id="@+id/video_conferenceBtn"
+                android:layout_width="70dp"
+                android:layout_height="45dp"
+                android:layout_gravity="end|center"
+                android:gravity="center"
+                android:padding="20dp"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeType="flat"
+                android:text="@string/video_conference"
+                android:textColor="#FF6A0D"
+                android:autoSizeMinTextSize="5sp"
+                android:autoSizeMaxTextSize="55sp"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"/>
 
         </FrameLayout><!--top menu layout -->
 

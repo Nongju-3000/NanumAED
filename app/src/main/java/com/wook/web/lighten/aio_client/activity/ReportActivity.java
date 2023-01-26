@@ -578,7 +578,7 @@ public class ReportActivity extends Activity {
             if(!ReportDB) {
                 long now_ = System.currentTimeMillis();
                 Date date_ = new Date(now_);
-                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 String getTime_ = sdf_.format(date_);
 
                 ChatData chatData_ = new ChatData("report/" + reportItems.get(0).getReport_end_time() + "/"

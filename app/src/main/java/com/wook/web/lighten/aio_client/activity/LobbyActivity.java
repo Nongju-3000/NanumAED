@@ -146,7 +146,7 @@ public class LobbyActivity extends Activity {
             } else {
                 long now = System.currentTimeMillis();
                 Date date = new Date(now);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 String getTime = sdf.format(date);
                 RemoteChatData chatData = new RemoteChatData(name, chat_edittext.getText().toString(), getTime);  // 유저 이름과 메세지로 chatData 만들기
                 databaseReference.child("Chat").child("대기실").push().setValue(chatData);
@@ -159,7 +159,7 @@ public class LobbyActivity extends Activity {
             public void onItemClick(int pos) {
                 long now = System.currentTimeMillis();
                 Date date = new Date(now);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 final String getTime = sdf.format(date);
                 String room = remoteRoomAdapter.getItem(pos).getName();
                 databaseReference.child("Room").child(room).child("trainer").orderByChild("name").equalTo(name).addListenerForSingleValueEvent(new ValueEventListener() {

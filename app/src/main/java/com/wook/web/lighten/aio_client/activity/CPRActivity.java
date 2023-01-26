@@ -236,7 +236,7 @@ public class CPRActivity extends AppCompatActivity {
     private EditText chatroom_edittext;
     private ImageButton chatroom_sendbutton;
 
-    private Button cpr_sub, cpr_add, standardCPR_btn01, depth_btn_cpr_01;
+    private Button cpr_sub, cpr_add, standardCPR_btn01, depth_btn_cpr_01, video_conferenceBtn;
 
     private long MillisecondTime, StartTime, TimeBuff, UpdateTime, intrval_01, StartTime_L, position_intrval = 0L;
 
@@ -374,6 +374,8 @@ public class CPRActivity extends AppCompatActivity {
     private ArrayList<Integer> lung_list01;
     private ArrayList<Float> lungtime_list01;
 
+    private JitsiMeetConferenceOptions latestOptions = null;
+
     private String address01;
     String[] address_array01;
     double max_lung01 = 100;
@@ -492,7 +494,7 @@ public class CPRActivity extends AppCompatActivity {
         if(isReady) {
             long now_ = System.currentTimeMillis();
             Date date_ = new Date(now_);
-            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             String time = sdf_.format(date_);
             int connected = 0;
             if (!device2_connect) {
@@ -580,7 +582,7 @@ public class CPRActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         enter_time = Double.parseDouble(sdf.format(date));
         Intent intent = getIntent();
         room = intent.getStringExtra("room");
@@ -700,6 +702,7 @@ public class CPRActivity extends AppCompatActivity {
         remoteChatAdapter = new RemoteChatAdapter();
         chatroom_recyclerview.setAdapter(remoteChatAdapter);
         chatroom_recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        video_conferenceBtn = findViewById(R.id.video_conferenceBtn);
 
         databaseReference.child("Chat").child(room).addChildEventListener(new ChildEventListener() {
             @Override
@@ -733,7 +736,7 @@ public class CPRActivity extends AppCompatActivity {
             } else {
                 long mnow = System.currentTimeMillis();
                 Date mdate = new Date(mnow);
-                SimpleDateFormat msdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                SimpleDateFormat msdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 String getTime = msdf.format(mdate);
                 RemoteChatData chatData = new RemoteChatData(UserName, chatroom_edittext.getText().toString(), getTime);  // 유저 이름과 메세지로 chatData 만들기
                 databaseReference.child("Chat").child(room).push().setValue(chatData);
@@ -807,9 +810,9 @@ public class CPRActivity extends AppCompatActivity {
             ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams) layout120.getLayoutParams();
             params2.setMargins(0, 0, text_interval, 0);
             layout120.setLayoutParams(params2);
-            LinearLayout.LayoutParams params_layout01 = (LinearLayout.LayoutParams)positionLayout.getLayoutParams();
+           /* LinearLayout.LayoutParams params_layout01 = (LinearLayout.LayoutParams)positionLayout.getLayoutParams();
             params_layout01.setMargins(frame_interval,0,frame_interval,0);
-            positionLayout.setLayoutParams(params_layout01);
+            positionLayout.setLayoutParams(params_layout01);*/
 
             div_interval = (float) frame_interval / (float) 10;
 
@@ -890,6 +893,10 @@ public class CPRActivity extends AppCompatActivity {
 
         databaseReference.child("Room").child(room).child("트레이너").limitToLast(10).addChildEventListener(childEventListener);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+
+        video_conferenceBtn.setOnClickListener(v -> {
+            JitsiMeetActivity.launch(CPRActivity.this, latestOptions);
+        });
 
     }
 
@@ -1051,7 +1058,7 @@ public class CPRActivity extends AppCompatActivity {
         public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
             long now = System.currentTimeMillis();
             Date date = new Date(now);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             String getTime = sdf.format(date);
             ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
             databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
@@ -1140,7 +1147,7 @@ public class CPRActivity extends AppCompatActivity {
                         if (!device2_connect) {
                             long now_ = System.currentTimeMillis();
                             Date date_ = new Date(now_);
-                            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                             String getTime_ = sdf_.format(date_);
                             ChatData chatData_ = new ChatData("Depth/" + getHexToDec(spil[0]), getTime_, UserName);
                             databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
@@ -1282,7 +1289,7 @@ public class CPRActivity extends AppCompatActivity {
                         if(angle01 > pre_angle + 2 || angle01 < pre_angle - 2) {
                             long now_ = System.currentTimeMillis();
                             Date date_ = new Date(now_);
-                            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                             String getTime_ = sdf_.format(date_);
                             ChatData chatData_ = new ChatData("Angle/" + angle01, getTime_, UserName);
                             databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
@@ -1308,7 +1315,7 @@ public class CPRActivity extends AppCompatActivity {
                         Log.e(TAG, "position = "+position01);
 
                         Date date = new Date(now);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                         String getTime = sdf.format(date);
                         ChatData chatData = new ChatData("Position/" + position01, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
@@ -1651,7 +1658,7 @@ public class CPRActivity extends AppCompatActivity {
 
                                 long now_ = System.currentTimeMillis();
                                 Date date_ = new Date(now_);
-                                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                                 String getTime_ = sdf_.format(date_);
                                 ChatData chatData_ = new ChatData("breath/" + breath01, getTime_, UserName);
                                 databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
@@ -1688,7 +1695,7 @@ public class CPRActivity extends AppCompatActivity {
                                 }
                                 long now_ = System.currentTimeMillis();
                                 Date date_ = new Date(now_);
-                                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                                 String getTime_ = sdf_.format(date_);
                                 ChatData chatData_ = new ChatData("breath/" + breath, getTime_, UserName);
                                 databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
@@ -1715,7 +1722,7 @@ public class CPRActivity extends AppCompatActivity {
                         }
                         long now__ = System.currentTimeMillis();
                         Date date__ = new Date(now__);
-                        SimpleDateFormat sdf__ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                        SimpleDateFormat sdf__ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                         String getTime__ = sdf__.format(date__);
                         ChatData chatData__ = new ChatData("Depth/" + getHexToDec(spil[0]), getTime__, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData__);
@@ -1961,39 +1968,38 @@ public class CPRActivity extends AppCompatActivity {
 
         Animation animation = null;
         if (currentBpm != 0) {
-            /*if (currentBpm > 140) {
-                float XDelta = frame_interval * 4;
-                if(XDelta > frame_width)
-                    XDelta = frame_width;
+            Log.e("bpm", String.valueOf(frame_width));
+            if (currentBpm > 140) {
+                float XDelta = (float)frame_width-press_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
-            } else*/ if (currentBpm >= 120) {
-                float XDelta = (float) frame_interval * 2 - 1;
-                if(XDelta > frame_width)
-                    XDelta = frame_width;
+            } else if (currentBpm >= 120) {
+                float XDelta = frame_interval * 3 + (currentBpm - 120) * div_interval;
+                if(XDelta > frame_width-press_width)
+                    XDelta = frame_width-press_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
             } else if (currentBpm >= 110) {
-                float XDelta = (float) frame_interval + (currentBpm - 110) * div_interval;
-                if(XDelta > frame_width)
-                    XDelta = frame_width;
+                float XDelta = frame_interval * 2 + (currentBpm - 110) * div_interval;
+                if(XDelta > frame_width-press_width)
+                    XDelta = frame_width-press_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
             } else if (currentBpm >= 100) {
-                float XDelta = (float) 0 + (currentBpm - 100) * div_interval;
-                if(XDelta > frame_width)
-                    XDelta = frame_width;
+                float XDelta = frame_interval + (currentBpm - 100) * div_interval;
+                if(XDelta > frame_width-press_width)
+                    XDelta = frame_width-press_width;
                 animation = new TranslateAnimation(position_bpm, XDelta, 0, 0);
                 position_bpm = XDelta;
             } else {
-                animation = new TranslateAnimation(position_bpm, (float) 0, 0, 0);
-                position_bpm = (float) 0;
+                animation = new TranslateAnimation(position_bpm, currentBpm * div_interval / 10, 0, 0);
+                position_bpm = currentBpm * div_interval / 10;
             }
             animation.setDuration(200);
             animation.setFillAfter(true);
             press_ave_btn01.startAnimation(animation);
 
-            if(currentBpm > 115 || currentBpm < 105) {
+            if(currentBpm > 120 || currentBpm < 100) {
                 press_ave_btn01.setBackgroundResource(R.drawable.position_press_red);
             } else {
                 press_ave_btn01.setBackgroundResource(R.drawable.position_press_green);
@@ -2001,7 +2007,7 @@ public class CPRActivity extends AppCompatActivity {
 
             long now_ = System.currentTimeMillis();
             Date date_ = new Date(now_);
-            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             String getTime_ = sdf_.format(date_);
             ChatData chatData_ = new ChatData("Bpm/" + currentBpm, getTime_, UserName);
             databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
@@ -2142,7 +2148,7 @@ public class CPRActivity extends AppCompatActivity {
 
                         long now = System.currentTimeMillis();
                         Date date = new Date(now);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                         String getTime = sdf.format(date);
 
                         hangUp();
@@ -2185,7 +2191,7 @@ public class CPRActivity extends AppCompatActivity {
                         sharedPreferences.edit().putInt("onGoing", 0).apply();
                         long now = System.currentTimeMillis();
                         Date date = new Date(now);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                         String getTime = sdf.format(date);
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
@@ -2352,7 +2358,7 @@ public class CPRActivity extends AppCompatActivity {
 
             long now_ = System.currentTimeMillis();
             Date date_ = new Date(now_);
-            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             String time = sdf_.format(date_);
             ChatData chatData_ = new ChatData("준비", time, UserName_);
             databaseReference.child("Room").child(room_).child("message").child(UserName).push().setValue(chatData_);
@@ -2691,18 +2697,19 @@ public class CPRActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 ChatData chatData = snapshot.getValue(ChatData.class);
-                if(enter_time > Double.parseDouble(chatData.getPostDate())) {
-                    JitsiMeetConferenceOptions options
-                            = new JitsiMeetConferenceOptions.Builder()
-                            .setRoom(chatData.getMessage())
-                            // Settings for audio and video
-                            .setAudioMuted(true)
-                            //.setVideoMuted(true)
-                            .build();
-                    // Launch the new activity with the given options. The launch() method takes care
-                    // of creating the required Intent and passing the options.
-                    JitsiMeetActivity.launch(CPRActivity.this, options);
-                }
+                JitsiMeetConferenceOptions options
+                        = new JitsiMeetConferenceOptions.Builder()
+                        .setRoom(chatData.getMessage())
+                        // Settings for audio and video
+                        .setAudioMuted(true)
+                        //.setVideoMuted(true)
+                        .build();
+                latestOptions = options;
+                video_conferenceBtn.setEnabled(true);
+                video_conferenceBtn.setVisibility(View.VISIBLE);
+                // Launch the new activity with the given options. The launch() method takes care
+                // of creating the required Intent and passing the options.
+                JitsiMeetActivity.launch(CPRActivity.this, options);
             }
 
             @Override
@@ -3039,7 +3046,7 @@ public class CPRActivity extends AppCompatActivity {
             Converters converters = new Converters();
             long now_ = System.currentTimeMillis();
             Date date_ = new Date(now_);
-            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             String getTime_ = sdf_.format(date_);
 
             int depth_count = 0;
@@ -3531,7 +3538,7 @@ public class CPRActivity extends AppCompatActivity {
         Print.e("Test", "min_lung = "+min_lung01+", max_lung = "+max_lung01);
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         String getTime = sdf.format(date);
         String message = min_lung01+"/"+max_lung01;
         ChatData chatData = new ChatData("cali/"+message, getTime, UserName);
