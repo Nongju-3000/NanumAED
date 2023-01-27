@@ -1,5 +1,7 @@
 package com.wook.web.lighten.aio_client.activity;
 
+import static com.wook.web.lighten.aio_client.activity.RoomActivity.prefs;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -669,6 +671,8 @@ public class CPRActivity extends AppCompatActivity {
         chatroom_sendbutton = findViewById(R.id.chatroom_sendbutton);
 
         sharedPreferences = getApplication().getSharedPreferences("DeviceCPR", MODE_PRIVATE);
+
+        prefs.edit().putString("room", room).apply();
 
         handler = new Handler(Looper.getMainLooper());
 

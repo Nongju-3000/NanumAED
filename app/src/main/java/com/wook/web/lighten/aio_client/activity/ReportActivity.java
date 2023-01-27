@@ -600,7 +600,7 @@ public class ReportActivity extends Activity {
                         , getTime_
                         , UserName);
 
-                databaseReference.child("Room").child(room).child("message").push().setValue(chatData_);
+                databaseReference.child("Room").child(room).child(reportItems.get(0).getReport_name()).child("message").push().setValue(chatData_);
             }
 
         } else {

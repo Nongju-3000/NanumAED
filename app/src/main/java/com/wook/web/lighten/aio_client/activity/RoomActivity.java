@@ -152,7 +152,9 @@ public class RoomActivity extends AppCompatActivity {
         }
 
         public void onBackPressed(){
-            activity.finish();
+            moveTaskToBack(true); // 태스크를 백그라운드로 이동
+            finishAndRemoveTask(); // 액티비티 종료 + 태스크 리스트에서 지우기
+            android.os.Process.killProcess(android.os.Process.myPid()); // 앱 프로세스 종료
         }
     }
 
@@ -372,6 +374,29 @@ public class RoomActivity extends AppCompatActivity {
 
         NotificationManager notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notifManager.cancelAll();
+
+        Log.e("roomname",  prefs.getString("room","null"));
+        Log.e("username",  prefs.getString("userName","null"));
+
+        if(prefs.getString("room",null) != null){
+            databaseReference.child("Room").child(prefs.getString("room",null)).child("into").orderByKey().equalTo(prefs.getString("userName",null)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        Intent intent1 = new Intent(RoomActivity.this, CPRActivity.class);
+                        intent1.putExtra("room", prefs.getString("room",null));
+                        intent1.putExtra("name", prefs.getString("userName",null));
+                        startActivity(intent1);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
 
         linear.setOnClickListener(new View.OnClickListener() {
             @Override
