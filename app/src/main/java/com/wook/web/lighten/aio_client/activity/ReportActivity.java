@@ -569,39 +569,7 @@ public class ReportActivity extends Activity {
 
             for (ReportItem reportItem : reportItems)
                 names.add("   " + reportItem.getReport_name() + "   ");
-
-
             setChart(0);
-
-            Converters converters = new Converters();
-
-            if(!ReportDB) {
-                long now_ = System.currentTimeMillis();
-                Date date_ = new Date(now_);
-                SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                String getTime_ = sdf_.format(date_);
-
-                ChatData chatData_ = new ChatData("report/" + reportItems.get(0).getReport_end_time() + "/"
-                        + reportItems.get(0).getReport_interval_sec() + "/"
-                        + reportItems.get(0).getReport_cycle() + "/"
-                        + reportItems.get(0).getReport_depth_correct() + "/"
-                        + reportItems.get(0).getReport_up_depth() + "/"
-                        + reportItems.get(0).getReport_down_depth() + "/"
-                        + reportItems.get(0).getReport_bpm() + "/"
-                        + reportItems.get(0).getReport_angle() + "/"
-                        + converters.writingStringFromList(reportItems.get(0).getReport_depth_list()) + "/"
-                        + reportItems.get(0).getDepth_num() + "/"
-                        + reportItems.get(0).getDepth_correct() + "/"
-                        + reportItems.get(0).getReport_position_num() + "/"
-                        + reportItems.get(0).getReport_position_correct() + "/"
-                        + reportItems.get(0).getReport_lung_num() + "/"
-                        + reportItems.get(0).getReport_lung_correct() + "/"
-                        + reportItems.get(0).getStop_time_list()
-                        , getTime_
-                        , UserName);
-
-                databaseReference.child("Room").child(room).child(reportItems.get(0).getReport_name()).child("message").push().setValue(chatData_);
-            }
 
         } else {
             Intent main = new Intent(ReportActivity.this, RoomActivity.class);
