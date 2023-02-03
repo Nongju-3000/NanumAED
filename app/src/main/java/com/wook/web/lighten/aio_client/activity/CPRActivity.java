@@ -333,7 +333,7 @@ public class CPRActivity extends AppCompatActivity {
     //private AutoFitTextureView cameraView;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.ACCESS_FINE_LOCATION"};
 
-    private ChildEventListener childEventListener, conferenceEventListener;
+    private ChildEventListener childEventListener, conferenceEventListener, chatEventListener;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -590,6 +590,8 @@ public class CPRActivity extends AppCompatActivity {
         room = intent.getStringExtra("room");
         UserName = intent.getStringExtra("name");
 
+        setChatEventListener();
+
         rxBleClient = RxBleClient.create(this);
         RxBleClient.updateLogOptions(new LogOptions.Builder()
                 .setLogLevel(LogConstants.INFO)
@@ -708,30 +710,7 @@ public class CPRActivity extends AppCompatActivity {
         chatroom_recyclerview.setLayoutManager(new LinearLayoutManager(this));
         video_conferenceBtn = findViewById(R.id.video_conferenceBtn);
 
-        databaseReference.child("Chat").child(room).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                RemoteChatData remoteChatData = snapshot.getValue(RemoteChatData.class);
-                remoteChatAdapter.addChatItem(remoteChatData);
-                chatroom_recyclerview.scrollToPosition(remoteChatAdapter.getItemCount() - 1);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+        databaseReference.child("Chat").child(room).addChildEventListener(chatEventListener);
 
         chatroom_sendbutton.setOnClickListener(v -> {
             if(chatroom_edittext.getText().toString().equals("")){
@@ -2696,6 +2675,33 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
+    private void setChatEventListener(){
+        chatEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                RemoteChatData remoteChatData = snapshot.getValue(RemoteChatData.class);
+                remoteChatAdapter.addChatItem(remoteChatData);
+                chatroom_recyclerview.scrollToPosition(remoteChatAdapter.getItemCount() - 1);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+    }
+
     private void setConferenceEventListener(){
         conferenceEventListener = new ChildEventListener() {
             @Override
@@ -3188,6 +3194,7 @@ public class CPRActivity extends AppCompatActivity {
 
             databaseReference.child("Room").child(room).child("트레이너").removeEventListener(childEventListener);
             databaseReference.child("Room").child(room).child("conference").removeEventListener(conferenceEventListener);
+            databaseReference.child("Chat").child(room).removeEventListener(chatEventListener);
 
             intent = new Intent(CPRActivity.this, LobbyActivity.class);
             intent.putExtra("Name",UserName);

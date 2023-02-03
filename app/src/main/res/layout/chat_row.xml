@@ -11,7 +11,7 @@
         android:gravity="start|center"
         android:autoSizeTextType="uniform"
         android:maxLines="1"
-        android:autoSizeMaxTextSize="11sp"
+        android:autoSizeMaxTextSize="15sp"
         android:text="bravo:"
         android:textColor="#ffffff"
         />
@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         android:layout_weight="0.2"
         android:gravity="center"
-        android:textSize="11sp"
+        android:textSize="15sp"
         android:text=":"
         android:textColor="#ffffff"
         />
@@ -30,7 +30,7 @@
         android:layout_height="match_parent"
         android:layout_weight="4"
         android:gravity="start|center"
-        android:textSize="11sp"
+        android:textSize="15sp"
         android:text=" hello"
         android:textColor="#ffffff"
         />

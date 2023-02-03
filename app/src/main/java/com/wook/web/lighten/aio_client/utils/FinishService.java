@@ -80,17 +80,28 @@ public class FinishService extends Service {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         String getTime = sdf.format(date);
 
-        if(token != null) {
-            ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-            databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
-        }
+        databaseReference.child("Room").child(room).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.getValue() != null){
+                    if(token != null) {
+                        ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+                        databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
+                    }
 
-        else{
-            ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-        }
+                    else{
+                        ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         stopSelf();
 
         /*
