@@ -714,7 +714,7 @@ public class CPRActivity extends AppCompatActivity {
 
         chatroom_sendbutton.setOnClickListener(v -> {
             if(chatroom_edittext.getText().toString().equals("")){
-                Toast.makeText(getApplicationContext(), "메세지를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.input_message_here, Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 long mnow = System.currentTimeMillis();
@@ -2150,7 +2150,7 @@ public class CPRActivity extends AppCompatActivity {
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     dialog.show();
                 } else {
-                    Toast toast = Toast.makeText(CPRActivity.this, "Disconnect the device.", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(CPRActivity.this, R.string.disconnect_device, Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, Gravity.BOTTOM);
                     toast.show();
                 }
@@ -2751,7 +2751,7 @@ public class CPRActivity extends AppCompatActivity {
                             if (start_check) {
                                 showStart(CPRActivity.this);
                             } else {
-                                Toast toast = Toast.makeText(CPRActivity.this, "Running...", Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(CPRActivity.this, R.string.running, Toast.LENGTH_SHORT);
                                 toast.setGravity(Gravity.CENTER, 0, Gravity.BOTTOM);
                                 toast.show();
                             }

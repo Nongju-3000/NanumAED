@@ -132,4 +132,8 @@
     <string name="error_bluetooth_cannot_start">Unable to start scanning</string>
     <string name="error_unknown_error">Unknown error</string>
     <string name="input_message_here">Input Message here</string>
+    <string name="disconnect_device">Disconnect the device.</string>
+    <string name="running">Running...</string>
+    <string name="alreadyinroom">\" is already in room\"</string>
+    <string name="inputname">Input Name</string>
 </resources>

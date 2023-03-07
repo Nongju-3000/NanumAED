@@ -233,9 +233,9 @@ public class ReportActivity extends Activity {
         //breath_break = findViewById(R.id.breath_break);
         //breath_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
         chart_break = findViewById(R.id.chart_break);
-        chart_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
+        //chart_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
         depth_break = findViewById(R.id.depth_break);
-        depth_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
+        //depth_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
 
         cprCardView.post(()->{
             createDialog();

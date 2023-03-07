@@ -133,4 +133,8 @@
     <string name="error_bluetooth_cannot_start">Unable to start scanning</string>
     <string name="error_unknown_error">Unknown error</string>
     <string name="input_message_here">메세지를 입력하세요</string>
+    <string name="disconnect_device">CPR을 중지해주세요</string>
+    <string name="running">CPR을 중지해주세요...</string>
+    <string name="alreadyinroom">\" 이미 방에 존재합니다\"</string>
+    <string name="inputname">이름을 입력해주세요</string>
 </resources>

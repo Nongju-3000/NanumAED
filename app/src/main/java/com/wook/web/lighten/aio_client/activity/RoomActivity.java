@@ -428,7 +428,7 @@ public class RoomActivity extends AppCompatActivity {
             final Intent intent1 = new Intent(RoomActivity.this, LobbyActivity.class);
 
             if(name.getText().toString().equals("")) {
-                Toast.makeText(RoomActivity.this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RoomActivity.this, R.string.inputname, Toast.LENGTH_SHORT).show();
             } else {
                 intent1.putExtra("Name", name.getText().toString());
                 intent1.putExtra("Token", token);

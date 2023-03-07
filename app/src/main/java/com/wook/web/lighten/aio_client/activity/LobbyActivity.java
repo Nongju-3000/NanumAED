@@ -141,7 +141,7 @@ public class LobbyActivity extends Activity {
 
         chat_sendbutton.setOnClickListener(v -> {
             if(chat_edittext.getText().toString().equals("")){
-                Toast.makeText(getApplicationContext(), "메세지를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.input_message_here, Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 long now = System.currentTimeMillis();
@@ -191,7 +191,7 @@ public class LobbyActivity extends Activity {
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Name" + name + " is already in room", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.name + name + getString(R.string.alreadyinroom), Toast.LENGTH_SHORT).show();
                 }
             }
         });
