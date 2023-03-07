@@ -1303,7 +1303,7 @@ public class CPRActivity extends AppCompatActivity {
                         ChatData chatData = new ChatData("Position/" + position01, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
 
-                        isBreath01 = false;
+                        //isBreath01 = false;
                         switch (position01) {
                             case 1:
                                 final Animation animation0 = new TranslateAnimation(0, -100, 0, 0);
@@ -1565,7 +1565,7 @@ public class CPRActivity extends AppCompatActivity {
                                     if (breath01 < bre_threshold01 && isBreath01) {
                                         breathval_01.add(71.0f);
                                         breathtime_01.add(current_time);
-
+                                        isBreath01 = false;
                                     }
 
                                     if (isBreOver01) {
