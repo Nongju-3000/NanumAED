@@ -2765,6 +2765,21 @@ public class CPRActivity extends AppCompatActivity {
                         toDay = data[1] + "/" + data[2];
                         Log.d("toDay",toDay);
                     }
+                    if(chatData.getMessage().contains("개인회의/")){
+                        String data[] = chatData.getMessage().split("/");
+                        if(data[1].equals(UserName)){
+                            JitsiMeetConferenceOptions options
+                                    = new JitsiMeetConferenceOptions.Builder()
+                                    .setRoom(data[2])
+                                    // Settings for audio and video
+                                    .setAudioMuted(false)
+                                    //.setVideoMuted(true)
+                                    .build();
+                            // Launch the new activity with the given options. The launch() method takes care
+                            // of creating the required Intent and passing the options.
+                            JitsiMeetActivity.launch(CPRActivity.this, options);
+                        }
+                    }
 
                     if(chatData.getMessage().contains("방송/")){
                         String data = chatData.getMessage().substring(3);
