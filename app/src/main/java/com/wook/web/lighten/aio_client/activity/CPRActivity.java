@@ -41,6 +41,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -303,6 +304,7 @@ public class CPRActivity extends AppCompatActivity {
     private int lung_num01 = 0;
     private int lung_correct01 = 0;
 
+    private boolean ismute = false;
     private int interval = 100;
     private boolean mode = false;
     private int minDepth = 30;
@@ -371,6 +373,8 @@ public class CPRActivity extends AppCompatActivity {
     private int hand_off_time = 0;
 
     private boolean isReset = false;
+
+    private boolean isConferenceRunning = false;
 
     private Button depth_btn_cpr_up;
     private ArrayList<Integer> lung_list01;
@@ -878,7 +882,18 @@ public class CPRActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
 
         video_conferenceBtn.setOnClickListener(v -> {
+            if(isConferenceRunning){
+                hangUp();
+                try {
+                    Toast.makeText(getApplicationContext(), R.string.conferencechange, Toast.LENGTH_SHORT).show();
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             JitsiMeetActivity.launch(CPRActivity.this, latestOptions);
+            isConferenceRunning = true;
+
         });
 
     }
@@ -975,6 +990,8 @@ public class CPRActivity extends AppCompatActivity {
             BroadcastEvent event = new BroadcastEvent(intent);
             switch (event.getType()) {
                 case CONFERENCE_TERMINATED:
+                    Log.e(TAG, "CONFERENCE_TERMINATED");
+                    isConferenceRunning = false;
                     break;
             }
         }
@@ -1029,7 +1046,13 @@ public class CPRActivity extends AppCompatActivity {
                 // .setFeatureFlag("toolbox.enabled", false)
                 // .setFeatureFlag("filmstrip.enabled", false)
                 .setUserInfo(info)
+                //.setFeatureFlag("audio-focus.disabled", true)
                 .setFeatureFlag("call-integration.enabled", false)
+                .setFeatureFlag("prejoinpage.enabled", false)
+                .setFeatureFlag("notifications.enabled", false)
+                .setFeatureFlag("ios.recording.enabled",true)
+                .setFeatureFlag("ios.screensharing.enabled",true)
+                .setFeatureFlag("android.screensharing.enabled",true)
                 .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
 
@@ -2706,6 +2729,15 @@ public class CPRActivity extends AppCompatActivity {
         conferenceEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if(isConferenceRunning){
+                    hangUp();
+                    try {
+                        Toast.makeText(getApplicationContext(), R.string.conferencechange, Toast.LENGTH_SHORT).show();
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 ChatData chatData = snapshot.getValue(ChatData.class);
                 JitsiMeetConferenceOptions options
                         = new JitsiMeetConferenceOptions.Builder()
@@ -2720,6 +2752,7 @@ public class CPRActivity extends AppCompatActivity {
                 // Launch the new activity with the given options. The launch() method takes care
                 // of creating the required Intent and passing the options.
                 JitsiMeetActivity.launch(CPRActivity.this, options);
+                isConferenceRunning = true;
             }
 
             @Override
@@ -2735,6 +2768,31 @@ public class CPRActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         };
+    }
+
+    int mVolume = 0;
+
+    private void mutedevice(){
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mVolume = audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+        //audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 0, 0);
+
+        /*audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, AudioManager.FLAG_SHOW_UI, 0);
+        audioManager.adjustStreamVolume(AudioManager.STREAM_VOICE_CALL, AudioManager.ADJUST_TOGGLE_MUTE, 0);
+        audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+
+        Intent setAudioMutedIntent = BroadcastIntentHelper.buildSetAudioMutedIntent(true);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(setAudioMutedIntent);*/
+
+        AudioManager.
+
+    }
+
+    private void unmutedevice(){
+        Intent setAudioMutedIntent = BroadcastIntentHelper.buildSetAudioMutedIntent(false);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(setAudioMutedIntent);
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, mVolume, 0);
     }
 
     private void setChildEventListener(){
@@ -2765,7 +2823,36 @@ public class CPRActivity extends AppCompatActivity {
                         toDay = data[1] + "/" + data[2];
                         Log.d("toDay",toDay);
                     }
+                    if(chatData.getMessage().contains("음소거/")){
+                        String data[] = chatData.getMessage().split("/");
+                        if((!data[1].equals(UserName))){
+                            if(!ismute) {
+                                mutedevice();
+                                ismute = true;
+                            }
+                        } else{
+                            if(ismute) {
+                                unmutedevice();
+                                ismute = false;
+                            }
+                        }
+                    } else if(chatData.getMessage().contains("음소거해제/")){
+                        if(ismute) {
+                            unmutedevice();
+                            ismute = false;
+                        }
+                    }
+
                     if(chatData.getMessage().contains("개인회의/")){
+                        if(isConferenceRunning){
+                            hangUp();
+                            try {
+                                Toast.makeText(getApplicationContext(), R.string.conferencechange, Toast.LENGTH_SHORT).show();
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         String data[] = chatData.getMessage().split("/");
                         if(data[1].equals(UserName)){
                             JitsiMeetConferenceOptions options
@@ -2778,6 +2865,7 @@ public class CPRActivity extends AppCompatActivity {
                             // Launch the new activity with the given options. The launch() method takes care
                             // of creating the required Intent and passing the options.
                             JitsiMeetActivity.launch(CPRActivity.this, options);
+                            isConferenceRunning = true;
                         }
                     }
 

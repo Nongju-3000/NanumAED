@@ -137,4 +137,5 @@
     <string name="running">Running...</string>
     <string name="alreadyinroom">\" is already in room\"</string>
     <string name="inputname">Input Name</string>
+    <string name="conferencechange">Conference Changing</string>
 </resources>
