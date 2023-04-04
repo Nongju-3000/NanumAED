@@ -1,8 +1,7 @@
 package com.wook.web.lighten.aio_client.activity;
 
-import static android.os.Environment.DIRECTORY_DOWNLOADS;
-
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,8 +12,6 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -27,16 +24,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
-import android.hardware.camera2.CameraAccessException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -47,9 +38,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -82,7 +70,6 @@ import com.polidea.rxandroidble2.LogConstants;
 import com.polidea.rxandroidble2.LogOptions;
 import com.polidea.rxandroidble2.RxBleClient;
 import com.polidea.rxandroidble2.RxBleDevice;
-import com.polidea.rxandroidble2.exceptions.BleException;
 import com.polidea.rxandroidble2.exceptions.BleScanException;
 import com.polidea.rxandroidble2.scan.ScanFilter;
 import com.polidea.rxandroidble2.scan.ScanSettings;
@@ -112,12 +99,11 @@ import java.util.Objects;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.exceptions.UndeliverableException;
-import io.reactivex.plugins.RxJavaPlugins;
 import soup.neumorphism.NeumorphButton;
 import soup.neumorphism.NeumorphImageButton;
 
 
+@SuppressLint("MissingPermission")
 public class RoomActivity extends AppCompatActivity {
 
     private BackPressCloseHandler backPressCloseHandler;
@@ -805,6 +791,7 @@ public class RoomActivity extends AppCompatActivity {
             for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter02.mLeDevices) {
                 String address = bluetoothDevice.getMacAddress();
                 if (Objects.equals(Devices.get("Device_02"), address)) {
+                    Log.e("Device02", address);
                     bluetoothLeServiceCPR.connect(address,1);
                 }
             }
@@ -938,6 +925,7 @@ public class RoomActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
+
 
     private void showAlertDialog() {
         mConnected = false;

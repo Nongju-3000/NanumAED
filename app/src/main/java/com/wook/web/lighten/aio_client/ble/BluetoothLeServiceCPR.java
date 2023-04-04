@@ -582,6 +582,7 @@ public class BluetoothLeServiceCPR extends Service {
         compositeDisposable.add(connectionDisposable);
 
         if(!isregisterstateDisposable.get(index)) {
+            Log.e("connect", "stateDisposable");
             Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(newState -> sendNewState(bleDevice, newState, index));
@@ -619,6 +620,8 @@ public class BluetoothLeServiceCPR extends Service {
     public void disconnect(){
         compositeDisposable.clear();
         statecompositeDisposable.clear();
+        isregisterstateDisposable.set(0, false);
+        isregisterstateDisposable.set(1, false);
         for(int i=0; i< isCharARegistereds.size(); i++){
             isCharDRegistereds.set(i, false);
             isCharARegistereds.set(i, false);
