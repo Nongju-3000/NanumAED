@@ -19,7 +19,6 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }
-        maven { url "https://github.com/Nongju-3000/jitsi-meet/tree/master/android" }
         maven { url "https://oss.jfrog.org/libs-snapshot" }
         mavenCentral()
 

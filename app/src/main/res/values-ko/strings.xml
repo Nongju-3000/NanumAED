@@ -137,5 +137,4 @@
     <string name="running">CPR을 중지해주세요...</string>
     <string name="alreadyinroom">\" 이미 방에 존재합니다\"</string>
     <string name="inputname">이름을 입력해주세요</string>
-    <string name="conferencechange">회의를 전환 중입니다...</string>
 </resources>
