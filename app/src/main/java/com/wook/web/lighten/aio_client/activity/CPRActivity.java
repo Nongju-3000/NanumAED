@@ -883,7 +883,6 @@ public class CPRActivity extends AppCompatActivity {
         } else {
             mDownHandler01.removeCallbacks(animateDownImage01);
             fromLevel01 = toLevel01;
-            ispeak01 = false;
         }
     }
 
@@ -1445,6 +1444,7 @@ public class CPRActivity extends AppCompatActivity {
                                 if (breath01 > bre_threshold01 && !isBreath01) {
                                     breathval_01.add(71.0f);
                                     breathtime_01.add(current_time);
+                                    ispeak01 = true;
                                     isBreath01 = true;
                                 }
 
@@ -1570,9 +1570,8 @@ public class CPRActivity extends AppCompatActivity {
                                     }
 
                                     if (gap_lung01 != 0 && ispeak01) {
-                                        if (percent > 100)
-                                            percent = 100;
                                         peakLungClip01();
+                                        ispeak01 = false;
                                     }
                                 }else {
                                     if (!isLungDrawing) {
@@ -1836,7 +1835,6 @@ public class CPRActivity extends AppCompatActivity {
             switch (breath) {
                 case 1:
                     lung_num01++;
-                    ispeak01 = true;
                     if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
@@ -1847,7 +1845,6 @@ public class CPRActivity extends AppCompatActivity {
                     break;
                 case 4:
                     lung_num01++;
-                    ispeak01 = true;
                     if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
@@ -1860,7 +1857,6 @@ public class CPRActivity extends AppCompatActivity {
                 case 3:
                     lung_num01++;
                     lung_correct01++;
-                    ispeak01 = true;
                     if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
