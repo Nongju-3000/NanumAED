@@ -855,7 +855,7 @@ public class CPRActivity extends AppCompatActivity {
     public static final int MAX_LEVEL = 10000;
     public static final int LEVEL_DIFF_UP = 500;
     public static final int LEVEL_DIFF_DOWN = 250;
-    public static final int DELAY = 8;
+    public static final int DELAY = 2;
 
     private Handler mUpHandler01 = new Handler(Looper.getMainLooper());
 
@@ -888,33 +888,32 @@ public class CPRActivity extends AppCompatActivity {
     }
 
     public void moveLungClip01(int percent) {
-
         int temp_level = (percent * MAX_LEVEL) / 100;
-
         if (toLevel01 == temp_level || temp_level > MAX_LEVEL) {
             return;
         }
         toLevel01 = temp_level;
-        if (toLevel01 > fromLevel01 && toLevel01 > 4000) {
+        if (toLevel01 > fromLevel01 && toLevel01 > 2000) {
             // cancel previous process first
             mDownHandler01.removeCallbacks(animateDownImage01);
             fromLevel01 = toLevel01;
-
             mUpHandler01.post(animateUpImage01);
         } else {
             // cancel previous process first
             mUpHandler01.removeCallbacks(animateUpImage01);
             fromLevel01 = toLevel01;
-
             mDownHandler01.post(animateDownImage01);
         }
     }
 
     public void peakLungClip01() {
-        mUpHandler01.removeCallbacks(animateUpImage01);
-        toLevel01 = 0;
-        fromLevel01 = toLevel01;
-        mDownHandler01.post(animateDownImage01);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            mUpHandler01.removeCallbacks(animateUpImage01);
+            toLevel01 = 0;
+            fromLevel01 = toLevel01;
+            mDownHandler01.post(animateDownImage01);
+            }, 1000);
     }
 
     private void registerForBroadcastMessages() {
