@@ -42,8 +42,7 @@
                 android:layout_height="45dp"
                 android:layout_gravity="end|center"
                 android:gravity="center"
-                android:padding="15dp"
-                android:visibility="invisible"
+                android:padding="20dp"
                 app:neumorph_backgroundColor="#292929"
                 app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
                 app:neumorph_shadowColorLight="#444444"
@@ -54,8 +53,7 @@
                 android:autoSizeMinTextSize="5sp"
                 android:autoSizeMaxTextSize="55sp"
                 android:autoSizeTextType="uniform"
-                android:maxLines="1"
-                android:layout_marginEnd="10dp"/>
+                android:maxLines="1"/>
 
         </FrameLayout><!--top menu layout -->
 
