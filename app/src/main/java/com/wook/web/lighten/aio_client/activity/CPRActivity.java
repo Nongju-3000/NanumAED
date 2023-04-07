@@ -269,7 +269,7 @@ public class CPRActivity extends AppCompatActivity {
     private int lung_correct01 = 0;
 
     private int interval = 100;
-    private boolean mode = false;
+    private boolean testmode = false;
     private int minDepth = 30;
     private int maxDepth = 60;
     private boolean playCheck = false;
@@ -893,7 +893,7 @@ public class CPRActivity extends AppCompatActivity {
             return;
         }
         toLevel01 = temp_level;
-        if (toLevel01 > fromLevel01 && toLevel01 > 2000) {
+        if (toLevel01 > fromLevel01 && toLevel01 > 4000) {
             // cancel previous process first
             mDownHandler01.removeCallbacks(animateDownImage01);
             fromLevel01 = toLevel01;
@@ -994,6 +994,7 @@ public class CPRActivity extends AppCompatActivity {
                 // .setFeatureFlag("filmstrip.enabled", false)
                 .setUserInfo(info)
                 .setFeatureFlag("call-integration.enabled", false)
+                .setFeatureFlag("prejoinpage.enabled", false)
                 .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
 
@@ -1512,6 +1513,7 @@ public class CPRActivity extends AppCompatActivity {
                                         int center = lung_list01.get(1);
                                         int right = lung_list01.get(2);
                                         if (center > left + 1 && center > right + 1) {
+                                            ispeak01 = true;
                                             int max = lung_list01.get(0);
                                             float time = lungtime_list01.get(0);
                                             for (int i = 1; i < lung_list01.size(); i++) {
@@ -1835,7 +1837,6 @@ public class CPRActivity extends AppCompatActivity {
             switch (breath) {
                 case 1:
                     lung_num01++;
-                    ispeak01 = true;
                     if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
@@ -1846,7 +1847,6 @@ public class CPRActivity extends AppCompatActivity {
                     break;
                 case 4:
                     lung_num01++;
-                    ispeak01 = true;
                     if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
@@ -1859,7 +1859,6 @@ public class CPRActivity extends AppCompatActivity {
                 case 3:
                     lung_num01++;
                     lung_correct01++;
-                    ispeak01 = true;
                     if (breathval_01.get(breathval_01.size() - 1) != 200.0f && breathval_01.get(breathval_01.size() - 1) != 71.0f) {
                         breathval_01.add(60.0f);
                         breathtime_01.add((breathtime_01.get(breathtime_01.size() - 1) + centertime) / 2);
@@ -2478,7 +2477,7 @@ public class CPRActivity extends AppCompatActivity {
 
         final AlertDialog dialog = builder.create();
 
-        if(!mode) {
+        if(!testmode) {
             count_layout.setVisibility(View.VISIBLE);
         } else {
             count_layout.setVisibility(View.INVISIBLE);
@@ -2493,7 +2492,7 @@ public class CPRActivity extends AppCompatActivity {
                         Thread.sleep(1000);
                         String cmd = null;
                         start_check = false;
-                        if (!start_mode) {
+                        if (!testmode) {
                             cmd = "f3";
                         } else {
                             cmd = "f4";
@@ -2502,7 +2501,7 @@ public class CPRActivity extends AppCompatActivity {
                             try {
                                 if (cmd != null) {
                                     Log.e("cmd", cmd);
-                                    if(!mode){
+                                    if(!testmode){
                                         Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
                                         sender.setAction(BluetoothLeServiceCPR.ACTION_SOUND);
                                         sender.putExtra(BluetoothLeServiceCPR.DATA1_NOT_KEY, interval);
@@ -2806,7 +2805,7 @@ public class CPRActivity extends AppCompatActivity {
                     }
                     if(chatData.getMessage().contains("모드/")){ // false == practice , true == evaluation
                         String data[] = chatData.getMessage().split("/");
-                        mode = Boolean.parseBoolean(data[1]);
+                        testmode = Boolean.parseBoolean(data[1]);
                     }
                     if(chatData.getMessage().contains("간격/")){
                         String data[] = chatData.getMessage().split("/");
@@ -2996,7 +2995,7 @@ public class CPRActivity extends AppCompatActivity {
             Log.e("bluetoothtime", String.valueOf(bluetoothtime_list01));
 
             String reName = UserName;
-            if (!start_mode) {
+            if (!testmode) {
                 if(isAdult){
                     reName += "(연습/성인)";
                 }else{
