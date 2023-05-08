@@ -34,6 +34,7 @@ import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -53,9 +54,14 @@ import android.widget.ViewFlipper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.github.angads25.toggle.interfaces.OnToggledListener;
+import com.github.angads25.toggle.model.ToggleableView;
+import com.github.angads25.toggle.widget.LabeledSwitch;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -100,6 +106,7 @@ import java.util.Objects;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import soup.neumorphism.NeumorphButton;
+import soup.neumorphism.NeumorphCardView;
 import soup.neumorphism.NeumorphImageButton;
 
 
@@ -110,9 +117,11 @@ public class RoomActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     EditText room;
-    EditText name;
+    EditText name_first, name_second;
     Button into, cali_btn;
-    LinearLayout linear;
+
+    LabeledSwitch mode_switch_one, mode_switch_two;
+    //LinearLayout linear;
     InputMethodManager imm;
     String roomName;
     String userName;
@@ -122,6 +131,8 @@ public class RoomActivity extends AppCompatActivity {
     static boolean isFirstRun;
     private boolean roomCheck = false;
     NeumorphButton report_list_db;
+
+    NeumorphCardView name_second_cardView;
     private BluetoothLeServiceCPR bluetoothLeServiceCPR;
     private TextView license_tv;
     private String token;
@@ -129,6 +140,7 @@ public class RoomActivity extends AppCompatActivity {
     private Disposable scanDisposable;
     private TextView manual_tv;
     private boolean trainercheck = false;
+    private boolean twomode = false;
 
     public class BackPressCloseHandler{
         private Activity activity;
@@ -284,10 +296,14 @@ public class RoomActivity extends AppCompatActivity {
         });
 
         //room = (EditText) findViewById(R.id.room);
-        name = (EditText) findViewById(R.id.name);
+        name_second_cardView = (NeumorphCardView) findViewById(R.id.name_second_cardView);
+        name_first = (EditText) findViewById(R.id.first_name);
+        name_second = (EditText) findViewById(R.id.second_name);
         into = (Button) findViewById(R.id.into);
-        linear = (LinearLayout) findViewById(R.id.linear);
+        //linear = (LinearLayout) findViewById(R.id.linear);
         report_list_db = (NeumorphButton) findViewById(R.id.report_list_db);
+        mode_switch_one = (LabeledSwitch) findViewById(R.id.mode_switch_one);
+        mode_switch_two = (LabeledSwitch) findViewById(R.id.mode_switch_two);
 
         report_list_db.setOnClickListener(v -> showReportList(RoomActivity.this));
 
@@ -302,7 +318,19 @@ public class RoomActivity extends AppCompatActivity {
         userName = prefs.getString("userName", "");
 
         //room.setText(roomName);
-        name.setText(userName);
+        if(userName.contains("&")) {
+            String[] name = userName.split("&");
+            name_first.setText(name[0]);
+            name_second.setText(name[1]);
+            twomode = true;
+            mode_switch_one.setColorOff(Color.parseColor("#232323"));
+            mode_switch_one.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+            mode_switch_two.setColorOn(Color.parseColor("#232323"));
+            mode_switch_two.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+            name_second_cardView.setVisibility(View.VISIBLE);
+        } else {
+            name_first.setText(userName);
+        }
 
         bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
@@ -316,6 +344,72 @@ public class RoomActivity extends AppCompatActivity {
             Devices.put("Device_01", Device01);
         if (!Device02.equals("-"))
             Devices.put("Device_02", Device02);
+
+        mode_switch_one.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if(twomode){
+                    mode_switch_one.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    mode_switch_one.setColorOn(Color.parseColor("#232323"));
+                    mode_switch_two.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    mode_switch_two.setColorOff(Color.parseColor("#232323"));
+                    twomode = false;
+                    name_second_cardView.setVisibility(View.GONE);
+                } else{
+                    mode_switch_one.setColorOff(Color.parseColor("#232323"));
+                    mode_switch_one.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    mode_switch_two.setColorOn(Color.parseColor("#232323"));
+                    mode_switch_two.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    twomode = true;
+                    name_second_cardView.setVisibility(View.VISIBLE);
+                }
+            }
+            return true;
+        });
+
+        mode_switch_two.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if(twomode){
+                    mode_switch_one.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    mode_switch_one.setColorOn(Color.parseColor("#232323"));
+                    mode_switch_two.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    mode_switch_two.setColorOff(Color.parseColor("#232323"));
+                    name_second_cardView.setVisibility(View.GONE);
+                    twomode = false;
+                } else{
+                    mode_switch_one.setColorOff(Color.parseColor("#232323"));
+                    mode_switch_one.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    mode_switch_two.setColorOn(Color.parseColor("#232323"));
+                    mode_switch_two.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
+                    name_second_cardView.setVisibility(View.VISIBLE);
+                    twomode = true;
+                }
+            }
+            return true;
+        });
+
+        /*mode_switch_one.setOnToggledListener(new OnToggledListener() {
+            @Override
+            public void onSwitched(ToggleableView toggleableView, boolean isOn) {
+                if(isOn) {
+                    mode_switch_two.setOn(false);
+                    name_second_cardView.setVisibility(View.GONE);
+                } else {
+                    mode_switch_two.setOn(true);
+                }
+            }
+        });
+
+        mode_switch_two.setOnToggledListener(new OnToggledListener() {
+            @Override
+            public void onSwitched(ToggleableView toggleableView, boolean isOn) {
+                if(isOn) {
+                    mode_switch_one.setActivated(false);
+                    name_second_cardView.setVisibility(View.VISIBLE);
+                } else {
+                    mode_switch_one.setOn(true);
+                }
+            }
+        });*/
 
         ////
         if(!Devices.isEmpty()){
@@ -384,21 +478,25 @@ public class RoomActivity extends AppCompatActivity {
             });
         }
 
-        linear.setOnClickListener(new View.OnClickListener() {
+        /*linear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 //imm.hideSoftInputFromWindow(room.getWindowToken(), 0);
-                imm.hideSoftInputFromWindow(name.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(name_first.getWindowToken(), 0);
             }
-        });
+        });*/
 
         into.setOnClickListener(v -> {
             isFirstRun = prefs.getBoolean("isFirstRun", true);
             if (isFirstRun) {
                 Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.icon);
-                User user = new User("android", token, name.getText().toString(), BitMapToString(icon));
-                databaseReference.child("TOKEN").child(name.getText().toString()).setValue(user);
+                String intoname = name_first.getText().toString();
+                if(twomode){
+                    intoname = intoname + "&" + name_second.getText().toString();
+                }
+                User user = new User("android", token, intoname, BitMapToString(icon));
+                databaseReference.child("TOKEN").child(intoname).setValue(user);
                 prefs.edit().putBoolean("isFirstRun", false).apply();
             }
 
@@ -408,15 +506,24 @@ public class RoomActivity extends AppCompatActivity {
             final String getTime = sdf.format(date);
 
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("userName", name.getText().toString());
+            if(twomode){
+                editor.putString("userName", name_first.getText().toString()+ "&" + name_second.getText().toString());
+            }else {
+                editor.putString("userName", name_first.getText().toString());
+            }
+
             editor.commit();
 
             final Intent intent1 = new Intent(RoomActivity.this, LobbyActivity.class);
 
-            if(name.getText().toString().equals("")) {
+            if(name_first.getText().toString().equals("") || (name_second.getText().toString().equals("") && twomode)) {
                 Toast.makeText(RoomActivity.this, R.string.inputname, Toast.LENGTH_SHORT).show();
             } else {
-                intent1.putExtra("Name", name.getText().toString());
+                String intoname = name_first.getText().toString();
+                if(twomode){
+                    intoname = intoname + "&" + name_second.getText().toString();
+                }
+                intent1.putExtra("Name", intoname);
                 intent1.putExtra("Token", token);
 
                 intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -1410,8 +1517,12 @@ public class RoomActivity extends AppCompatActivity {
                                 }
                             });
 
-                    String key = databaseReference.child("TOKEN").child(name.getText().toString()).getKey();
-                    User user = new User("android", token, name.getText().toString(), image);
+                    String intoname = name_first.getText().toString();
+                    if(twomode){
+                        intoname = intoname + "&" + name_second.getText().toString();
+                    }
+                    String key = databaseReference.child("TOKEN").child(intoname).getKey();
+                    User user = new User("android", token, intoname, image);
                     Map<String, Object> postValues = user.toMap();
 
                     Map<String, Object> childUpdates = new HashMap<>();

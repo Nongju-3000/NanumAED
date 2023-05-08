@@ -258,6 +258,7 @@ public class BluetoothLeServiceCPR extends Service {
 
     private void writeCharacteristic(RxBleConnection rxBleConnection, String data, int index) {
         try {
+            Log.e(TAG, "writeCharacteristic: " + data);
             byte[] sender = HexString.hexToBytes(data);
             if(connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
                 rxBleConnection.writeCharacteristic(UUID_WRITE, sender).subscribe();

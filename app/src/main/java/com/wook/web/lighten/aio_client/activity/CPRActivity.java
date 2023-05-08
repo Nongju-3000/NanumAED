@@ -3,6 +3,7 @@ package com.wook.web.lighten.aio_client.activity;
 import static com.wook.web.lighten.aio_client.activity.RoomActivity.prefs;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -126,6 +127,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.plugins.RxJavaPlugins;
 import soup.neumorphism.NeumorphButton;
+import soup.neumorphism.NeumorphCardView;
 import soup.neumorphism.NeumorphImageButton;
 
 
@@ -184,6 +186,7 @@ public class CPRActivity extends AppCompatActivity {
     private ImageView test_lung01;
     private ImageView babyCircle;
     ClipDrawable lung_clip01;
+    private LinearLayout cpr_timer_layout, user_select_layout;
 
     private Switch start_mode_cpr;
     private Switch mode_cpr;
@@ -245,6 +248,8 @@ public class CPRActivity extends AppCompatActivity {
 
     private String room;
     private String UserName;
+    private String[] UsersName;
+    private String currentUserName;
 
     private boolean checkMagnet[] = {true, true, true};
 
@@ -290,7 +295,7 @@ public class CPRActivity extends AppCompatActivity {
 
     private ImageView angle_remote, press_position;
     private ImageButton press_point_btn;
-    private TextView mainName, correctCount, totalCount;
+    private TextView mainName, correctCount, totalCount, name_first, name_second;
 
     private int correct_position = 0;
     private int total_position = 0;
@@ -546,6 +551,10 @@ public class CPRActivity extends AppCompatActivity {
         destroy.setAction(FinishService.ACTION_INITIALIZE);
         startService(destroy);
         setContentView(R.layout.activity_mode_cpr);
+        cpr_timer_layout = findViewById(R.id.cpr_timer_layout);
+        user_select_layout = findViewById(R.id.user_select_layout);
+        name_first = findViewById(R.id.name_first);
+        name_second = findViewById(R.id.name_second);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         long now = System.currentTimeMillis();
         Date date = new Date(now);
@@ -554,6 +563,62 @@ public class CPRActivity extends AppCompatActivity {
         Intent intent = getIntent();
         room = intent.getStringExtra("room");
         UserName = intent.getStringExtra("name");
+        mainName = findViewById(R.id.mainName);
+        mainName.setText("CPR(" + room + "," + UserName + ")");
+        if(UserName.contains("&")){
+            UsersName = UserName.split("&");
+            currentUserName = UsersName[0];
+            cpr_timer_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 2));
+            user_select_layout.setVisibility(View.VISIBLE);
+            name_first.setText(UsersName[0]);
+            name_second.setText(UsersName[1]);
+            name_first.setTextColor(Color.parseColor("#FF6A0D"));
+            mainName.setText("CPR(" + room + "," + currentUserName + ")");
+            long mnow = System.currentTimeMillis();
+            Date mdate = new Date(mnow);
+            SimpleDateFormat msdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            final String getTime = msdf.format(mdate);
+            ChatData chatData = new ChatData("사용자전환/"+currentUserName, getTime, UserName);  // 유저 이름과 메세지로 chatData 만들기
+            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+        } else{
+            currentUserName = UserName;
+            long mnow = System.currentTimeMillis();
+            Date mdate = new Date(mnow);
+            SimpleDateFormat msdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            final String getTime = msdf.format(mdate);
+            ChatData chatData = new ChatData("사용자전환/"+currentUserName, getTime, UserName);  // 유저 이름과 메세지로 chatData 만들기
+            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+        }
+
+        name_first.setOnClickListener(v -> {
+            if(currentUserName.equals(UsersName[1])) {
+                name_first.setTextColor(Color.parseColor("#FF6A0D"));
+                name_second.setTextColor(Color.parseColor("#FFFFFF"));
+                currentUserName = UsersName[0];
+                mainName.setText("CPR(" + room + "," + currentUserName + ")");
+                long mnow = System.currentTimeMillis();
+                Date mdate = new Date(mnow);
+                SimpleDateFormat msdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                final String getTime = msdf.format(mdate);
+                ChatData chatData = new ChatData("사용자전환/"+currentUserName, getTime, UserName);  // 유저 이름과 메세지로 chatData 만들기
+                databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+            }
+        });
+
+        name_second.setOnClickListener(v -> {
+            if(currentUserName.equals(UsersName[0])) {
+                name_first.setTextColor(Color.parseColor("#FFFFFF"));
+                name_second.setTextColor(Color.parseColor("#FF6A0D"));
+                currentUserName = UsersName[1];
+                mainName.setText("CPR(" + room + "," + currentUserName + ")");
+                long mnow = System.currentTimeMillis();
+                Date mdate = new Date(mnow);
+                SimpleDateFormat msdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                final String getTime = msdf.format(mdate);
+                ChatData chatData = new ChatData("사용자전환/"+currentUserName, getTime, UserName);  // 유저 이름과 메세지로 chatData 만들기
+                databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+            }
+        });
 
         setChatEventListener();
 
@@ -595,6 +660,7 @@ public class CPRActivity extends AppCompatActivity {
 
         mac_list = new ArrayList<>();
 
+
         //cameraView = findViewById(R.id.cameraView);
         bluetoothtime_list01 = new ArrayList<>();
 
@@ -624,8 +690,7 @@ public class CPRActivity extends AppCompatActivity {
         device_disconnect_cpr_01 = findViewById(R.id.device_disconnect_cpr_01);
         cpr_layout_01 = findViewById(R.id.cpr_layout_01);
 
-        mainName = findViewById(R.id.mainName);
-        mainName.setText("CPR(" + room + "," + UserName + ")");
+
 
         //ytb_img = findViewById(R.id.ytb_img);
         //YouTubePlayerView = findViewById(R.id.you_tube_player_view);
@@ -907,13 +972,18 @@ public class CPRActivity extends AppCompatActivity {
     }
 
     public void peakLungClip01() {
-        Handler handler = new Handler();
+        /*Handler handler = new Handler();
         handler.postDelayed(() -> {
             mUpHandler01.removeCallbacks(animateUpImage01);
             toLevel01 = 0;
             fromLevel01 = toLevel01;
             mDownHandler01.post(animateDownImage01);
-            }, 1000);
+            }, 1000);*/
+
+        mUpHandler01.removeCallbacks(animateUpImage01);
+        toLevel01 = 0;
+        fromLevel01 = toLevel01;
+        mDownHandler01.post(animateDownImage01);
     }
 
     private void registerForBroadcastMessages() {
@@ -1696,7 +1766,12 @@ public class CPRActivity extends AppCompatActivity {
                         Animation animation = new TranslateAnimation(0, 0, 0, depth_true);
 
                         new Thread(() -> runOnUiThread(() -> {
-                            remote_depth_text.setText(String.valueOf(depthSet));
+                            int value;
+                            if (depthSet >= 70)
+                                value = 70;
+                            else
+                                value = depthSet;
+                            remote_depth_text.setText(String.valueOf(value));
                             if ((0 < depthSet && depthSet < minDepth) || (maxDepth < depthSet)) {
                                 if (!start_check) {
                                     cprItem_01.add(new UserItem(Seconds_, depthSet, 0, angle01, position01));
@@ -1738,9 +1813,11 @@ public class CPRActivity extends AppCompatActivity {
                             }
 
                             if (cprItem_01.size() != 0) {
-                                score_01 = (int) (((double) Depth_correct_sum01 / (double) Depth_size) * 100);
-                                depth_correct = Depth_correct_sum01;
-                                depth_num = Depth_size;
+                                if (!start_check) {
+                                    score_01 = (int) (((double) Depth_correct_sum01 / (double) Depth_size) * 100);
+                                    depth_correct = Depth_correct_sum01;
+                                    depth_num = Depth_size;
+                                }
                             }
                         }
                         if(!isReversed) {
@@ -3086,7 +3163,8 @@ public class CPRActivity extends AppCompatActivity {
                     + reportItems.get(0).getReport_lung_num() + "/"
                     + reportItems.get(0).getReport_lung_correct() + "/"
                     + stopList + "/"
-                    + converters.writingStringFromList(reportItems.get(0).getReport_bletime_list())
+                    + converters.writingStringFromList(reportItems.get(0).getReport_bletime_list()) + "/"
+                    + currentUserName
                     , getTime_
                     , UserName);
 
@@ -3428,7 +3506,7 @@ public class CPRActivity extends AppCompatActivity {
                 if (userItem.getHand_off_start() != 0) {
                     arrayList.add((float)0);
                     stopList.add(userItem.getHand_off_start());
-                    hand_off += userItem.getHand_off_start();
+                    hand_off += (int)userItem.getHand_off_start();
                 }
 
                 if(userItem.getBreath() != 0){

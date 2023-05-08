@@ -1,139 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#232323"
     tools:context=".activity.RoomActivity">
-
-    <LinearLayout
-        android:id="@+id/linear"
+    <soup.neumorphism.NeumorphCardView
+        android:id="@+id/main_cardView"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"> <!-- test 1 -->
-        <soup.neumorphism.NeumorphCardView
-            android:layout_weight="1"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shadowColorLight="#444444"
+        app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+        app:neumorph_backgroundColor="#292929"
+        app:neumorph_shapeType="flat">
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:neumorph_shadowElevation="3dp"
-            app:neumorph_shadowColorLight="#444444"
-            app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-            app:neumorph_backgroundColor="#292929"
-            app:neumorph_shapeType="flat"
-            >
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
             <soup.neumorphism.NeumorphButton
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_width="100dp"
-                android:layout_height="60dp"
-                android:text="@string/menu"
                 android:id="@+id/report_list_db"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/menu"
                 android:textColor="#FF6A0D"
-                android:layout_gravity="left|top"
-                android:textSize="12dp"
-                app:neumorph_shadowElevation="3dp"
+                android:textSize="13sp"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shapeType="flat"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintVertical_bias="0.01"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintWidth_percent="0.35"
+                style="@style/Widget.Neumorph.Button"/>
+            <TextView
+                android:id="@+id/manual_tv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/manual"
+                android:gravity="center"
+                android:textSize="11sp"
+                app:layout_constraintTop_toTopOf="@id/report_list_db"
+                app:layout_constraintBottom_toBottomOf="@id/report_list_db"
+                app:layout_constraintStart_toEndOf="@id/report_list_db"
+                app:layout_constraintEnd_toStartOf="@id/license_tv"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintWidth_percent="0.2"
+                app:layout_constraintHeight_percent="0.04"/>
+            <TextView
+                android:id="@+id/license_tv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/license"
+                android:textSize="11sp"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="@id/report_list_db"
+                app:layout_constraintBottom_toBottomOf="@id/report_list_db"
+                app:layout_constraintStart_toEndOf="@id/report_list_db"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.95"
+                app:layout_constraintWidth_percent="0.4"
+                app:layout_constraintHeight_percent="0.04"/>
+
+            <com.github.angads25.toggle.widget.LabeledSwitch
+                android:id="@+id/mode_switch_one"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/name_first_cardView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.1"
+                app:layout_constraintWidth_percent="0.43"
+                app:layout_constraintHorizontal_bias="0.12"
+                app:colorOff="@color/text_orange"
+                app:colorOn="#232323"
+                app:textOff="@string/one_person"
+                app:textOn="@string/one_person"
+                app:colorBorder="@color/text_orange"
+                android:textSize="20sp"
+                />
+
+            <com.github.angads25.toggle.widget.LabeledSwitch
+                android:id="@+id/mode_switch_two"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/name_first_cardView"
+                app:layout_constraintStart_toEndOf="@id/mode_switch_one"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.1"
+                app:layout_constraintWidth_percent="0.43"
+                app:layout_constraintHorizontal_bias="0.15"
+                app:colorOff="#232323"
+                app:colorOn="@color/text_orange"
+                app:textOff="@string/two_people"
+                app:textOn="@string/two_people"
+                app:colorBorder="@color/text_orange"
+                app:on="false"
+                android:textSize="20sp"
+                />
+
+            <soup.neumorphism.NeumorphCardView
+                android:id="@+id/name_first_cardView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeType="pressed"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.45"
+                app:layout_constraintHeight_percent="0.24"
+                app:layout_constraintWidth_percent="0.85">
+
+                <EditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="20dp"
+                    android:hint="@string/nickname"
+                    android:inputType="text"
+                    android:background="@null"
+                    android:textColor="#ffffff"
+                    android:textColorHint="#c8c8c8"
+                    android:textSize="18sp" />
+            </soup.neumorphism.NeumorphCardView>
+            <soup.neumorphism.NeumorphCardView
+                android:id="@+id/name_second_cardView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeType="pressed"
+                app:layout_constraintTop_toBottomOf="@id/name_first_cardView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/name_first_cardView"
+                app:layout_constraintEnd_toEndOf="@id/name_first_cardView"
+                app:layout_constraintHeight_percent="0.24"
+                app:layout_constraintVertical_bias="0"
+                android:visibility="gone">
+                <EditText
+                    android:id="@+id/second_name"
+                    android:hint="@string/nickname"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:textSize="18sp"
+                    android:textColorHint="#c8c8c8"
+                    android:textColor="#ffffff"
+                    android:inputType="text"
+                    android:layout_marginHorizontal="20dp"/>
+            </soup.neumorphism.NeumorphCardView>
+            <soup.neumorphism.NeumorphButton
+                android:id="@+id/into"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/enter"
+                android:textColor="#FF6A0D"
+                android:textSize="11sp"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeType="flat"
+                app:layout_constraintTop_toBottomOf="@id/name_second_cardView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                app:layout_constraintHeight_percent="0.15"
+                app:layout_constraintHorizontal_bias="0"
+                />
+            <soup.neumorphism.NeumorphButton
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/calibration"
+                android:id="@+id/cali_btn"
+                android:textColor="#FF6A0D"
+                android:layout_gravity="center|top"
+                android:textSize="11sp"
+                app:neumorph_shadowElevation="2dp"
                 app:neumorph_shadowColorLight="#444444"
                 app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
                 app:neumorph_backgroundColor="#292929"
                 app:neumorph_shapeType="flat"
                 style="@style/Widget.Neumorph.Button"
-                />
-            <TextView
-                android:id="@+id/manual_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sandolgothic"
-                android:text="@string/manual"
-                android:layout_gravity="end|center"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="130dp"
-                android:textSize="12dp"/>
-            <TextView
-                android:id="@+id/license_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/license"
-                android:layout_gravity="right|center"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
-                android:textSize="12dp"/>
-        </FrameLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <soup.neumorphism.NeumorphCardView
-                    android:layout_width="300dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    app:neumorph_backgroundColor="#292929"
-                    app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-                    app:neumorph_shadowColorLight="#444444"
-                    app:neumorph_shadowElevation="3dp"
-                    app:neumorph_shapeType="pressed">
-
-                    <EditText
-                        android:id="@+id/name"
-                        android:hint="@string/nickname"
-                        android:layout_gravity="center"
-                        android:layout_width="200dp"
-                        android:layout_height="100dp"
-                        android:textColorHint="#c8c8c8"
-                        android:textColor="#ffffff"
-                        android:inputType="text"
-                        />
-
-                </soup.neumorphism.NeumorphCardView>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <soup.neumorphism.NeumorphButton
-                        android:id="@+id/into"
-                        style="@style/Widget.Neumorph.Button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/enter"
-                        android:textColor="#FF6A0D"
-                        app:neumorph_backgroundColor="#292929"
-                        app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-                        app:neumorph_shadowColorLight="#444444"
-                        app:neumorph_shadowElevation="3dp"
-                        app:neumorph_shapeType="flat" />
-
-                    <soup.neumorphism.NeumorphButton
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/calibration"
-                        android:id="@+id/cali_btn"
-                        android:textColor="#FF6A0D"
-                        android:layout_gravity="center|top"
-                        android:textSize="12dp"
-                        app:neumorph_shadowElevation="3dp"
-                        app:neumorph_shadowColorLight="#444444"
-                        app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-                        app:neumorph_backgroundColor="#292929"
-                        app:neumorph_shapeType="flat"
-                        style="@style/Widget.Neumorph.Button"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-
-        </soup.neumorphism.NeumorphCardView>
-
-
-    </LinearLayout><!-- test 1 -->
-
-</LinearLayout>
+                app:layout_constraintTop_toTopOf="@id/into"
+                app:layout_constraintBottom_toBottomOf="@id/into"
+                app:layout_constraintStart_toEndOf="@id/into"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintWidth_percent="0.5"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </soup.neumorphism.NeumorphCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

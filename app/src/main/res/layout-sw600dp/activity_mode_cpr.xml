@@ -19,7 +19,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             >
 
@@ -60,64 +60,105 @@
                 android:layout_marginEnd="10dp"/>
         </FrameLayout><!--top menu layout -->
 
-        <soup.neumorphism.NeumorphCardView
-            android:layout_weight="1"
+        <LinearLayout
+            android:id="@+id/cpr_timer_layout"
             android:layout_width="match_parent"
-            android:layout_gravity="right"
-            android:layout_height="match_parent"
-            app:neumorph_shadowElevation="3dp"
-            app:neumorph_shadowColorLight="#444444"
-            app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
-            app:neumorph_backgroundColor="#292929"
-            app:neumorph_shapeType="flat"
-            android:layout_marginRight="10dp"
-            >
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <soup.neumorphism.NeumorphCardView
+                android:id="@+id/cpr_timer_card"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_gravity="right"
+                app:neumorph_shadowElevation="3dp"
+                app:neumorph_shadowColorLight="#444444"
+                app:neumorph_shadowColorDark="@color/design_dark_default_color_shadow_dark"
+                app:neumorph_backgroundColor="#292929"
+                app:neumorph_shapeType="flat"
                 >
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:autoSizeMaxTextSize="55sp"
-                    android:autoSizeMinTextSize="5sp"
-                    android:autoSizeTextType="uniform"
-                    android:text="Event Time"
-                    android:textColor="#ffffff"
+                    android:orientation="vertical">
 
-                    />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        >
 
-                <TextView
-                    android:id="@+id/cpr_timer"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="start|center"
-                    android:maxLines="1"
-                    android:text="00:00:00"
-                    android:layout_gravity="center"
-                    android:autoSizeMaxTextSize="55sp"
-                    android:autoSizeMinTextSize="5sp"
-                    android:autoSizeTextType="uniform"
-                    android:textColor="#ffffff"
-                    android:layout_marginLeft="50dp"
-                    />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:autoSizeMaxTextSize="55sp"
+                            android:autoSizeMinTextSize="5sp"
+                            android:autoSizeTextType="uniform"
+                            android:text="Event Time"
+                            android:textColor="#ffffff"
 
-            </LinearLayout><!--play menu layout -->
-        </soup.neumorphism.NeumorphCardView>
+                            />
+
+                        <TextView
+                            android:id="@+id/cpr_timer"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"
+                            android:gravity="start|center"
+                            android:maxLines="1"
+                            android:text="00:00:00"
+                            android:layout_gravity="center"
+                            android:autoSizeMaxTextSize="55sp"
+                            android:autoSizeMinTextSize="5sp"
+                            android:autoSizeTextType="uniform"
+                            android:textColor="#ffffff"
+                            android:layout_marginLeft="50dp"
+                            />
+
+                    </LinearLayout><!--play menu layout -->
+                    <LinearLayout
+                        android:id="@+id/user_select_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        android:layout_weight="1">
+                        <TextView
+                            android:id="@+id/name_first"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:maxLines="1"
+                            android:textColor="#ffffff"
+                            android:autoSizeMaxTextSize="55sp"
+                            android:autoSizeMinTextSize="5sp"
+                            android:autoSizeTextType="uniform"
+                            android:gravity="center"/>
+                        <TextView
+                            android:id="@+id/name_second"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:maxLines="1"
+                            android:textColor="#ffffff"
+                            android:autoSizeMaxTextSize="55sp"
+                            android:autoSizeMinTextSize="5sp"
+                            android:autoSizeTextType="uniform"
+                            android:gravity="center"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </soup.neumorphism.NeumorphCardView>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
+            android:layout_height="0dp"
+            android:layout_weight="8"
             android:orientation="vertical"
             android:layout_margin="5dp"
             >

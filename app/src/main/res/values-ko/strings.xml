@@ -137,4 +137,6 @@
     <string name="running">CPR을 중지해주세요...</string>
     <string name="alreadyinroom">\" 이미 방에 존재합니다\"</string>
     <string name="inputname">이름을 입력해주세요</string>
+    <string name="one_person">1인 구조</string>
+    <string name="two_people">2인 구조</string>
 </resources>
