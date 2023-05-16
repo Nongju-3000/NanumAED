@@ -773,10 +773,9 @@ public class RoomActivity extends AppCompatActivity {
         View view = inflater.inflate(R.layout.setting_dialog, null);
         builder.setView(view);
 
-        Button init_btn = view.findViewById(R.id.init_btn);
-        Button magnet_btn = view.findViewById(R.id.magnet_btn);
-        Button setting_cancel = view.findViewById(R.id.setting_cancel);
-        Button setting_confirm = view.findViewById(R.id.setting_confirm);
+        NeumorphButton init_btn = view.findViewById(R.id.init_btn);
+        NeumorphButton magnet_btn = view.findViewById(R.id.magnet_btn);
+        NeumorphButton setting_confirm = view.findViewById(R.id.setting_confirm);
         viewFlipper = view.findViewById(R.id.setting_viewFlipper);
         calibration_img = view.findViewById(R.id.calibration_img);
         calibration_text = view.findViewById(R.id.calibration_text);
@@ -827,11 +826,6 @@ public class RoomActivity extends AppCompatActivity {
             sender.setAction(BluetoothLeServiceCPR.ACTION_MAGNET);
             startService(sender);
         });
-
-        setting_cancel.setOnClickListener(v->{
-            dialog.dismiss();
-        });
-
         setting_confirm.setOnClickListener(v->{
             dialog.dismiss();
         });

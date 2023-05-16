@@ -138,4 +138,7 @@
     <string name="inputname">Input Name</string>
     <string name="one_person">1Person</string>
     <string name="two_people">2People</string>
+    <string name="aio">Calibration</string>
+    <string name="magnet_confirm">Magnet Position</string>
+    <string name="exit">Exit</string>
 </resources>

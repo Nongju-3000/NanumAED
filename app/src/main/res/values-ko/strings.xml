@@ -139,4 +139,7 @@
     <string name="inputname">이름을 입력해주세요</string>
     <string name="one_person">1인 구조</string>
     <string name="two_people">2인 구조</string>
+    <string name="aio">AIO 보정</string>
+    <string name="magnet_confirm">자석 확인</string>
+    <string name="exit">나가기</string>
 </resources>
