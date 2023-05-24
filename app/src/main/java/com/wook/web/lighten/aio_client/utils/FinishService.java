@@ -88,11 +88,13 @@ public class FinishService extends Service {
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
                         databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
                     }
 
                     else{
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+                        databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
                     }
                 }
             }

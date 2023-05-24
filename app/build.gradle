@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.wook.web.lighten.aio_client"
         minSdkVersion 26
-        targetSdkVersion 33
+        targetSdkVersion 32
         versionCode 40
         versionName "5.0"
 
@@ -80,4 +80,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
     implementation ('org.jitsi.react:jitsi-meet-sdk:7.0.1') { transitive = true }
-    implementation 'com.jakewharton.rx2:replaying-share:2.2.0'}
+    implementation 'com.jakewharton.rx2:replaying-share:2.2.0'
+    implementation 'com.txusballesteros:snake:1.0'
+}

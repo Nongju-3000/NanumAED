@@ -72,6 +72,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 import com.polidea.rxandroidble2.LogConstants;
 import com.polidea.rxandroidble2.LogOptions;
 import com.polidea.rxandroidble2.RxBleClient;
@@ -141,6 +142,7 @@ public class RoomActivity extends AppCompatActivity {
     private TextView manual_tv;
     private boolean trainercheck = false;
     private boolean twomode = false;
+    private HashMap<String ,String> cali_map = new HashMap<String, String>();
 
     public class BackPressCloseHandler{
         private Activity activity;
@@ -999,7 +1001,7 @@ public class RoomActivity extends AppCompatActivity {
                         bluetoothLeServiceCPR.writeCharacteristic(0, "f3");
                     }
                     if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
-                        bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
+                        //bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
                     }
                 }
             }catch(Exception e){}
@@ -1247,8 +1249,8 @@ public class RoomActivity extends AppCompatActivity {
     private void scanBleDevices() {
         scanDisposable = rxBleClient.scanBleDevices(
                 new ScanSettings.Builder()
-                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                        .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+                        .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+                        .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
                         .build(),
                 new ScanFilter.Builder()
                         .build()
@@ -1435,7 +1437,7 @@ public class RoomActivity extends AppCompatActivity {
                                 startService(sender);
 
                                 calibration_text.setText(getString(R.string.first));
-                            }, 150);
+                            }, 500);
                             isMin = true;
                         }else if(position01 == 187){
                             magnet_text.setText(getString(R.string.magnet_again));
@@ -1443,27 +1445,17 @@ public class RoomActivity extends AppCompatActivity {
                         if(isMax){
                             if(position01 != 179) {
                                 isMax = false;
-                                if(isCali01){
-                                    address_array01 = address01.split("/");
-                                    address01 = address_array01[0]+"/"+address_array01[1]+"/"+position01;
-                                }else{
-                                    address01 += "/"+position01;
-                                }
-
-                                sharedPreferences.edit().putString("address01",address01).apply();
+                                cali_map.put(spil[2], min_lung01 + "/" + position01);
+                                String addressjson = new Gson().toJson(cali_map);
+                                sharedPreferences.edit().putString("address",addressjson).apply();
                                 max_lung01 = position01;
                             }
                         }
                         if(isMin){
                             if(position01 != 186) {
                                 isMin = false;
-                                if(isCali01){
-                                    address_array01 = address01.split("/");
-                                    address01 = address_array01[0]+"/"+position01;
-                                }else{
-                                    address01 += "/"+position01;
-                                }
-                                min_lung01 = position01 * 1.1;
+                                cali_map.put(spil[2], String.valueOf(position01));
+                                min_lung01 = position01;
                             }
                         }
                         break;

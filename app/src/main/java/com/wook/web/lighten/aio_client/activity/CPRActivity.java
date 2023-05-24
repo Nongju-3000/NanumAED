@@ -80,6 +80,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.polidea.rxandroidble2.LogConstants;
@@ -110,6 +111,7 @@ import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 import org.jitsi.meet.sdk.JitsiMeetUserInfo;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
@@ -140,6 +142,7 @@ public class CPRActivity extends AppCompatActivity {
     private static int depth_over;
     private final static int cycle_set = 30;
     private final static int breath_set = 2;
+    private boolean isout = false;
 
     private static ToBinary ToBinary;
 
@@ -2175,7 +2178,7 @@ public class CPRActivity extends AppCompatActivity {
                         String getTime = sdf.format(date);
 
                         hangUp();
-                    LocalBroadcastManager.getInstance(CPRActivity.this).unregisterReceiver(broadcastReceiver);
+                        LocalBroadcastManager.getInstance(CPRActivity.this).unregisterReceiver(broadcastReceiver);
 
                         ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
                         databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
@@ -2676,8 +2679,8 @@ public class CPRActivity extends AppCompatActivity {
     private void scanBleDevices() {
         scanDisposable = rxBleClient.scanBleDevices(
                         new ScanSettings.Builder()
-                                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+                                .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+                                .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
                                 .build(),
                         new ScanFilter.Builder()
                                 .build()
@@ -2945,8 +2948,22 @@ public class CPRActivity extends AppCompatActivity {
         bluetoothLeServiceCPR = null;
         Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
-        databaseReference.child("Room").child(room).child("into").child(UserName).setValue(null);
-
+        if(!isout) {
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            String getTime = sdf.format(date);
+            ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
+            databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
+            reset(1);
+            try {
+                Thread.sleep(1000);
+                databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     //TODO Timer
@@ -3236,6 +3253,8 @@ public class CPRActivity extends AppCompatActivity {
             databaseReference.child("Room").child(room).child("트레이너").removeEventListener(childEventListener);
             databaseReference.child("Room").child(room).child("conference").removeEventListener(conferenceEventListener);
             databaseReference.child("Chat").child(room).removeEventListener(chatEventListener);
+
+            isout = true;
 
             intent = new Intent(CPRActivity.this, LobbyActivity.class);
             intent.putExtra("Name",UserName);
@@ -3570,22 +3589,29 @@ public class CPRActivity extends AppCompatActivity {
 
     private void initialize(){
         String address;
-        address = sharedPreferences.getString("address01", "-");
-
-        address_array01 = address.split("/");
-        if(address_array01[0].equals(address01)){
-            min_lung01 = Integer.parseInt(address_array01[1]);
-            max_lung01 = Integer.parseInt(address_array01[2]);
+        address = sharedPreferences.getString("address", null);
+        if(address != null) {
+            HashMap<String, String> addresstohashmap = new Gson().fromJson(address, (Type) HashMap.class);
+            if (addresstohashmap.containsKey(bleDevice2.getMacAddress())) {
+                address_array01 = addresstohashmap.get(bleDevice2.getMacAddress()).split("/");
+                min_lung01 = Double.parseDouble(address_array01[0]) * 1.1d;
+                max_lung01 = Double.parseDouble(address_array01[1]);
+                bre_threshold01 = min_lung01 + 2;
+                gap_lung01 = max_lung01 - bre_threshold01;
+                bre_level01 = (int) (min_lung01 + ((float) gap_lung01 / 3));
+                bre_level02 = (int) (min_lung01 + ((float) gap_lung01 / 3 * 2));
+                isCali01 = true;
+            } else {
+                bre_threshold01 = min_lung01 + 2;
+                gap_lung01 = max_lung01 - bre_threshold01;
+                bre_level01 = (int) (min_lung01 + ((float) gap_lung01 / 3));
+                bre_level02 = (int) (min_lung01 + ((float) gap_lung01 / 3 * 2));
+            }
+        } else{
             bre_threshold01 = min_lung01 + 2;
             gap_lung01 = max_lung01 - bre_threshold01;
-            bre_level01 = (int)(min_lung01 + ((float)gap_lung01 / 3));
-            bre_level02 = (int)(min_lung01 + ((float)gap_lung01 / 3 * 2));
-            isCali01 = true;
-        }else{
-            bre_threshold01 = min_lung01 + 2;
-            gap_lung01 = max_lung01 - bre_threshold01;
-            bre_level01 = (int)(min_lung01 + ((float)gap_lung01 / 3));
-            bre_level02 = (int)(min_lung01 + ((float)gap_lung01 / 3 * 2));
+            bre_level01 = (int) (min_lung01 + ((float) gap_lung01 / 3));
+            bre_level02 = (int) (min_lung01 + ((float) gap_lung01 / 3 * 2));
         }
         Print.e("Test", "min_lung = "+min_lung01+", max_lung = "+max_lung01);
         long now = System.currentTimeMillis();
