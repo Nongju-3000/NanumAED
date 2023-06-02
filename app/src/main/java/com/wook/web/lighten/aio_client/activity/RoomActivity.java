@@ -258,14 +258,14 @@ public class RoomActivity extends AppCompatActivity {
         manual_tv.setOnClickListener(v->{
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference();
-            StorageReference pdfRef = storageReference.child("manual/credomanual.pdf");
+            StorageReference pdfRef = storageReference.child("manual/CREDO-MAN-003-AIO(rev.1.0)_Kor+Eng.pdf");
 
             File destinationPath = new File(getExternalFilesDir(null), "/manual");
             if(!destinationPath.exists()){
                 destinationPath.mkdirs();
             }
             //   File destinationPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);
-            File checkPath = new File(destinationPath, "credomanual.pdf");
+            File checkPath = new File(destinationPath, "CREDO-MAN-003-AIO(rev.1.0)_Kor+Eng.pdf");
             getPermission();
             if(checkPath.exists()){
                 showPdf();
@@ -647,7 +647,7 @@ public class RoomActivity extends AppCompatActivity {
 
     private void showPdf(){
         File destinationPath = new File(getExternalFilesDir(null), "/manual");
-        File file = new File(destinationPath, "credomanual.pdf");
+        File file = new File(destinationPath, "CREDO-MAN-003-AIO(rev.1.0)_Kor+Eng.pdf");
         // Get the URI Path of file.
         Uri uriPdfPath = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
         // Start Intent to View PDF from the Installed Applications.

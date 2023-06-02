@@ -886,9 +886,9 @@ public class ReportActivity extends Activity {
             indax++;
         }
 
+        Log.e("presstime", String.valueOf(presstime_list));
         int j = 0;
         for (float item : chart_item) {
-            Log.d("item", String.valueOf(item));
             if (item >= Integer.parseInt(min) && item <= Integer.parseInt(max)) {
                 try {
                     if(pre_item != 0) {
