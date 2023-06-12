@@ -73,37 +73,6 @@ public class FinishService extends Service {
         Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
 
-        sharedPreferences.edit().putInt("reenter", 1).apply();
-
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        String getTime = sdf.format(date);
-
-        databaseReference.child("Room").child(room).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.getValue() != null){
-                    if(token != null) {
-                        ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-                        databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
-                        databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
-                    }
-
-                    else{
-                        ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-                        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-                        databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
         stopSelf();
 
         /*

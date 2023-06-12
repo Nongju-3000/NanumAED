@@ -671,7 +671,7 @@ public class CPRActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot datas : snapshot.getChildren()) {
-                    //token = datas.getRef().getKey();
+                    token = datas.getRef().getKey();
                     Intent serviceIntent = new Intent(CPRActivity.this, FinishService.class);
                     bindService(serviceIntent, finishConnection, BIND_AUTO_CREATE);
                     Intent sender2 = new Intent(CPRActivity.this, FinishService.class);
@@ -1082,10 +1082,10 @@ public class CPRActivity extends AppCompatActivity {
             Date date = new Date(now);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
             String getTime = sdf.format(date);
-            ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
+            /*ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
             databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
             databaseReference.child("Room").child(room).child("into").child(UserName).setValue(null);
-            databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
+            databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);*/
             e.printStackTrace();
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);
@@ -2036,13 +2036,21 @@ public class CPRActivity extends AppCompatActivity {
                 press_ave_btn01.setBackgroundResource(R.drawable.position_press_green);
             }
 
-            long now_ = System.currentTimeMillis();
-            Date date_ = new Date(now_);
-            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-            String getTime_ = sdf_.format(date_);
-            ChatData chatData_ = new ChatData("Bpm/" + currentBpm, getTime_, UserName);
-            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
+        } else{
+            animation = new TranslateAnimation(position_bpm, 0, 0, 0);
+            animation.setDuration(400);
+            animation.setFillAfter(true);
+            position_bpm = 0;
+            press_ave_btn01.startAnimation(animation);
+            press_ave_btn01.setBackgroundResource(R.drawable.position_press_red);
         }
+
+        long now_ = System.currentTimeMillis();
+        Date date_ = new Date(now_);
+        SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        String getTime_ = sdf_.format(date_);
+        ChatData chatData_ = new ChatData("Bpm/" + currentBpm, getTime_, UserName);
+        databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
     }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
@@ -2963,22 +2971,6 @@ public class CPRActivity extends AppCompatActivity {
         bluetoothLeServiceCPR = null;
         Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
-        if (!isout) {
-            long now = System.currentTimeMillis();
-            Date date = new Date(now);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-            String getTime = sdf.format(date);
-            ChatData chatData = new ChatData("아웃/" + UserName, getTime, UserName);
-            databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData);
-            databaseReference.child("Room").child(room).child("user").child(token).setValue(null);
-            reset(1);
-            try {
-                Thread.sleep(1000);
-                databaseReference.child("Room").child(room).child("message").child(UserName).setValue(null);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     //TODO Timer
@@ -3253,6 +3245,7 @@ public class CPRActivity extends AppCompatActivity {
         if (set == 1) {
             Intent intent;
             mConnected = false;
+            prefs.edit().putString("room", null).apply();
 
             databaseReference.child("Room").child(room).child("user").orderByChild("name").equalTo(UserName).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
