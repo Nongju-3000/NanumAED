@@ -45,6 +45,7 @@ public class LobbyActivity extends Activity {
     private RemoteChatAdapter remoteChatAdapter;
     private BackPressCloseHandler backPressCloseHandler;
     private boolean trainercheck = false;
+    private boolean duplicatedcheck = false;
 
 
     @Override
@@ -61,7 +62,7 @@ public class LobbyActivity extends Activity {
                 view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                 getWindow().setStatusBarColor(Color.parseColor("#6178e3"));
             }
-        }else if (Build.VERSION.SDK_INT >= 21) {
+        } else if (Build.VERSION.SDK_INT >= 21) {
             // 21 버전 이상일 때
             getWindow().setStatusBarColor(Color.BLACK);
         }
@@ -88,11 +89,11 @@ public class LobbyActivity extends Activity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 remoteChatAdapter.clearChatList();
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    for(DataSnapshot mdataSnapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    for (DataSnapshot mdataSnapshot : dataSnapshot.getChildren()) {
                         RemoteChatData remoteChatData = mdataSnapshot.getValue(RemoteChatData.class);
                         Log.e("remoteChatData", remoteChatData.toString());
-                        if(!dataSnapshot.getKey().equals("대기실")){
+                        if (!dataSnapshot.getKey().equals("대기실")) {
                             remoteChatData.setName(remoteChatData.getName() + "(" + dataSnapshot.getKey() + ")");
                             remoteChatAdapter.addChatItem(remoteChatData);
                         } else {
@@ -100,7 +101,7 @@ public class LobbyActivity extends Activity {
                         }
                     }
                 }
-                chat_recyclerview.scrollToPosition(remoteChatAdapter.getItemCount()-1);
+                chat_recyclerview.scrollToPosition(remoteChatAdapter.getItemCount() - 1);
             }
 
             @Override
@@ -139,7 +140,7 @@ public class LobbyActivity extends Activity {
         });*/
 
         chat_sendbutton.setOnClickListener(v -> {
-            if(chat_edittext.getText().toString().equals("")){
+            if (chat_edittext.getText().toString().equals("")) {
                 Toast.makeText(getApplicationContext(), R.string.input_message_here, Toast.LENGTH_SHORT).show();
                 return;
             } else {
@@ -165,9 +166,33 @@ public class LobbyActivity extends Activity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.getValue() != null){
-                            trainercheck = true;
+                            Toast.makeText(getApplicationContext(), getString(R.string.name) + name + getString(R.string.alreadyinroom), Toast.LENGTH_SHORT).show();
                         } else {
-                            trainercheck = false;
+                            databaseReference.child("Room").child(room).child("message").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.hasChild(name)) {
+                                        Toast.makeText(getApplicationContext(), getString(R.string.name) + name + getString(R.string.alreadyinroom), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        NameData nameData = new NameData(name, token);
+                                        databaseReference.child("Room").child(room).child("user").push().setValue(nameData);
+                                        ChatData chatData = new ChatData("입장했습니다.", getTime, name);  // 유저 이름과 메세지로 chatData 만들기
+                                        databaseReference.child("Room").child(room).child("message").child(name).push().setValue(chatData);
+                                        DatabaseReference into = databaseReference.child("Room").child(room).child("into").child(name);
+                                        into.setValue(chatData.getUserName());
+                                        Intent intent = new Intent(LobbyActivity.this, CPRActivity.class);
+                                        intent.putExtra("room", room);
+                                        intent.putExtra("name", name);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
                         }
                     }
 
@@ -176,22 +201,14 @@ public class LobbyActivity extends Activity {
 
                     }
                 });
-                if(!trainercheck){
-                    NameData nameData = new NameData(name, token);
-                    databaseReference.child("Room").child(room).child("user").push().setValue(nameData);
-                    ChatData chatData = new ChatData("입장했습니다.", getTime, name);  // 유저 이름과 메세지로 chatData 만들기
-                    databaseReference.child("Room").child(room).child("message").child(name).push().setValue(chatData);
-                    DatabaseReference into = databaseReference.child("Room").child(room).child("into").child(name);
-                    into.setValue(chatData.getUserName());
-                    Intent intent = new Intent(LobbyActivity.this, CPRActivity.class);
-                    intent.putExtra("room", room);
-                    intent.putExtra("name", name);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
+
+
+                if (!trainercheck && !duplicatedcheck) {
+
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.name + name + getString(R.string.alreadyinroom), Toast.LENGTH_SHORT).show();
+
                 }
+
             }
         });
 
@@ -207,6 +224,7 @@ public class LobbyActivity extends Activity {
                 remoteRoomAdapter.addRoom(roomname);
                 intoListener = databaseReference.child("Room").child(snapshot.getKey()).child("into").addChildEventListener(new ChildEventListener() {
                     int intoCount = 0;
+
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot intodataSnapshot, @androidx.annotation.Nullable String previousChildName) {
                         intoCount++;
@@ -293,6 +311,7 @@ public class LobbyActivity extends Activity {
         public BackPressCloseHandler(Activity context) {
             this.activity = context;
         }
+
         public void onBackPressed() {
             Intent main = new Intent(LobbyActivity.this, RoomActivity.class);
             startActivity(main);
