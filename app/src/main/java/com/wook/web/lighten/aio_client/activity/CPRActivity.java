@@ -3069,6 +3069,15 @@ public class CPRActivity extends AppCompatActivity {
 
         lung01.setVisibility(View.INVISIBLE);
         test_lung01.setVisibility(View.INVISIBLE);
+        anne.setVisibility(View.VISIBLE);
+        remote_depth_text.setVisibility(View.VISIBLE);
+        cpr_ani01.setVisibility(View.VISIBLE);
+        cpr_ani02.setVisibility(View.VISIBLE);
+        standardCPR_btn01.setVisibility(View.VISIBLE);
+        depth_btn01.setVisibility(View.VISIBLE);
+        depth_btn_cpr_up.setVisibility(View.VISIBLE);
+        depthCPR_view01.setVisibility(View.VISIBLE);
+        press_position.setVisibility(View.VISIBLE);
 
 
         Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
