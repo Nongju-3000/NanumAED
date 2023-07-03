@@ -3115,7 +3115,6 @@ public class CPRActivity extends AppCompatActivity {
                         String.valueOf(minDepth), String.valueOf(maxDepth),
                         String.valueOf(depth_num), String.valueOf(depth_correct), String.valueOf(position_num01), String.valueOf(position_correct01),
                         String.valueOf(lung_num01), String.valueOf(lung_correct01), bpm1, bluetoothtime_list01));
-                ReportSave(reportItems);
 
                 Converters converters = new Converters();
                 long now_ = System.currentTimeMillis();
@@ -3140,59 +3139,61 @@ public class CPRActivity extends AppCompatActivity {
                         depth_count++;
                     }
                 }
+                if (depth_count > 5) {
+                    double avg_depth = depth_sum / depth_count;
+                    String avg_depth_s = String.format("%.2f", avg_depth);
+                    String bpm = reportItems.get(0).getReport_bpm();
+                    String score;
+                    int sum_depth = Integer.parseInt(reportItems.get(0).getReport_depth_correct())
+                            + Integer.parseInt(reportItems.get(0).getReport_up_depth())
+                            + Integer.parseInt(reportItems.get(0).getReport_down_depth());
 
-                double avg_depth = depth_sum / depth_count;
-                String avg_depth_s = String.format("%.2f", avg_depth);
-                String bpm = reportItems.get(0).getReport_bpm();
-                String score;
-                int sum_depth = Integer.parseInt(reportItems.get(0).getReport_depth_correct())
-                        + Integer.parseInt(reportItems.get(0).getReport_up_depth())
-                        + Integer.parseInt(reportItems.get(0).getReport_down_depth());
+                    int depth_accuracy_ = (int) ((double) sum_depth / (double) 3);
+                    int breathScore = (int) ((Double.parseDouble(reportItems.get(0).getReport_lung_correct()) / Double.parseDouble(reportItems.get(0).getReport_lung_num())) * 100);
+                    if (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0) {
+                        int all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
+                        score = String.valueOf(all_score);
+                    } else {
+                        score = reportItems.get(0).getReport_down_depth();
+                    }
 
-                int depth_accuracy_ = (int) ((double) sum_depth / (double) 3);
-                int breathScore = (int) ((Double.parseDouble(reportItems.get(0).getReport_lung_correct()) / Double.parseDouble(reportItems.get(0).getReport_lung_num())) * 100);
-                if (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0) {
-                    int all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
-                    score = String.valueOf(all_score);
-                } else {
-                    score = reportItems.get(0).getReport_down_depth();
+                    String stopList;
+                    if (reportItems.get(0).getStop_time_list().isEmpty()) {
+                        stopList = "0";
+                    } else {
+                        stopList = converters.writingStringFromList(reportItems.get(0).getStop_time_list());
+                    }
+
+                    ChatData chatData__ = new ChatData("score/" + score + "/" + avg_depth_s + "/" + bpm, getTime_, UserName);
+                    databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData__);
+                    ChatData chatData_ = new ChatData("report/" + reportItems.get(0).getReport_end_time() + "/"
+                            + reportItems.get(0).getReport_interval_sec() + "/"
+                            + reportItems.get(0).getReport_cycle() + "/"
+                            + reportItems.get(0).getReport_depth_correct() + "/"
+                            + reportItems.get(0).getReport_up_depth() + "/"
+                            + reportItems.get(0).getReport_down_depth() + "/"
+                            + reportItems.get(0).getReport_bpm() + "/"
+                            + reportItems.get(0).getReport_angle() + "/"
+                            + converters.writingStringFromList(reportItems.get(0).getReport_depth_list()) + "/"
+                            + converters.writingStringFromList(reportItems.get(0).getReport_presstime_list()) + "/"
+                            + converters.writingStringFromList(reportItems.get(0).getReport_breathval()) + "/"
+                            + converters.writingStringFromList(reportItems.get(0).getReport_breathtime()) + "/"
+                            + reportItems.get(0).getReport_ventil_volume() + "/"
+                            + reportItems.get(0).getDepth_num() + "/"
+                            + reportItems.get(0).getDepth_correct() + "/"
+                            + reportItems.get(0).getReport_position_num() + "/"
+                            + reportItems.get(0).getReport_position_correct() + "/"
+                            + reportItems.get(0).getReport_lung_num() + "/"
+                            + reportItems.get(0).getReport_lung_correct() + "/"
+                            + stopList + "/"
+                            + converters.writingStringFromList(reportItems.get(0).getReport_bletime_list()) + "/"
+                            + currentUserName
+                            , getTime_
+                            , UserName);
+
+                    databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
+                    ReportSave(reportItems);
                 }
-
-                String stopList;
-                if (reportItems.get(0).getStop_time_list().isEmpty()) {
-                    stopList = "0";
-                } else {
-                    stopList = converters.writingStringFromList(reportItems.get(0).getStop_time_list());
-                }
-
-                ChatData chatData__ = new ChatData("score/" + score + "/" + avg_depth_s + "/" + bpm, getTime_, UserName);
-                databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData__);
-                ChatData chatData_ = new ChatData("report/" + reportItems.get(0).getReport_end_time() + "/"
-                        + reportItems.get(0).getReport_interval_sec() + "/"
-                        + reportItems.get(0).getReport_cycle() + "/"
-                        + reportItems.get(0).getReport_depth_correct() + "/"
-                        + reportItems.get(0).getReport_up_depth() + "/"
-                        + reportItems.get(0).getReport_down_depth() + "/"
-                        + reportItems.get(0).getReport_bpm() + "/"
-                        + reportItems.get(0).getReport_angle() + "/"
-                        + converters.writingStringFromList(reportItems.get(0).getReport_depth_list()) + "/"
-                        + converters.writingStringFromList(reportItems.get(0).getReport_presstime_list()) + "/"
-                        + converters.writingStringFromList(reportItems.get(0).getReport_breathval()) + "/"
-                        + converters.writingStringFromList(reportItems.get(0).getReport_breathtime()) + "/"
-                        + reportItems.get(0).getReport_ventil_volume() + "/"
-                        + reportItems.get(0).getDepth_num() + "/"
-                        + reportItems.get(0).getDepth_correct() + "/"
-                        + reportItems.get(0).getReport_position_num() + "/"
-                        + reportItems.get(0).getReport_position_correct() + "/"
-                        + reportItems.get(0).getReport_lung_num() + "/"
-                        + reportItems.get(0).getReport_lung_correct() + "/"
-                        + stopList + "/"
-                        + converters.writingStringFromList(reportItems.get(0).getReport_bletime_list()) + "/"
-                        + currentUserName
-                        , getTime_
-                        , UserName);
-
-                databaseReference.child("Room").child(room).child("message").child(UserName).push().setValue(chatData_);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -3214,7 +3215,7 @@ public class CPRActivity extends AppCompatActivity {
 
         breath01 = 0;
 
-        cpr_timer.setText("00:00:00");
+        cpr_timer.setText("00:00");
 
         cpr_arrow01.setVisibility(View.INVISIBLE);
 
@@ -3262,7 +3263,6 @@ public class CPRActivity extends AppCompatActivity {
 
             databaseReference.child("Room").child(room).child("트레이너").removeEventListener(childEventListener);
             databaseReference.child("Room").child(room).child("conference").removeEventListener(conferenceEventListener);
-            databaseReference.child("Chat").child(room).removeEventListener(chatEventListener);
 
             isout = true;
 
@@ -3608,8 +3608,8 @@ public class CPRActivity extends AppCompatActivity {
             HashMap<String, String> addresstohashmap = new Gson().fromJson(address, (Type) HashMap.class);
             if (addresstohashmap.containsKey(bleDevice2.getMacAddress())) {
                 address_array01 = addresstohashmap.get(bleDevice2.getMacAddress()).split("/");
-                min_lung01 = (int) (Integer.parseInt(address_array01[0]) * 1.1);
-                max_lung01 = Integer.parseInt(address_array01[1]);
+                min_lung01 = (int) (Float.parseFloat(address_array01[0]) * 1.1);
+                max_lung01 = (int)(Float.parseFloat(address_array01[1]));
                 bre_threshold01 = min_lung01 + 5;
                 gap_lung01 = max_lung01 - bre_threshold01;
                 bre_level01 = (int) (min_lung01 + ((float) gap_lung01 / 3));

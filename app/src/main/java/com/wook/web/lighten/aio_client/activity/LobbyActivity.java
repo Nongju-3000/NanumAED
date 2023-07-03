@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,8 +32,6 @@ import com.wook.web.lighten.aio_client.data.RoomData;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import javax.annotation.Nullable;
 
 public class LobbyActivity extends Activity {
 
@@ -196,8 +195,74 @@ public class LobbyActivity extends Activity {
             }
         });
 
-        databaseReference.child("Room").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("Room").addChildEventListener(new ChildEventListener() {
+            ArrayList<ChildEventListener> intoListenerList = new ArrayList<>();
+            ArrayList<String> roomlist = new ArrayList<>();
+
             @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+                ChildEventListener intoListener;
+                String roomname = snapshot.getKey();
+                roomlist.add(snapshot.getKey());
+                remoteRoomAdapter.addRoom(roomname);
+                intoListener = databaseReference.child("Room").child(snapshot.getKey()).child("into").addChildEventListener(new ChildEventListener() {
+                    int intoCount = 0;
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot intodataSnapshot, @androidx.annotation.Nullable String previousChildName) {
+                        intoCount++;
+                        remoteRoomAdapter.setRoom(roomname, intoCount);
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot intodataSnapshot) {
+                        intoCount--;
+                        remoteRoomAdapter.setRoom(roomname, intoCount);
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                intoListenerList.add(intoListener);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                String roomname = snapshot.getKey();
+                remoteRoomAdapter.removeRoom(roomname);
+                int index = roomlist.indexOf(snapshot.getKey());
+                roomlist.remove(index);
+                databaseReference.child("Room").child(snapshot.getKey()).child("into").removeEventListener(intoListenerList.get(index));
+                intoListenerList.remove(index);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+            /*@Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ArrayList<RoomData> roomDataArrayList = new ArrayList<>();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -212,7 +277,7 @@ public class LobbyActivity extends Activity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-            }
+            }*/
         });
 
     }

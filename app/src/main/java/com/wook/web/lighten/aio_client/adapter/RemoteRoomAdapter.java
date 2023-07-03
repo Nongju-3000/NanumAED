@@ -66,14 +66,11 @@ public class RemoteRoomAdapter extends RecyclerView.Adapter<RemoteRoomAdapter.Vi
             num_of_people = itemView.findViewById(R.id.numofpeople_remote);
             enterbutton = itemView.findViewById(R.id.enter_remote);
 
-            enterbutton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = getBindingAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION) {
-                        if (onItemClickListener != null) {
-                            onItemClickListener.onItemClick(pos);
-                        }
+            enterbutton.setOnClickListener(v -> {
+                int pos = getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(pos);
                     }
                 }
             });
@@ -87,6 +84,36 @@ public class RemoteRoomAdapter extends RecyclerView.Adapter<RemoteRoomAdapter.Vi
 
     public RoomData getItem(int position) {
         return mRoomList.get(position);
+    }
+
+    public void setRoom(String roomname, int num_of_people) {
+        for (int i = 0; i < mRoomList.size(); i++) {
+            if (mRoomList.get(i).getName().equals(roomname)) {
+                ArrayList<RoomData> newroomList = new ArrayList<>();
+                newroomList.addAll(mRoomList);
+                newroomList.get(i).setNum_of_people(num_of_people);
+                mRoomList.clear();
+                mRoomList.addAll(newroomList);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    public void addRoom(String roomname) {
+        RoomData roomData = new RoomData(roomname, 0);
+        mRoomList.add(roomData);
+        notifyItemInserted(mRoomList.size() - 1);
+    }
+
+    public void removeRoom(String roomname) {
+        for (int i = 0; i < mRoomList.size(); i++) {
+            if (mRoomList.get(i).getName().equals(roomname)) {
+                mRoomList.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
+        }
     }
 
     public boolean duplicateCheck(String roomName) {
