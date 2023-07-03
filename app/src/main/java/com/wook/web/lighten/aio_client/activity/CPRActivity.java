@@ -2269,7 +2269,6 @@ public class CPRActivity extends AppCompatActivity {
         } else if (Objects.equals(Devices.get("Device_02"), address)) {
             if (device_btn02 != null)
                 device_btn02.setImageResource(R.drawable.cpr_on);
-            initialize();
             device2_connect = true;
             de2Connect = 1;
         }
@@ -2414,6 +2413,7 @@ public class CPRActivity extends AppCompatActivity {
                     if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
                         bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
                         bluetoothLeServiceCPR.writeCharacteristic(1, "e0");
+                        initialize();
                     }
                 }
             } catch (Exception e) {
@@ -3069,6 +3069,7 @@ public class CPRActivity extends AppCompatActivity {
 
         lung01.setVisibility(View.INVISIBLE);
         test_lung01.setVisibility(View.INVISIBLE);
+
 
         Intent sender = new Intent(CPRActivity.this, BluetoothLeServiceCPR.class);
         sender.setAction(BluetoothLeServiceCPR.ACTION_SOUND);
