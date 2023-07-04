@@ -15,6 +15,7 @@ import com.jakewharton.rx.ReplayingShare;
 import com.polidea.rxandroidble2.RxBleClient;
 import com.polidea.rxandroidble2.RxBleConnection;
 import com.polidea.rxandroidble2.RxBleDevice;
+import com.polidea.rxandroidble2.exceptions.BleGattException;
 import com.wook.web.lighten.aio_client.data.GattAttributes;
 import com.wook.web.lighten.aio_client.utils.HexString;
 import com.wook.web.lighten.aio_client.utils.Print;
@@ -89,56 +90,63 @@ public class BluetoothLeServiceCPR extends Service {
     //TODO ble data service setting
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         parsingActions(intent);
         return START_NOT_STICKY;
     }
+
     int bpm;
-    private void parsingActions(Intent intent){
+
+    private void parsingActions(Intent intent) {
         String action = intent.getAction();
-        if(action == null){
+        if (action == null) {
             Print.e(TAG, "The Service is started");
-        } else if(action.equals(ACTION_SOUND)){
+        } else if (action.equals(ACTION_SOUND)) {
             bpm = intent.getIntExtra(DATA1_NOT_KEY, 0);
             beepSchedule((bpm != 0));
-        } else if(action.equals(ACTION_READY)){
+        } else if (action.equals(ACTION_READY)) {
             setReady();
-        } else if(action.equals(ACTION_DEPTH_CHANGE)){
+        } else if (action.equals(ACTION_DEPTH_CHANGE)) {
             int min = intent.getIntExtra(DATA1_NOT_KEY, 0);
             int max = intent.getIntExtra(DATA2_NOT_KEY, 0);
             setDepth(min, max);
-        } else if(action.equals(ACTION_CALL)){
+        } else if (action.equals(ACTION_CALL)) {
             int index = intent.getIntExtra(DATA1_NOT_KEY, 0);
             call(index);
-        } else if(action.equals(ACTION_COMPANY)){
+        } else if (action.equals(ACTION_COMPANY)) {
             int index = intent.getIntExtra(DATA1_NOT_KEY, 1);
             int value = intent.getIntExtra(DATA2_NOT_KEY, 0);
             sendCompany(index, value);
-        }else if(action.equals(ACTION_MAGNET)){
+        } else if (action.equals(ACTION_MAGNET)) {
             int index = intent.getIntExtra(DATA1_NOT_KEY, 1);
             sendMagnet(index);
-        }else if(action.equals(ACTION_CALIBRATION)){
+        } else if (action.equals(ACTION_CALIBRATION)) {
             int index = intent.getIntExtra(DATA1_NOT_KEY, 1);
             sendCalibration(index);
-        }else if(action.equals(ACTION_CALIBRATION_MAGNET)){
+        } else if (action.equals(ACTION_CALIBRATION_MAGNET)) {
             int index = intent.getIntExtra(DATA1_NOT_KEY, 1);
             sendCalibrationMagnet(index);
         }
     }
+
     private Thread sendReferThread = null;
     private boolean isHandlerFree = true;
 
     private ArrayList<Integer> min_list = new ArrayList<>();
     private ArrayList<Integer> max_list = new ArrayList<>();
 
-    private void sendCalibration(int index){
+    private void sendCalibration(int index) {
         Print.e(TAG, "sendCalibration Call!");
-        if(sendReferThread == null){
+        if (sendReferThread == null) {
             sendReferThread = new Thread(() -> {
-                while(!isHandlerFree);
+                while (!isHandlerFree) ;
                 Print.e(TAG, "CALIBRATION sending");
                 writeCharacteristic(index, CMD_CALIBRATION);
-                try{ Thread.sleep(150); }catch (Exception e){e.printStackTrace();}
+                try {
+                    Thread.sleep(150);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 sendReferThread.interrupt();
                 sendReferThread = null;
             });
@@ -146,13 +154,17 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void sendCalibrationMagnet(int index){
-        if(sendReferThread == null){
+    private void sendCalibrationMagnet(int index) {
+        if (sendReferThread == null) {
             sendReferThread = new Thread(() -> {
-                while(!isHandlerFree);
+                while (!isHandlerFree) ;
                 Print.e(TAG, "magnet calibration sending");
                 writeCharacteristic(index, CMD_CALIBRATION_MAGNET);
-                try{ Thread.sleep(150); }catch (Exception e){e.printStackTrace();}
+                try {
+                    Thread.sleep(150);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 sendReferThread.interrupt();
                 sendReferThread = null;
             });
@@ -160,13 +172,17 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void sendMagnet(int index){
-        if(sendReferThread == null){
+    private void sendMagnet(int index) {
+        if (sendReferThread == null) {
             sendReferThread = new Thread(() -> {
-                while(!isHandlerFree);
+                while (!isHandlerFree) ;
                 Print.e(TAG, "magnet sending");
                 writeCharacteristic(index, CMD_MAGNET);
-                try{ Thread.sleep(150); }catch (Exception e){e.printStackTrace();}
+                try {
+                    Thread.sleep(150);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 sendReferThread.interrupt();
                 sendReferThread = null;
             });
@@ -174,13 +190,17 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void call(int index){
-        if(sendReferThread == null){
+    private void call(int index) {
+        if (sendReferThread == null) {
             sendReferThread = new Thread(() -> {
-                while(!isHandlerFree);
+                while (!isHandlerFree) ;
                 Print.e(TAG, "call sending");
                 writeCharacteristic(index, CMD_CALL);
-                try{ Thread.sleep(150); }catch (Exception e){e.printStackTrace();}
+                try {
+                    Thread.sleep(150);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 sendReferThread.interrupt();
                 sendReferThread = null;
             });
@@ -188,13 +208,17 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void sendCompany(int index, int value){ // 161 ~ 175
-        if(sendReferThread == null){
+    private void sendCompany(int index, int value) { // 161 ~ 175
+        if (sendReferThread == null) {
             sendReferThread = new Thread(() -> {
-                while(!isHandlerFree);
+                while (!isHandlerFree) ;
                 Print.e(TAG, "company sending");
                 writeCharacteristic(index, Integer.toHexString(value));
-                try{ Thread.sleep(150); }catch (Exception e){e.printStackTrace();}
+                try {
+                    Thread.sleep(150);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 sendReferThread.interrupt();
                 sendReferThread = null;
             });
@@ -202,29 +226,33 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void setDepth(int min, int max){
+    private void setDepth(int min, int max) {
         min_list.clear();
         min_list.clear();
-        for(int i=0; i<6; i++){
+        for (int i = 0; i < 6; i++) {
             min_list.add(0);
             max_list.add(0);
         }
 
-        if(sendReferThread == null){
+        if (sendReferThread == null) {
             sendReferThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     int count = 0;
-                    for(RxBleConnection connection: mRxBleConnections){
-                        while(!isHandlerFree);
+                    for (RxBleConnection connection : mRxBleConnections) {
+                        while (!isHandlerFree) ;
                         Print.e(TAG, "inner sending loop");
-                        if(connection != null){
+                        if (connection != null) {
                             min_list.set(count, min);
                             max_list.set(count, max);
                         }
                         writeCharacteristic(connection, CMD_RANGE_INCOMMING_FLAG, count);
                         count++;
-                        try{ Thread.sleep(150); }catch (Exception e){e.printStackTrace();}
+                        try {
+                            Thread.sleep(150);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                     sendReferThread.interrupt();
                     sendReferThread = null;
@@ -234,20 +262,25 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void setReady(){
-        if(sendReferThread != null)
+    private void setReady() {
+        if (sendReferThread != null)
             Print.e("Test", "sendReferThread is not null");
 
         isStart = false;
 
-        if(sendReferThread == null){
+        if (sendReferThread == null) {
             sendReferThread = new Thread(() -> {
                 int index = 0;
-                for(RxBleConnection rxBleConnection: mRxBleConnections){
-                    while(!isHandlerFree);
+                for (RxBleConnection rxBleConnection : mRxBleConnections) {
+                    while (!isHandlerFree) ;
                     Print.e(TAG, "inner sending loop");
                     writeCharacteristic(rxBleConnection, CMD_READY, index);
-                    try{ index++; Thread.sleep(150); }catch (Exception e){e.printStackTrace();}
+                    try {
+                        index++;
+                        Thread.sleep(150);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 sendReferThread.interrupt();
                 sendReferThread = null;
@@ -260,14 +293,14 @@ public class BluetoothLeServiceCPR extends Service {
         try {
             Log.e(TAG, "writeCharacteristic: " + data);
             byte[] sender = HexString.hexToBytes(data);
-            if(connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
+            if (connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
                 rxBleConnection.writeCharacteristic(UUID_WRITE, sender).subscribe();
             }
-            if(data.equals(CMD_RANGE_INCOMMING_FLAG)){
+            if (data.equals(CMD_RANGE_INCOMMING_FLAG)) {
                 isHandlerFree = false;
                 mHander.postDelayed(() -> {
                     int min = min_list.get(index);
-                    if(min != 0) {
+                    if (min != 0) {
                         min_list.set(index, 0);
                         writeCharacteristic(rxBleConnection, Integer.toHexString(min), index);
                         Print.e(TAG, "min sent..");
@@ -293,29 +326,32 @@ public class BluetoothLeServiceCPR extends Service {
                     Print.e(TAG, "sent max data end!");
                 }
             }
-        }catch(NumberFormatException | NullPointerException ignored){
+        } catch (NumberFormatException | NullPointerException ignored) {
         }
     }
 
     private Handler beepHandler;
+
     private void beepSchedule(boolean run) {
-        if(beepHandler != null) {
+        if (beepHandler != null) {
             beepHandler.removeCallbacks(beepRun);
             beepHandler = null;
         }
-        if(run) {
+        if (run) {
             beepHandler = new Handler(Looper.getMainLooper());
             long interval = 60000 / bpm;
             beepHandler.postDelayed(beepRun, interval);
         }
     }
+
     private Runnable beepRun = () -> {
         playBeepSound();
         beepSchedule(true);
     };
     private SoundPoolHandler soundPoolHandler;
+
     private void playBeepSound() {
-        if(soundPoolHandler == null) soundPoolHandler = new SoundPoolHandler(this);
+        if (soundPoolHandler == null) soundPoolHandler = new SoundPoolHandler(this);
         soundPoolHandler.playSound();
     }
 
@@ -361,9 +397,9 @@ public class BluetoothLeServiceCPR extends Service {
         if (mBluetoothAdapter == null) {
             return false;
         }
-        if(rxBleClient == null)
+        if (rxBleClient == null)
             rxBleClient = RxBleClient.create(this);
-        if(mRxBleConnections.size()!=2) {
+        if (mRxBleConnections.size() != 2) {
             for (int i = 0; i < 2; i++) {
                 mRxBleConnections.add(null);
                 isCharDRegistereds.add(false);
@@ -374,26 +410,28 @@ public class BluetoothLeServiceCPR extends Service {
         }
         return true;
     }
+
     public boolean isConnected(String macAddress) {
-        if(macAddress.equals("-"))
+        if (macAddress.equals("-"))
             return false;
         else
             return rxBleClient.getBleDevice(macAddress).getConnectionState() == RxBleConnection.RxBleConnectionState.CONNECTED;
     }
 
     private String preStatus = "";
-    private void sendNewState(final RxBleDevice device, RxBleConnection.RxBleConnectionState newState, int index){
+
+    private void sendNewState(final RxBleDevice device, RxBleConnection.RxBleConnectionState newState, int index) {
         connectionChecking.set(index, newState);
         String connectedStatus = "";
-        if(RxBleConnection.RxBleConnectionState.DISCONNECTED == newState){
+        if (RxBleConnection.RxBleConnectionState.DISCONNECTED == newState) {
             isCharDRegistereds.set(index, false);
             isCharARegistereds.set(index, false);
             connect(device.getMacAddress(), index);
             connectedStatus = "disconnected";
-        }else if(RxBleConnection.RxBleConnectionState.CONNECTED == newState){
+        } else if (RxBleConnection.RxBleConnectionState.CONNECTED == newState) {
             connectedStatus = "connected";
         }
-        if(!connectedStatus.equals(preStatus) && (connectedStatus.equals("disconnected") || connectedStatus.equals("connected"))) {
+        if (!connectedStatus.equals(preStatus) && (connectedStatus.equals("disconnected") || connectedStatus.equals("connected"))) {
             final Intent intent = new Intent(ACTION_NEW_STATE);
             intent.putExtra(EXTRA_BLE_DEVICE_ADDRESS, device.getMacAddress());
             intent.putExtra(EXTRA_NEW_STATE, connectedStatus);
@@ -402,11 +440,11 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    public void broadCastRxConnectionUpdate(final RxBleDevice device, int index){
+    public void broadCastRxConnectionUpdate(final RxBleDevice device, int index) {
         RxBleConnection rxBleConnection = mRxBleConnections.get(index);
         Print.e(TAG, "broadCastRxConnectionUpdate");
 
-        if(isConnected(device.getMacAddress())) {
+        if (isConnected(device.getMacAddress())) {
             //connectCompositeDisposable.add(connectionDisposables.get(index));
             Disposable disposable = rxBleConnection.setupNotification(CHAR_POSITION_UUID)
                     .doOnSubscribe(notificationObservable -> {
@@ -422,8 +460,8 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private void rxEnableNotification(RxBleDevice device, RxBleConnection rxBleConnection, int index){
-        if(!isCharDRegistereds.get(index)) {
+    private void rxEnableNotification(RxBleDevice device, RxBleConnection rxBleConnection, int index) {
+        if (!isCharDRegistereds.get(index)) {
             isCharDRegistereds.set(index, true);
 
             /*if(Objects.requireNonNull(device.getName()).contains("AIO")) {
@@ -459,11 +497,11 @@ public class BluetoothLeServiceCPR extends Service {
                         );
                 compositeDisposable.add(disposable);
             }
-        }else{
-            if(!isCharARegistereds.get(index)){
+        } else {
+            if (!isCharARegistereds.get(index)) {
                 isCharARegistereds.set(index, true);
 
-                if(isConnected(device.getMacAddress())) {
+                if (isConnected(device.getMacAddress())) {
                     Disposable disposable = rxBleConnection.setupNotification(CHAR_DEPTH_UUID)
                             .doOnNext(notificationObservable -> sendConnection(device, index))
                             .flatMap(notificationObservable -> notificationObservable)
@@ -477,9 +515,9 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private Runnable getAngleRunnable(RxBleDevice device, RxBleConnection rxBleConnection){
+    private Runnable getAngleRunnable(RxBleDevice device, RxBleConnection rxBleConnection) {
         return () -> {
-            if(isConnected(device.getMacAddress())){
+            if (isConnected(device.getMacAddress())) {
                 Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
                         .flatMap(notificationObservable -> notificationObservable)
                         .subscribe(
@@ -491,11 +529,11 @@ public class BluetoothLeServiceCPR extends Service {
         };
     }
 
-    private void sendConnection(RxBleDevice device, int index){
-        if(isStart){
+    private void sendConnection(RxBleDevice device, int index) {
+        if (isStart) {
             writeCharacteristic(index, mode);
         }
-        if(Objects.requireNonNull(device.getName()).contains("AIO")){
+        if (Objects.requireNonNull(device.getName()).contains("AIO")) {
             writeCharacteristic(index, "e0");
         }
         final Intent intent = new Intent(ACTION_BLE_CONNECTED);
@@ -503,23 +541,24 @@ public class BluetoothLeServiceCPR extends Service {
         sendBroadcast(intent);
     }
 
-    private void onPositionReceived(RxBleDevice bleDevice, byte[] bytes){
+    private void onPositionReceived(RxBleDevice bleDevice, byte[] bytes) {
         final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
         if (bytes != null && bytes.length > 0) {
             final StringBuilder stringBuilder = new StringBuilder(bytes.length);
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
-            intent.putExtra(EXTRA_DATA, stringBuilder + "," + CHAR_POSITION_UUID+ "," + bleDevice.getMacAddress());
+            intent.putExtra(EXTRA_DATA, stringBuilder + "," + CHAR_POSITION_UUID + "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
     }
-    private void onBreathReceived(RxBleDevice bleDevice, byte[] bytes){
+
+    private void onBreathReceived(RxBleDevice bleDevice, byte[] bytes) {
         final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
         if (bytes != null && bytes.length > 0) {
             final StringBuilder stringBuilder = new StringBuilder(bytes.length);
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
-            intent.putExtra(EXTRA_DATA, stringBuilder.toString() + "," + CHAR_BREATH_UUID+ "," + bleDevice.getMacAddress());
+            intent.putExtra(EXTRA_DATA, stringBuilder.toString() + "," + CHAR_BREATH_UUID + "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
         /*if(Objects.requireNonNull(bleDevice.getName()).contains("CPR-BA")){
@@ -529,27 +568,29 @@ public class BluetoothLeServiceCPR extends Service {
             }
         }*/
     }
-    private void onDepthReceived(RxBleDevice bleDevice, byte[] bytes){
+
+    private void onDepthReceived(RxBleDevice bleDevice, byte[] bytes) {
         final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
         if (bytes != null && bytes.length > 0) {
             final StringBuilder stringBuilder = new StringBuilder(bytes.length);
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
-            intent.putExtra(EXTRA_DATA, stringBuilder + "," + CHAR_DEPTH_UUID+ "," + bleDevice.getMacAddress());
+            intent.putExtra(EXTRA_DATA, stringBuilder + "," + CHAR_DEPTH_UUID + "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
     }
 
     private void onNotificationSetupFailure(Throwable throwable) {
         //noinspection ConstantConditions
-        Print.e(TAG, "Notification setup Failure : " +throwable.getMessage());
+        Print.e(TAG, "Notification setup Failure : " + throwable.getMessage());
+        setCompositeDisposable();
     }
 
     private ArrayList<RxBleConnection> mRxBleConnections = new ArrayList<>();
     private PublishSubject<Boolean> disconnectTriggerSubject = PublishSubject.create();
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final CompositeDisposable statecompositeDisposable = new CompositeDisposable();
-    private ArrayList<Boolean> isregisterstateDisposable = new ArrayList<Boolean>(){{
+    private ArrayList<Boolean> isregisterstateDisposable = new ArrayList<Boolean>() {{
         add(false);
         add(false);
     }};
@@ -560,7 +601,7 @@ public class BluetoothLeServiceCPR extends Service {
     private ArrayList<Disposable> connectionDisposables = new ArrayList<>();
     private CompositeDisposable connectCompositeDisposable = new CompositeDisposable();
 
-    public boolean connect(final String macAddress, int index){
+    public boolean connect(final String macAddress, int index) {
         RxBleDevice bleDevice = rxBleClient.getBleDevice(macAddress);
 
         Observable<RxBleConnection> connectionObservable = bleDevice
@@ -582,7 +623,7 @@ public class BluetoothLeServiceCPR extends Service {
                 );
         compositeDisposable.add(connectionDisposable);
 
-        if(!isregisterstateDisposable.get(index)) {
+        if (!isregisterstateDisposable.get(index)) {
             Log.e("connect", "stateDisposable");
             Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
                     .observeOn(AndroidSchedulers.mainThread())
@@ -594,39 +635,53 @@ public class BluetoothLeServiceCPR extends Service {
         return true;
     }
 
-    private void dispose(){
+    private void dispose() {
     }
+
     private void onConnectionFinished() {
     }
 
     private void onConnectionFailure(Throwable throwable) {
         //connect(mac, index);
-        Print.e(TAG, "Connection Failure : " +throwable.getMessage());
+        Print.e(TAG, "Connection Failure : " + throwable.getMessage());
     }
 
     public void writeCharacteristic(int index, String data) {
-        if(!isStart){
-            if(data.equals("f3")){
+        if (!isStart) {
+            if (data.equals("f3")) {
                 mode = data;
                 isStart = true;
             }
         }
         byte[] sender = HexString.hexToBytes(data);
-        if(connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
-            mRxBleConnections.get(index).writeCharacteristic(UUID_WRITE, sender).subscribe();
-            Log.e(TAG, "write characteristic, data = "+data + ", index = "+index);
+        if (connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
+            try {
+                mRxBleConnections.get(index).writeCharacteristic(UUID_WRITE, sender).subscribe();
+                Log.e(TAG, "write characteristic, data = " + data + ", index = " + index);
+            } catch (BleGattException e) {
+                int status = e.getStatus();
+                Log.e(TAG, "write characteristic, data = " + data + ", index = " + index + ", status = " + status);
+                if (status == 133) {
+                    setCompositeDisposable();
+                }
+            }
         }
     }
 
-    public void disconnect(){
+
+    public void disconnect() {
         compositeDisposable.clear();
         statecompositeDisposable.clear();
         isregisterstateDisposable.set(0, false);
         isregisterstateDisposable.set(1, false);
-        for(int i=0; i< isCharARegistereds.size(); i++){
+        for (int i = 0; i < isCharARegistereds.size(); i++) {
             isCharDRegistereds.set(i, false);
             isCharARegistereds.set(i, false);
         }
+    }
+
+    public void setCompositeDisposable(){
+        compositeDisposable.clear();
     }
 
 } // end
