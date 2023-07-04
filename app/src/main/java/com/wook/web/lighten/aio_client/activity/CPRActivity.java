@@ -2876,6 +2876,18 @@ public class CPRActivity extends AppCompatActivity {
                     }
                     if (chatData.getMessage().contains("화면최소화")) {
                         JitsiMeetActivityDelegate.onBackPressed();
+                        try {
+                            if (!Devices.isEmpty()) { //TODO BAND SET
+                                if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
+                                    bluetoothLeServiceCPR.writeCharacteristic(0, "f3");
+                                }
+                                if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
+                                    bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
+                                    bluetoothLeServiceCPR.writeCharacteristic(1, "e0");
+                                }
+                            }
+                        } catch (Exception e) {
+                        }
                     }
                     if (chatData.getMessage().contains("pause")) {
                         if (youTubePlayer != null)
