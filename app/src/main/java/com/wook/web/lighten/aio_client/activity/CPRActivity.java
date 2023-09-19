@@ -546,6 +546,7 @@ public class CPRActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent destroy = new Intent(CPRActivity.this, FinishService.class);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         destroy.putExtra("room", room);
         destroy.putExtra("UserName", UserName);
         destroy.setAction(FinishService.ACTION_INITIALIZE);
@@ -1075,6 +1076,8 @@ public class CPRActivity extends AppCompatActivity {
                 // Different features flags can be set
                 // .setFeatureFlag("toolbox.enabled", false)
                 // .setFeatureFlag("filmstrip.enabled", false)
+                .setFeatureFlag("meeting-password.enabled", false)
+                .setFeatureFlag("lobby-mode.enabled", false)
                 .setUserInfo(info)
                 .setFeatureFlag("call-integration.enabled", false)
                 .setFeatureFlag("prejoinpage.enabled", false)

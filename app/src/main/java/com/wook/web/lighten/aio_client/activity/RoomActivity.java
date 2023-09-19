@@ -120,7 +120,6 @@ public class RoomActivity extends AppCompatActivity {
     EditText room;
     EditText name_first, name_second;
     Button into, cali_btn;
-
     LabeledSwitch mode_switch_one, mode_switch_two;
     //LinearLayout linear;
     InputMethodManager imm;
@@ -140,10 +139,10 @@ public class RoomActivity extends AppCompatActivity {
     private RxBleClient rxBleClient;
     private Disposable scanDisposable;
     private TextView manual_tv;
-    private boolean trainercheck = false;
-    private boolean twomode = false;
+    private boolean trainerCheck = false;
+    private boolean twoMode = false;
     private boolean mConnected = false;
-    private HashMap<String, String> cali_map = new HashMap<String, String>();
+    private final HashMap<String, String> cali_map = new HashMap<>();
 
     private String Device01 = "-";
     private String Device02 = "-";
@@ -201,6 +200,7 @@ public class RoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);    // 타이틀바 제거
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_room);
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeServiceCPR.class);
@@ -328,7 +328,7 @@ public class RoomActivity extends AppCompatActivity {
             String[] name = userName.split("&");
             name_first.setText(name[0]);
             name_second.setText(name[1]);
-            twomode = true;
+            twoMode = true;
             mode_switch_one.setColorOff(Color.parseColor("#232323"));
             mode_switch_one.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
             mode_switch_two.setColorOn(Color.parseColor("#232323"));
@@ -353,19 +353,19 @@ public class RoomActivity extends AppCompatActivity {
 
         mode_switch_one.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (twomode) {
+                if (twoMode) {
                     mode_switch_one.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
                     mode_switch_one.setColorOn(Color.parseColor("#232323"));
                     mode_switch_two.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
                     mode_switch_two.setColorOff(Color.parseColor("#232323"));
-                    twomode = false;
+                    twoMode = false;
                     name_second_cardView.setVisibility(View.GONE);
                 } else {
                     mode_switch_one.setColorOff(Color.parseColor("#232323"));
                     mode_switch_one.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
                     mode_switch_two.setColorOn(Color.parseColor("#232323"));
                     mode_switch_two.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
-                    twomode = true;
+                    twoMode = true;
                     name_second_cardView.setVisibility(View.VISIBLE);
                 }
             }
@@ -374,20 +374,20 @@ public class RoomActivity extends AppCompatActivity {
 
         mode_switch_two.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (twomode) {
+                if (twoMode) {
                     mode_switch_one.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
                     mode_switch_one.setColorOn(Color.parseColor("#232323"));
                     mode_switch_two.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
                     mode_switch_two.setColorOff(Color.parseColor("#232323"));
                     name_second_cardView.setVisibility(View.GONE);
-                    twomode = false;
+                    twoMode = false;
                 } else {
                     mode_switch_one.setColorOff(Color.parseColor("#232323"));
                     mode_switch_one.setColorOn(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
                     mode_switch_two.setColorOn(Color.parseColor("#232323"));
                     mode_switch_two.setColorOff(ContextCompat.getColor(RoomActivity.this, R.color.text_orange));
                     name_second_cardView.setVisibility(View.VISIBLE);
-                    twomode = true;
+                    twoMode = true;
                 }
             }
             return true;
@@ -458,11 +458,9 @@ public class RoomActivity extends AppCompatActivity {
             }
         });*/
 
-        NotificationManager notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notifManager.cancelAll();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
 
-        Log.e("roomname", prefs.getString("room", "null"));
-        Log.e("username", prefs.getString("userName", "null"));
 
         if (prefs.getString("room", null) != null) {
             databaseReference.child("Room").child(prefs.getString("room", null)).child("into").orderByKey().equalTo(prefs.getString("userName", null)).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -498,7 +496,7 @@ public class RoomActivity extends AppCompatActivity {
             if (isFirstRun) {
                 Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.icon);
                 String intoname = name_first.getText().toString();
-                if (twomode) {
+                if (twoMode) {
                     intoname = intoname + "&" + name_second.getText().toString();
                 }
                 User user = new User("android", token, intoname, BitMapToString(icon));
@@ -512,24 +510,24 @@ public class RoomActivity extends AppCompatActivity {
             final String getTime = sdf.format(date);
 
             SharedPreferences.Editor editor = prefs.edit();
-            if (twomode) {
+            if (twoMode) {
                 editor.putString("userName", name_first.getText().toString() + "&" + name_second.getText().toString());
             } else {
                 editor.putString("userName", name_first.getText().toString());
             }
 
-            editor.commit();
+            editor.apply();
 
             final Intent intent1 = new Intent(RoomActivity.this, LobbyActivity.class);
 
-            if (name_first.getText().toString().equals("") || (name_second.getText().toString().equals("") && twomode)) {
+            if (name_first.getText().toString().equals("") || (name_second.getText().toString().equals("") && twoMode)) {
                 Toast.makeText(RoomActivity.this, R.string.inputname, Toast.LENGTH_SHORT).show();
             } else {
-                String intoname = name_first.getText().toString();
-                if (twomode) {
-                    intoname = intoname + "&" + name_second.getText().toString();
+                String intoName = name_first.getText().toString();
+                if (twoMode) {
+                    intoName = intoName + "&" + name_second.getText().toString();
                 }
-                intent1.putExtra("Name", intoname);
+                intent1.putExtra("Name", intoName);
                 intent1.putExtra("Token", token);
 
                 intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -690,7 +688,6 @@ public class RoomActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(mGattUpdateReceiver);
     }
-
 
 
     private void getPermission() {
@@ -859,7 +856,7 @@ public class RoomActivity extends AppCompatActivity {
     private HashMap<String, String> Devices = new HashMap<>();
     private int scan_count = 0;
     private BluetoothGattCharacteristic mNotifyCharacteristic = null;
-    private ArrayList<String> mac_list = new ArrayList<>();
+    private final ArrayList<String> mac_list = new ArrayList<>();
     NeumorphImageButton device_btn01;
     NeumorphImageButton device_btn02;
 
@@ -1170,12 +1167,12 @@ public class RoomActivity extends AppCompatActivity {
 
     private class LeDeviceListAdapter extends BaseAdapter {
         private ArrayList<RxBleDevice> mLeDevices;
-        private LayoutInflater mInflator;
+        private LayoutInflater mInflater;
 
         public LeDeviceListAdapter() {
             super();
             mLeDevices = new ArrayList<RxBleDevice>();
-            mInflator = getLayoutInflater();
+            mInflater = getLayoutInflater();
         }
 
         public void addDevice(RxBleDevice device) {
@@ -1217,7 +1214,7 @@ public class RoomActivity extends AppCompatActivity {
             CPRActivity.ViewHolder viewHolder;
 
             if (view == null) {
-                view = mInflator.inflate(R.layout.listitem_device, null);
+                view = mInflater.inflate(R.layout.listitem_device, null);
                 viewHolder = new CPRActivity.ViewHolder();
                 viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
                 viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
@@ -1322,26 +1319,23 @@ public class RoomActivity extends AppCompatActivity {
         AppDatabase database = AppDatabase.getDbInstance(getApplicationContext());
         reports = database.reportDao().getAllDevice();
 
-        HashMap<String, String> keyitem = new HashMap<>();
+        HashMap<String, String> keyItem = new HashMap<>();
 
         final HashMap<String, ArrayList<String>> reportList = new HashMap<>();
-        final ArrayList<String> date = new ArrayList<>();
 
         for (Report report : reports) {
-            String split[] = report.to_day.split("/");
-            keyitem.put(split[0], "");
+            String[] split = report.to_day.split("/");
+            keyItem.put(split[0], "");
         }
 
-        for (String key : keyitem.keySet()) {
-            date.add(key);
-        }
+        final ArrayList<String> date = new ArrayList<>(keyItem.keySet());
 
         Collections.sort(date);
 
         for (String date_ : date) {
             ArrayList<String> item = new ArrayList<>();
             for (Report report : reports) {
-                String split[] = report.to_day.split("/");
+                String[] split = report.to_day.split("/");
                 //if (date_.equals(report.to_day)) {
                 if (date_.equals(split[0])) {
                     int all_score;
@@ -1353,8 +1347,13 @@ public class RoomActivity extends AppCompatActivity {
                     int depth_accuracy_ = (int) ((double) sum_depth / (double) 3);
                     if (Integer.parseInt(report.lung_num) != 0) {
                         all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
-                    } else
-                        all_score = depth_accuracy_;
+                    } else {
+                        if (Integer.parseInt(report.position_num) != 0) {
+                            all_score = depth_accuracy_;
+                        } else {
+                            all_score = Integer.parseInt(report.report_down_depth);
+                        }
+                    }
                     Log.e("Test", "name = " + report.report_name);
                     item.add(report.report_name + "," + report.report_depth_correct + "," + report.to_day + "," + all_score);
                 }
@@ -1511,23 +1510,20 @@ public class RoomActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = pref.edit();
 
                     FirebaseMessaging.getInstance().getToken()
-                            .addOnCompleteListener(new OnCompleteListener<String>() {
-                                @Override
-                                public void onComplete(@NonNull Task<String> task) {
-                                    if (!task.isSuccessful()) {
-                                        return;
-                                    }
-                                    // Get new FCM registration token
-                                    token = task.getResult();
+                            .addOnCompleteListener(task -> {
+                                if (!task.isSuccessful()) {
+                                    return;
                                 }
+                                // Get new FCM registration token
+                                token = task.getResult();
                             });
 
-                    String intoname = name_first.getText().toString();
-                    if (twomode) {
-                        intoname = intoname + "&" + name_second.getText().toString();
+                    String intoName = name_first.getText().toString();
+                    if (twoMode) {
+                        intoName = intoName + "&" + name_second.getText().toString();
                     }
-                    String key = databaseReference.child("TOKEN").child(intoname).getKey();
-                    User user = new User("android", token, intoname, image);
+                    String key = databaseReference.child("TOKEN").child(intoName).getKey();
+                    User user = new User("android", token, intoName, image);
                     Map<String, Object> postValues = user.toMap();
 
                     Map<String, Object> childUpdates = new HashMap<>();
@@ -1537,7 +1533,7 @@ public class RoomActivity extends AppCompatActivity {
 
                     editor.putString("image", image);
 
-                    editor.commit();
+                    editor.apply();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1554,9 +1550,7 @@ public class RoomActivity extends AppCompatActivity {
 
         byte[] b = baos.toByteArray();
 
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-
-        return temp;
+        return Base64.encodeToString(b, Base64.DEFAULT);
 
     }
 
@@ -1566,9 +1560,7 @@ public class RoomActivity extends AppCompatActivity {
 
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
 
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-
-            return bitmap;
+            return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
 
         } catch (Exception e) {
 

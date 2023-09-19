@@ -166,14 +166,14 @@ public class ReportActivity extends Activity {
         }
     };
 
-    private void setDateTextView(TextView date, String rawdate){
+    private void setDateTextView(TextView date, String rawdate) {
         String year, month, day;
 
-        year = String.valueOf(rawdate.charAt(0))+ rawdate.charAt(1) + rawdate.charAt(2) + rawdate.charAt(3);
-        month = String.valueOf(rawdate.charAt(4))+ rawdate.charAt(5);
-        day = String.valueOf(rawdate.charAt(6))+ rawdate.charAt(7);
+        year = String.valueOf(rawdate.charAt(0)) + rawdate.charAt(1) + rawdate.charAt(2) + rawdate.charAt(3);
+        month = String.valueOf(rawdate.charAt(4)) + rawdate.charAt(5);
+        day = String.valueOf(rawdate.charAt(6)) + rawdate.charAt(7);
 
-        date.setText(year+"."+month+"."+day);
+        date.setText(year + "." + month + "." + day);
     }
 
     @Override
@@ -237,14 +237,14 @@ public class ReportActivity extends Activity {
         depth_break = findViewById(R.id.depth_break);
         //depth_break.setOnClickListener(v -> Toast.makeText(getApplication(), "AIO를 사용하셔야 활성화됩니다.", Toast.LENGTH_SHORT).show());
 
-        cprCardView.post(()->{
+        cprCardView.post(() -> {
             createDialog();
         });
 
         sessionCardView.setOnClickListener(v -> {
             createDialog();
-            if(!isOpen){
-                if(isVentil) {
+            if (!isOpen) {
+                if (isVentil) {
                     ventilDialog.show();
                 }
                 cprDialog.show();
@@ -255,9 +255,9 @@ public class ReportActivity extends Activity {
 
         cprCardView.setOnClickListener(v -> {
             createDialog();
-            if(!isOpen){
+            if (!isOpen) {
                 sessionDialog.show();
-                if(isVentil) {
+                if (isVentil) {
                     ventilDialog.show();
                 }
                 cprDialog.show();
@@ -266,7 +266,7 @@ public class ReportActivity extends Activity {
         });
         ventilationCardView.setOnClickListener(v -> {
             createDialog();
-            if(!isOpen){
+            if (!isOpen) {
                 sessionDialog.show();
                 ventilDialog.show();
                 cprDialog.show();
@@ -374,14 +374,14 @@ public class ReportActivity extends Activity {
                 for (Report report : reports)
                     if (ReportDay.equals(report.to_day)) {
                         String[] split = report.to_day.split("/");
-                        setDateTextView(date,split[0]);
+                        setDateTextView(date, split[0]);
                         String[] timesplit = split[1].split(":");
                         int time_sec = Integer.parseInt(timesplit[0]) * 3600 + Integer.parseInt(timesplit[1]) * 60 + Integer.parseInt(timesplit[2]);
-                        time_sec = time_sec + Integer.parseInt( report.report_end_time);
-                        String hour = String.format("%02d",time_sec / 3600);
-                        String min = String.format("%02d",(time_sec % 3600) / 60);
-                        String sec = String.format("%02d",time_sec % 60);
-                        time.setText(split[1] + " - " + hour +":"+ min +":"+ sec);
+                        time_sec = time_sec + Integer.parseInt(report.report_end_time);
+                        String hour = String.format("%02d", time_sec / 3600);
+                        String min = String.format("%02d", (time_sec % 3600) / 60);
+                        String sec = String.format("%02d", time_sec % 60);
+                        time.setText(split[1] + " - " + hour + ":" + min + ":" + sec);
                         String item[] = ReportItem.split(",");
                         if (item[0].equals(report.report_name) && item[1].equals(report.report_depth_correct)) {
                             reportItems.add(new ReportItem(report.report_name
@@ -440,7 +440,7 @@ public class ReportActivity extends Activity {
                     ));
                 }
             }
-        }else{
+        } else {
             reportItems = (ArrayList<ReportItem>) intent.getSerializableExtra("reportItems");
             ReportSave(reportItems);
         }
@@ -450,62 +450,55 @@ public class ReportActivity extends Activity {
             report_end_time.setText(reportItems.get(0).getReport_end_time() + " sec");
             report_interval_sec.setText(reportItems.get(0).getReport_interval_sec() + " sec");
             report_cycle.setText(reportItems.get(0).getReport_cycle());
-            if(Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0) {
+            if (Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0) {
                 report_depth_correct.setVisibility(View.GONE);
                 depth_break.setVisibility(View.VISIBLE);
                 report_up_depth.setText("-");
-            }
-            else {
+            } else {
                 depth_break.setVisibility(View.GONE);
                 report_depth_correct.setVisibility(View.VISIBLE);
                 report_depth_correct.setText(reportItems.get(0).getReport_depth_correct() + " %");
                 report_up_depth.setText(reportItems.get(0).getReport_up_depth() + " %");
-                if(Integer.parseInt( reportItems.get(0).getReport_up_depth()) >= 70){
+                if (Integer.parseInt(reportItems.get(0).getReport_up_depth()) >= 70) {
                     report_up_depth.setTextColor(Color.GREEN);
-                }
-                else if(Integer.parseInt( reportItems.get(0).getReport_up_depth()) >= 30){
-                    report_up_depth.setTextColor(Color.rgb(255,100,0));
-                }
-                else if(Integer.parseInt( reportItems.get(0).getReport_up_depth()) >= 0){
+                } else if (Integer.parseInt(reportItems.get(0).getReport_up_depth()) >= 30) {
+                    report_up_depth.setTextColor(Color.rgb(255, 100, 0));
+                } else if (Integer.parseInt(reportItems.get(0).getReport_up_depth()) >= 0) {
                     report_up_depth.setTextColor(Color.RED);
                 }
             }
             report_down_depth.setText(reportItems.get(0).getReport_down_depth() + " %");
-            if(Integer.parseInt( reportItems.get(0).getReport_down_depth()) >= 70){
+            if (Integer.parseInt(reportItems.get(0).getReport_down_depth()) >= 70) {
                 report_down_depth.setTextColor(Color.GREEN);
-            }
-            else if(Integer.parseInt( reportItems.get(0).getReport_down_depth()) >= 30){
-                report_down_depth.setTextColor(Color.rgb(255,100,0));
-            }
-            else if(Integer.parseInt( reportItems.get(0).getReport_down_depth()) >= 0){
+            } else if (Integer.parseInt(reportItems.get(0).getReport_down_depth()) >= 30) {
+                report_down_depth.setTextColor(Color.rgb(255, 100, 0));
+            } else if (Integer.parseInt(reportItems.get(0).getReport_down_depth()) >= 0) {
                 report_down_depth.setTextColor(Color.RED);
             }
             report_bpm.setText(reportItems.get(0).getReport_bpm() + " BPM");
             int angle = 90 - Integer.parseInt(reportItems.get(0).getReport_angle());
-            if( angle > 60 && angle < 120) {
+            if (angle > 60 && angle < 120) {
                 report_angle.setText(getString(R.string.correct));
                 report_angleguage.setBackground(getDrawable(R.drawable.angle_green));
-            }
-            else if( angle > 30 && angle < 150){
+            } else if (angle > 30 && angle < 150) {
                 report_angle.setText(getString(R.string.incorrect));
                 report_angleguage.setBackground(getDrawable(R.drawable.angle_orange));
 
-            }
-            else{
+            } else {
                 report_angle.setText(getString(R.string.jiggle));
                 report_angleguage.setBackground(getDrawable(R.drawable.angle_red));
             }
             report_total.setText(reportItems.get(0).getDepth_num());
 
-            if(Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0 && Integer.parseInt(reportItems.get(0).getReport_lung_num()) == 0)){
+            if (Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0 && Integer.parseInt(reportItems.get(0).getReport_lung_num()) == 0)) {
                 equip.setText("");
-            }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) != 0 && Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0 && Integer.parseInt(reportItems.get(0).getReport_lung_num()) == 0){
+            } else if (Integer.parseInt(reportItems.get(0).getReport_angle()) != 0 && Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0 && Integer.parseInt(reportItems.get(0).getReport_lung_num()) == 0) {
                 equip.setText("BAND");
-            }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)){
+            } else if (Integer.parseInt(reportItems.get(0).getReport_angle()) == 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)) {
                 equip.setText("AIO");
                 report_angle.setText("BLOCK");
                 report_angleguage.setBackground(getDrawable(R.drawable.angle_gray));
-            }else if(Integer.parseInt(reportItems.get(0).getReport_angle()) != 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)){
+            } else if (Integer.parseInt(reportItems.get(0).getReport_angle()) != 0 && (Integer.parseInt(reportItems.get(0).getReport_position_num()) != 0 || Integer.parseInt(reportItems.get(0).getReport_lung_num()) != 0)) {
                 equip.setText("BAND, AIO");
             }
 
@@ -516,10 +509,9 @@ public class ReportActivity extends Activity {
                     + Integer.parseInt(reportItems.get(0).getReport_down_depth());
 
             depth_accuracy_ = (int) ((double) sum_depth / (double) 3);
-            if(Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0) {
+            if (Integer.parseInt(reportItems.get(0).getReport_position_num()) == 0) {
                 depth_accuracy.setText(reportItems.get(0).getReport_down_depth() + " %");
-            }
-            else {
+            } else {
                 depth_accuracy.setText(depth_accuracy_ + " %");
             }
 
@@ -546,11 +538,11 @@ public class ReportActivity extends Activity {
             stop_list = reportItems.get(0).getStop_time_list();
             ble_list = reportItems.get(0).getReport_bletime_list();
 
-            report_total.post(()->{
-                float correctCountTextSize = correctCount.getTextSize()*0.8f;
-                float report_totalTextSize = report_total.getTextSize()*0.8f;
+            report_total.post(() -> {
+                float correctCountTextSize = correctCount.getTextSize() * 0.8f;
+                float report_totalTextSize = report_total.getTextSize() * 0.8f;
                 Log.d("CountTextSize", String.valueOf(correctCountTextSize) + ", " + report_totalTextSize);
-                if (correctCountTextSize > report_totalTextSize){
+                if (correctCountTextSize > report_totalTextSize) {
                     report_total.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
                     correctCount.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
                     slash.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
@@ -619,8 +611,8 @@ public class ReportActivity extends Activity {
 
                 Calendar cal = Calendar.getInstance();
                 Date nowDate = cal.getTime();
-                SimpleDateFormat dataformat = new SimpleDateFormat("yyyyMMdd");
-                String toDay = dataformat.format(nowDate);
+                SimpleDateFormat dataFormat = new SimpleDateFormat("yyyyMMdd");
+                String toDay = dataFormat.format(nowDate);
                 report.to_day = toDay;
                 report.min = reportItem.getReport_Min();
                 report.max = reportItem.getReport_Max();
@@ -635,15 +627,15 @@ public class ReportActivity extends Activity {
                 database.reportDao().insert(report);
 
                 String[] split = toDay.split("/");
-                setDateTextView(date,split[0]);
-                String[] timesplit = split[1].split(":");
-                int time_sec = Integer.parseInt(timesplit[0]) * 3600 + Integer.parseInt(timesplit[1]) * 60 + Integer.parseInt(timesplit[2]);
+                setDateTextView(date, split[0]);
+                String[] timeSplit = split[1].split(":");
+                int time_sec = Integer.parseInt(timeSplit[0]) * 3600 + Integer.parseInt(timeSplit[1]) * 60 + Integer.parseInt(timeSplit[2]);
                 Log.d("interval", report.report_end_time);
-                time_sec = time_sec + Integer.parseInt( report.report_end_time);
-                String hour = String.format("%02d",time_sec / 3600);
-                String min = String.format("%02d",(time_sec % 3600) / 60);
-                String sec = String.format("%02d",time_sec % 60);
-                time.setText(split[1] + " - " + hour +":"+ min +":"+ sec);
+                time_sec = time_sec + Integer.parseInt(report.report_end_time);
+                String hour = String.format("%02d", time_sec / 3600);
+                String min = String.format("%02d", (time_sec % 3600) / 60);
+                String sec = String.format("%02d", time_sec % 60);
+                time.setText(split[1] + " - " + hour + ":" + min + ":" + sec);
             }
         }
     }
@@ -652,7 +644,7 @@ public class ReportActivity extends Activity {
     private TextView ventil_volume;
     private TextView ave_volume;
 
-    private void createDialog(){
+    private void createDialog() {
         ventilDialog = new Dialog(ReportActivity.this);
         ventilDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         ventilDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -660,9 +652,9 @@ public class ReportActivity extends Activity {
         ventilDialog.setContentView(R.layout.info_ventil);
 
         ventilDialog.setOnDismissListener(dialog -> {
-            if(sessionDialog.isShowing())
+            if (sessionDialog.isShowing())
                 sessionDialog.dismiss();
-            if(cprDialog.isShowing())
+            if (cprDialog.isShowing())
                 cprDialog.dismiss();
             isOpen = false;
         });
@@ -672,14 +664,13 @@ public class ReportActivity extends Activity {
         ventil_volume = ventilDialog.findViewById(R.id.ventil_volume);
         ave_volume = ventilDialog.findViewById(R.id.ave_volume);
         info_ventilationCardView.setLayoutParams(new FrameLayout.LayoutParams(ventilationCardView.getWidth(), ventilationCardView.getHeight()));
-        Log.e("ventilDialog", "ventilDialog");
 
         ventil_count.setText(reportItems.get(0).getReport_lung_num());
         ventil_volume.setText(reportItems.get(0).getReport_ventil_volume() + "ml");
         int num = Integer.parseInt(reportItems.get(0).getReport_lung_num());
         int volume = Integer.parseInt(reportItems.get(0).getReport_ventil_volume());
-        if(num != 0)
-            ave_volume.setText((volume / num)+ "ml");
+        if (num != 0)
+            ave_volume.setText((volume / num) + "ml");
         WindowManager.LayoutParams wmlp = ventilDialog.getWindow().getAttributes();
         wmlp.gravity = Gravity.TOP | Gravity.LEFT;
         wmlp.x = 10000;
@@ -701,9 +692,9 @@ public class ReportActivity extends Activity {
         cprDialog.setContentView(R.layout.info_accuracy);
 
         cprDialog.setOnDismissListener(dialog -> {
-            if(sessionDialog.isShowing())
+            if (sessionDialog.isShowing())
                 sessionDialog.dismiss();
-            if(ventilDialog.isShowing())
+            if (ventilDialog.isShowing())
                 ventilDialog.dismiss();
             isOpen = false;
         });
@@ -733,9 +724,9 @@ public class ReportActivity extends Activity {
         NeumorphCardView info_sessionCardView = sessionDialog.findViewById(R.id.info_sessionCardView);
 
         sessionDialog.setOnDismissListener(dialog -> {
-            if(ventilDialog.isShowing())
+            if (ventilDialog.isShowing())
                 ventilDialog.dismiss();
-            if(cprDialog.isShowing())
+            if (cprDialog.isShowing())
                 cprDialog.dismiss();
             isOpen = false;
         });
@@ -772,12 +763,12 @@ public class ReportActivity extends Activity {
         BarLineChartTouchListener barLineChartTouchListener = (BarLineChartTouchListener) chart.getOnTouchListener();
         barLineChartTouchListener.stopDeceleration();
         float scale = div_time / 15;
-        chart.zoomToCenter(scale/2, 0f);
+        chart.zoomToCenter(scale / 2, 0f);
 
         chart.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(!(chart.getLowestVisibleX() == chart.getXAxis().getAxisMinimum() || chart.getHighestVisibleX() == chart.getXAxis().getAxisMaximum())){
+                if (!(chart.getLowestVisibleX() == chart.getXAxis().getAxisMinimum() || chart.getHighestVisibleX() == chart.getXAxis().getAxisMaximum())) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_CANCEL:
                         case MotionEvent.ACTION_UP: {
@@ -788,7 +779,7 @@ public class ReportActivity extends Activity {
                             v.getParent().requestDisallowInterceptTouchEvent(true);
                             break;
                         }
-                        case  MotionEvent.ACTION_MOVE:{
+                        case MotionEvent.ACTION_MOVE: {
                             v.getParent().requestDisallowInterceptTouchEvent(true);
                             break;
                         }
@@ -876,30 +867,27 @@ public class ReportActivity extends Activity {
         float pre_item = 0f;
         float pre_xval = 0f;
 
-        for(float itam: breathval) {
+        for (float itam : breathval) {
             if (itam > 0) {
                 addEntry_chart(itam, breathtime.get(indax), 1);
-            }
-            else{
+            } else {
                 addEntry_chart(itam * (-1) - 5.0f, breathtime.get(indax), 2);
             }
             indax++;
         }
 
-        Log.e("presstime", String.valueOf(presstime_list));
         int j = 0;
         for (float item : chart_item) {
             if (item >= Integer.parseInt(min) && item <= Integer.parseInt(max)) {
                 try {
-                    if(pre_item != 0) {
+                    if (pre_item != 0) {
                         addEntry_chart(0, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
                         addEntry_chart(item, presstime_list.get(index), 0);
-                    }
-                    else{
+                    } else {
                         addEntry_chart(0, pre_xval, 0);
                         addEntry_chart(item, presstime_list.get(index), 0);
                     }
-                } catch(ArrayIndexOutOfBoundsException e) {
+                } catch (ArrayIndexOutOfBoundsException e) {
                     addEntry_chart(0, 0, 0);
                     addEntry_chart(item, presstime_list.get(index), 0);
                 }
@@ -907,16 +895,15 @@ public class ReportActivity extends Activity {
                 depth_sum += item;
                 depth_count++;
             } else if ((5 < item && item < Integer.parseInt(min))) {
-                try{
-                    if(pre_item!=0) {
+                try {
+                    if (pre_item != 0) {
                         addEntry_chart(0, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
                         addEntry_chart(item, presstime_list.get(index), 0);
-                    }
-                    else{
+                    } else {
                         addEntry_chart(0, pre_xval, 0);
                         addEntry_chart(item, presstime_list.get(index), 0);
                     }
-                } catch (ArrayIndexOutOfBoundsException e){
+                } catch (ArrayIndexOutOfBoundsException e) {
                     addEntry_chart(0, 0, 0);
                     addEntry_chart(item, presstime_list.get(index), 0);
                 }
@@ -926,16 +913,15 @@ public class ReportActivity extends Activity {
                 depth_sum += item;
                 depth_count++;
             } else if ((Integer.parseInt(max) < item && item <= 100)) {
-                try{
-                    if( pre_item !=0 ) {
+                try {
+                    if (pre_item != 0) {
                         addEntry_chart(0, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
                         addEntry_chart(70, presstime_list.get(index), 0);
-                    }
-                    else{
+                    } else {
                         addEntry_chart(0, pre_xval, 0);
                         addEntry_chart(70, presstime_list.get(index), 0);
                     }
-                } catch (ArrayIndexOutOfBoundsException e){
+                } catch (ArrayIndexOutOfBoundsException e) {
                     addEntry_chart(0, 0, 0);
                     addEntry_chart(70, presstime_list.get(index), 0);
                 }
@@ -943,16 +929,15 @@ public class ReportActivity extends Activity {
                 depth_sum += item;
                 depth_count++;
             } else if (100 < item) {
-                try{
-                    if(pre_item !=0 ) {
+                try {
+                    if (pre_item != 0) {
                         addEntry_chart(10, (presstime_list.get(index) - presstime_list.get(index - 1)) / 2 + presstime_list.get(index - 1), 0);
                         addEntry_chart((item - 100), presstime_list.get(index), 0);
-                    }
-                    else{
+                    } else {
                         addEntry_chart(10, pre_xval, 0);
                         addEntry_chart((item - 100), presstime_list.get(index), 0);
                     }
-                } catch (ArrayIndexOutOfBoundsException e){
+                } catch (ArrayIndexOutOfBoundsException e) {
                     addEntry_chart(10, 0, 0);
                     addEntry_chart((item - 100), presstime_list.get(index), 0);
                 }
@@ -960,18 +945,18 @@ public class ReportActivity extends Activity {
             } else if (0 == item) {
                 try {
                     addEntry_chart(0, (presstime_list.get(index - 1) - presstime_list.get(index - 2)) / 2 + presstime_list.get(index - 1), 0);
-                    addEntry_chart(0, presstime_list.get(index - 1)  + (float)stop_list.get(j), 0);
-                    pre_xval = presstime_list.get(index - 1)  + (float)stop_list.get(j);
+                    addEntry_chart(0, presstime_list.get(index - 1) + (float) stop_list.get(j), 0);
+                    pre_xval = presstime_list.get(index - 1) + (float) stop_list.get(j);
                     stop_xval.add((presstime_list.get(index - 1) - presstime_list.get(index - 2)) / 2 + presstime_list.get(index - 1));
-                    stop_xval.add(presstime_list.get(index - 1)  + (float)stop_list.get(j));
-                } catch (ArrayIndexOutOfBoundsException e){
-                    try{
+                    stop_xval.add(presstime_list.get(index - 1) + (float) stop_list.get(j));
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    try {
                         addEntry_chart(0, presstime_list.get(index - 1) + presstime_list.get(index - 1), 0);
-                        addEntry_chart(0, presstime_list.get(index - 1) + (float)stop_list.get(j), 0);
-                        pre_xval = presstime_list.get(index - 1) + (float)stop_list.get(j);
+                        addEntry_chart(0, presstime_list.get(index - 1) + (float) stop_list.get(j), 0);
+                        pre_xval = presstime_list.get(index - 1) + (float) stop_list.get(j);
                         stop_xval.add(presstime_list.get(index - 1) + presstime_list.get(index - 1));
-                        stop_xval.add(presstime_list.get(index - 1) + (float)stop_list.get(j));
-                    } catch (ArrayIndexOutOfBoundsException e_){
+                        stop_xval.add(presstime_list.get(index - 1) + (float) stop_list.get(j));
+                    } catch (ArrayIndexOutOfBoundsException e_) {
                         addEntry_chart(0, 0, 0);
                         addEntry_chart(0, 0f + stop_list.get(j), 0);
                         pre_xval = 0f + stop_list.get(j);
@@ -990,11 +975,6 @@ public class ReportActivity extends Activity {
                         index--;
                         break;
                     case 2:
-                        depth++;
-                        brath++;
-                        breath_++;
-                        index--;
-                        break;
                     case 3:
                         depth++;
                         brath++;
@@ -1009,10 +989,10 @@ public class ReportActivity extends Activity {
                 }
             }
             index++;
-            if(index == chart_size){
-                if(item < 5){
+            if (index == chart_size) {
+                if (item < 5) {
                     data = chart.getData();
-                    if(data != null){
+                    if (data != null) {
                         ILineDataSet breath = data.getDataSetByIndex(1);
                         stop_array.add(breath.getEntryCount() - 1);
                     }
@@ -1021,32 +1001,30 @@ public class ReportActivity extends Activity {
             pre_item = item;
         }
 
-        for(int i = 0; i < stop_xval.size(); i++){
-            if(i % 2 == 1){
-                if(i+1 == stop_xval.size()){
-                    addll_chart(stop_xval.get(i),div_time,1);
+        for (int i = 0; i < stop_xval.size(); i++) {
+            if (i % 2 == 1) {
+                if (i + 1 == stop_xval.size()) {
+                    addll_chart(stop_xval.get(i), div_time, 1);
                 }
-            }
-            else if(i % 2 == 0){
-                if(i == 0){
-                    addll_chart(0,stop_xval.get(i),1);
-                }
-                else{
-                    addll_chart(stop_xval.get(i-1),stop_xval.get(i),1);
+            } else if (i % 2 == 0) {
+                if (i == 0) {
+                    addll_chart(0, stop_xval.get(i), 1);
+                } else {
+                    addll_chart(stop_xval.get(i - 1), stop_xval.get(i), 1);
                 }
             }
         }
 
-        if(stop_xval.size() == 0){
-            addll_chart(0,div_time,1);
+        if (stop_xval.size() == 0) {
+            addll_chart(0, div_time, 1);
         }
 
         double avg_depth = depth_sum / depth_count;
         String avg_depth_s = String.format("%.1f", avg_depth);
-        ave_depth.setText(avg_depth_s+"mm");
+        ave_depth.setText(avg_depth_s + "mm");
 
         int breathScore = (int) (((double) brath / (double) breath_) * 100);
-        if(Integer.parseInt(reportItems.get(position).getReport_position_num()) == 0){
+        if (Integer.parseInt(reportItems.get(position).getReport_position_num()) == 0) {
             chart_break.setVisibility(View.VISIBLE);
             //breath_break.setVisibility(View.VISIBLE);
             //breath_accuracy.setVisibility(View.GONE);
@@ -1056,8 +1034,7 @@ public class ReportActivity extends Activity {
             //breath_accuracy.invalidate();
             ventil_score.invalidate();
             //breath_break.invalidate();
-        }
-        else{
+        } else {
             ventil_score.setText(breathScore + " %");
             //breath_accuracy.setText(breathScore + " %");
             lung_clip.setLevel(breathScore * 90);
@@ -1078,7 +1055,7 @@ public class ReportActivity extends Activity {
             all_accuracy.setText(all_score + "%");
             total_score = all_score;
         } else {
-            if(Integer.parseInt(reportItems.get(position).getReport_up_depth()) != 0) {
+            if (Integer.parseInt(reportItems.get(position).getReport_up_depth()) != 0) {
                 total_score = depth_accuracy_;
                 all_accuracy.setText(total_score + "%");
             } else {
@@ -1090,33 +1067,33 @@ public class ReportActivity extends Activity {
         XAxis xAxis = chart.getXAxis();
         xAxis.setEnabled(true);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setAxisMaximum(depth*2);
+        xAxis.setAxisMaximum(depth * 2);
         xAxis.setAxisMinimum(0f);
         xAxis.removeAllLimitLines();
         xAxis.setDrawAxisLine(true);
-        xAxis.setAxisMaximum((float)div_time);
+        xAxis.setAxisMaximum((float) div_time);
         xAxis.setAxisMinimum(0.0f);
         //     xAxis.setAxisLineColor(Color.TRANSPARENT);
         xAxis.setGridColor(Color.TRANSPARENT);
         xAxis.setTextColor(Color.WHITE);
         xAxis.setShowSpecificLabelPositions(true);
 
-        float[] label_position = new float[(int)scale + 1];
-        for(int i=0; i<scale + 1; i++)
+        float[] label_position = new float[(int) scale + 1];
+        for (int i = 0; i < scale + 1; i++)
             label_position[i] = i * 15.0f;
 
         xAxis.setSpecificLabelPositions(label_position);
 
         chart.getXAxis().setTextColor(Color.WHITE);
 
-        for(int i=0; i<stop_xval.size(); i++) {
+        for (int i = 0; i < stop_xval.size(); i++) {
             LimitLine ll = null;
-            if(i%2 == 0)
+            if (i % 2 == 0)
                 ll = new LimitLine(stop_xval.get(i), " ");
-            else{
-                try{
-                    ll = new LimitLine(stop_xval.get(i), (String.format("%.1f" , stop_list.get(i/2)) + " Secs  "));
-                }catch(IndexOutOfBoundsException e){
+            else {
+                try {
+                    ll = new LimitLine(stop_xval.get(i), (String.format("%.1f", stop_list.get(i / 2)) + " Secs  "));
+                } catch (IndexOutOfBoundsException e) {
                     ll = new LimitLine(stop_xval.get(i), "2.0 Secs  ");
                 }
             }
@@ -1129,14 +1106,14 @@ public class ReportActivity extends Activity {
             xAxis.addLimitLine(ll);
         }
 
-        for(int i = 0; i<ble_list.size(); i++){
-            LimitLine ll= null;
-            if(i%2 == 0)
+        for (int i = 0; i < ble_list.size(); i++) {
+            LimitLine ll;
+            if (i % 2 == 0)
                 ll = new LimitLine(ble_list.get(i), "Bluetooth OFF");
-            else{
-                try{
+            else {
+                try {
                     ll = new LimitLine(ble_list.get(i), "");
-                }catch(IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
                     ll = new LimitLine(ble_list.get(i), "");
                 }
             }
@@ -1183,7 +1160,7 @@ public class ReportActivity extends Activity {
         return set;
     }
 
-    private LineDataSet createSet2(){
+    private LineDataSet createSet2() {
         LineDataSet set = new LineDataSet(null, null);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
 
@@ -1197,10 +1174,10 @@ public class ReportActivity extends Activity {
         return set;
     }
 
-    private LineDataSet createSet3(){
+    private LineDataSet createSet3() {
         LineDataSet set = new LineDataSet(null, null);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(Color.rgb(255,210,0));
+        set.setColor(Color.rgb(255, 210, 0));
         set.setLineWidth(2f);
         set.setDrawCircles(false);
         set.setDrawHorizontalHighlightIndicator(false);
@@ -1210,10 +1187,10 @@ public class ReportActivity extends Activity {
         return set;
     }
 
-    private LineDataSet createSet4(){
+    private LineDataSet createSet4() {
         LineDataSet set = new LineDataSet(null, null);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(Color.rgb(255,100,0));
+        set.setColor(Color.rgb(255, 100, 0));
         set.setLineWidth(2f);
         set.setDrawCircles(false);
         set.setDrawHorizontalHighlightIndicator(false);
@@ -1223,10 +1200,10 @@ public class ReportActivity extends Activity {
         return set;
     }
 
-    private LineDataSet createSet5(){
+    private LineDataSet createSet5() {
         LineDataSet set = new LineDataSet(null, null);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(Color.rgb(72,214,214));
+        set.setColor(Color.rgb(72, 214, 214));
         set.setLineWidth(3f);
         set.setDrawCircles(false);
         set.setDrawHorizontalHighlightIndicator(false);
@@ -1236,10 +1213,10 @@ public class ReportActivity extends Activity {
         return set;
     }
 
-    private LineDataSet createSet6(){
+    private LineDataSet createSet6() {
         LineDataSet set = new LineDataSet(null, null);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(Color.rgb(73,198,68));
+        set.setColor(Color.rgb(73, 198, 68));
         set.setLineWidth(2.5f);
         set.setDrawCircles(false);
         set.setDrawHorizontalHighlightIndicator(false);
@@ -1263,14 +1240,14 @@ public class ReportActivity extends Activity {
                 data.addDataSet(breath);
             }
 
-            if(label == 0)
+            if (label == 0)
                 data.addEntry(new Entry(xval, val, "Label1"), 0);
 
-            if(label == 1 || label == 2 )
+            if (label == 1 || label == 2)
                 data.addEntry(new Entry(xval, val), 1);
 
-            if( val > 0f && (val > Integer.parseInt(max) || val < Integer.parseInt(min))){
-                if(val > prev_val && label == 0 ) {
+            if (val > 0f && (val > Integer.parseInt(max) || val < Integer.parseInt(min))) {
+                if (val > prev_val && label == 0) {
                     ILineDataSet set = createSet2();
                     data.addDataSet(set);
                     set.addEntry(new Entry(prev_xval, prev_val));
@@ -1278,8 +1255,8 @@ public class ReportActivity extends Activity {
                 }
             }
 
-            if( val > 0f && val < Integer.parseInt(min)){
-                if(prev_val > val && label == 0 ) {
+            if (val > 0f && val < Integer.parseInt(min)) {
+                if (prev_val > val && label == 0) {
                     ILineDataSet set = createSet3();
                     data.addDataSet(set);
                     set.addEntry(new Entry(prev_xval, prev_val));
@@ -1287,9 +1264,7 @@ public class ReportActivity extends Activity {
                 }
             }
 
-            if (isover){
-                Log.d("overdrawing", String.valueOf(prev_bxval));
-                Log.d("overdrawing", String.valueOf(xval));
+            if (isover) {
                 ILineDataSet set = createSet4();
                 data.addDataSet(set);
                 set.addEntry(new Entry(prev_bxval, prev_bval));
@@ -1297,9 +1272,7 @@ public class ReportActivity extends Activity {
                 isover = false;
             }
 
-            if ( label == 2){
-                Log.d("overdrawing", String.valueOf(prev_bxval));
-                Log.d("overdrawing", String.valueOf(xval));
+            if (label == 2) {
                 ILineDataSet set = createSet4();
                 data.addDataSet(set);
                 set.addEntry(new Entry(prev_bxval, prev_bval));
@@ -1307,18 +1280,16 @@ public class ReportActivity extends Activity {
                 isover = true;
             }
 
-            if(label == 3){
+            if (label == 3) {
                 ILineDataSet set = createSet5();
                 data.addDataSet(set);
                 set.addEntry(new Entry(xval, val));
             }
 
-            if(label == 0) {
+            if (label == 0) {
                 prev_xval = xval;
                 prev_val = val;
-            }
-
-            else if(label == 1 || label == 2){
+            } else if (label == 1 || label == 2) {
                 prev_bxval = xval;
                 prev_bval = val;
             }
@@ -1330,12 +1301,12 @@ public class ReportActivity extends Activity {
     }
 
     final float breath_limit = 10.0f;
-    final float breath_threshold= 50.0f;
+    final float breath_threshold = 50.0f;
 
-    private void addll_chart( float pre_xval, float xval, int label) {
+    private void addll_chart(float pre_xval, float xval, int label) {
         LineData data = chart.getData();
         if (data != null) {
-            if(label == 0){
+            if (label == 0) {
                 ILineDataSet set = createSet5();
                 ILineDataSet mset = createSet5();
                 data.addDataSet(set);
@@ -1345,7 +1316,7 @@ public class ReportActivity extends Activity {
                 mset.addEntry(new Entry(pre_xval, breath_threshold));
                 mset.addEntry(new Entry(xval, breath_threshold));
             }
-            if(label == 1){
+            if (label == 1) {
                 ILineDataSet set = createSet6();
                 ILineDataSet mset = createSet6();
                 data.addDataSet(set);
@@ -1369,7 +1340,6 @@ public class ReportActivity extends Activity {
 
 //        chart02.clear();
 //        chart02.invalidate();
-
 
     }
 
@@ -1400,25 +1370,17 @@ public class ReportActivity extends Activity {
             View view = inflater.inflate(R.layout.done_layout, null);
             builder.setView(view);
 
-            final Button appbtnCancel = view.findViewById(R.id.appbtnCancel);
-            final Button appbtnExit = view.findViewById(R.id.appbtnExit);
+            final Button appBtnCancel = view.findViewById(R.id.appbtnCancel);
+            final Button appBtnExit = view.findViewById(R.id.appbtnExit);
 
             final AlertDialog dialog = builder.create();
 
-            appbtnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            appbtnExit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent main = new Intent(ReportActivity.this, RoomActivity.class);
-                    startActivity(main);
-                    finish();
-                    overridePendingTransition(R.anim.fadeout, R.anim.fadein);
-                }
+            appBtnCancel.setOnClickListener(v -> dialog.dismiss());
+            appBtnExit.setOnClickListener(v -> {
+                Intent main = new Intent(ReportActivity.this, RoomActivity.class);
+                startActivity(main);
+                finish();
+                overridePendingTransition(R.anim.fadeout, R.anim.fadein);
             });
 
             dialog.setCancelable(false);
@@ -1444,26 +1406,25 @@ public class ReportActivity extends Activity {
         AppDatabase database = AppDatabase.getDbInstance(getApplicationContext());
         reports = database.reportDao().getAllDevice();
 
-        HashMap<String, String> keyitem = new HashMap<>();
+        HashMap<String, String> keyItem = new HashMap<>();
 
         final HashMap<String, ArrayList<String>> reportList = new HashMap<>();
-        final ArrayList<String> date = new ArrayList<>();
 
-        for (Report report : reports){
-            String split[] = report.to_day.split("/");
-            keyitem.put(split[0], "");
+        for (Report report : reports) {
+            String[] split = report.to_day.split("/");
+            keyItem.put(split[0], "");
         }
 
-        for (String key : keyitem.keySet()) {date.add(key);}
+        final ArrayList<String> date = new ArrayList<>(keyItem.keySet());
 
         Collections.sort(date);
 
         for (String date_ : date) {
             ArrayList<String> item = new ArrayList<>();
             for (Report report : reports) {
-                String split[] = report.to_day.split("/");
+                String[] split = report.to_day.split("/");
                 //if (date_.equals(report.to_day)) {
-                if(date_.equals(split[0])){
+                if (date_.equals(split[0])) {
                     int all_score;
                     int breathScore = (int) ((Double.parseDouble(report.lung_correct) / Double.parseDouble(report.lung_num)) * 100);
                     int sum_depth = Integer.parseInt(report.report_depth_correct)
@@ -1471,11 +1432,16 @@ public class ReportActivity extends Activity {
                             + Integer.parseInt(report.report_down_depth);
 
                     int depth_accuracy_ = (int) ((double) sum_depth / (double) 3);
-                    if(Integer.parseInt(report.lung_num) != 0){
+                    if (Integer.parseInt(report.lung_num) != 0) {
                         all_score = (int) ((breathScore * 0.2) + (depth_accuracy_ * 0.8));
-                    }else
-                        all_score = depth_accuracy_;
-                    item.add(report.report_name + "," + report.report_depth_correct+ ","+report.to_day +","+all_score);
+                    } else {
+                        if (Integer.parseInt(report.position_num) != 0) {
+                            all_score = depth_accuracy_;
+                        } else {
+                            all_score = Integer.parseInt(report.report_down_depth);
+                        }
+                    }
+                    item.add(report.report_name + "," + report.report_depth_correct + "," + report.to_day + "," + all_score);
                 }
             }
             Collections.sort(item);

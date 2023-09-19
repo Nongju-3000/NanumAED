@@ -40,19 +40,17 @@ public class LobbyActivity extends Activity {
     private RecyclerView room_recyclerview, chat_recyclerview;
     private EditText chat_edittext;
     private String token, name;
-    private ImageButton chat_sendbutton;
+    private ImageButton chat_sendButton;
     private RemoteRoomAdapter remoteRoomAdapter;
     private RemoteChatAdapter remoteChatAdapter;
     private BackPressCloseHandler backPressCloseHandler;
-    private boolean trainercheck = false;
-    private boolean duplicatedcheck = false;
-
 
     @Override
     public void onCreate(android.os.Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_lobby);
 
         View view = getWindow().getDecorView();
@@ -78,7 +76,7 @@ public class LobbyActivity extends Activity {
         remoteChatAdapter = new RemoteChatAdapter();
         chat_recyclerview.setAdapter(remoteChatAdapter);
         chat_recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        chat_sendbutton = findViewById(R.id.chat_sendbutton);
+        chat_sendButton = findViewById(R.id.chat_sendbutton);
 
         token = getIntent().getStringExtra("Token");
         name = getIntent().getStringExtra("Name");
@@ -90,8 +88,8 @@ public class LobbyActivity extends Activity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 remoteChatAdapter.clearChatList();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    for (DataSnapshot mdataSnapshot : dataSnapshot.getChildren()) {
-                        RemoteChatData remoteChatData = mdataSnapshot.getValue(RemoteChatData.class);
+                    for (DataSnapshot mDataSnapshot : dataSnapshot.getChildren()) {
+                        RemoteChatData remoteChatData = mDataSnapshot.getValue(RemoteChatData.class);
                         Log.e("remoteChatData", remoteChatData.toString());
                         if (!dataSnapshot.getKey().equals("대기실")) {
                             remoteChatData.setName(remoteChatData.getName() + "(" + dataSnapshot.getKey() + ")");
@@ -139,7 +137,7 @@ public class LobbyActivity extends Activity {
             }
         });*/
 
-        chat_sendbutton.setOnClickListener(v -> {
+        chat_sendButton.setOnClickListener(v -> {
             if (chat_edittext.getText().toString().equals("")) {
                 Toast.makeText(getApplicationContext(), R.string.input_message_here, Toast.LENGTH_SHORT).show();
                 return;
@@ -201,32 +199,24 @@ public class LobbyActivity extends Activity {
 
                     }
                 });
-
-
-                if (!trainercheck && !duplicatedcheck) {
-
-                } else {
-
-                }
-
             }
         });
 
         databaseReference.child("Room").addChildEventListener(new ChildEventListener() {
             ArrayList<ChildEventListener> intoListenerList = new ArrayList<>();
-            ArrayList<String> roomlist = new ArrayList<>();
+            ArrayList<String> roomList = new ArrayList<>();
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
                 ChildEventListener intoListener;
                 String roomname = snapshot.getKey();
-                roomlist.add(snapshot.getKey());
+                roomList.add(snapshot.getKey());
                 remoteRoomAdapter.addRoom(roomname);
                 intoListener = databaseReference.child("Room").child(snapshot.getKey()).child("into").addChildEventListener(new ChildEventListener() {
                     int intoCount = 0;
 
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot intodataSnapshot, @androidx.annotation.Nullable String previousChildName) {
+                    public void onChildAdded(@NonNull DataSnapshot intoDataSnapshot, @androidx.annotation.Nullable String previousChildName) {
                         intoCount++;
                         remoteRoomAdapter.setRoom(roomname, intoCount);
                     }
@@ -237,7 +227,7 @@ public class LobbyActivity extends Activity {
                     }
 
                     @Override
-                    public void onChildRemoved(@NonNull DataSnapshot intodataSnapshot) {
+                    public void onChildRemoved(@NonNull DataSnapshot intoDataSnapshot) {
                         intoCount--;
                         remoteRoomAdapter.setRoom(roomname, intoCount);
                     }
@@ -262,10 +252,10 @@ public class LobbyActivity extends Activity {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                String roomname = snapshot.getKey();
-                remoteRoomAdapter.removeRoom(roomname);
-                int index = roomlist.indexOf(snapshot.getKey());
-                roomlist.remove(index);
+                String roomName = snapshot.getKey();
+                remoteRoomAdapter.removeRoom(roomName);
+                int index = roomList.indexOf(snapshot.getKey());
+                roomList.remove(index);
                 databaseReference.child("Room").child(snapshot.getKey()).child("into").removeEventListener(intoListenerList.get(index));
                 intoListenerList.remove(index);
             }
