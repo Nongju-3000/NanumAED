@@ -89,7 +89,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 import soup.neumorphism.NeumorphButton;
 import soup.neumorphism.NeumorphImageButton;
 
-@SuppressLint({"LogNotTimber", "SetTextI18n","SimpleDateFormat"})
+@SuppressLint({"LogNotTimber", "SetTextI18n", "SimpleDateFormat"})
 public class CPRActivity extends AppCompatActivity {
     private final static String TAG = CPRActivity.class.getSimpleName();
     private static int depth_true, depth_false, depth_over;
@@ -109,13 +109,13 @@ public class CPRActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD = 20000; //scan time 4000
     private Button depth_btn01, press_ave_btn01, standard_btn01;
     private View view01;
-    private ImageView lung01,test_lung01,babyCircle, anne_aed, bolt, cpr_arrow01, cpr_arrow01_, cpr_ani01, cpr_ani02, press_position;
+    private ImageView lung01, test_lung01, babyCircle, cpr_arrow01, cpr_arrow01_, cpr_ani01, cpr_ani02, press_position;
     private ClipDrawable lung_clip01;
     private boolean start_check = true;
-    private TextView cpr_timer, aed_tv;
+    private TextView cpr_timer;
     private Button standardCPR_btn01, depth_btn_cpr_up;
     private long MillisecondTime, StartTime, TimeBuff, UpdateTime, interval01, StartTime_L = 0L;
-    private final Handler handler= new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private final Handler handler01 = new Handler(Looper.getMainLooper());
     private final Handler handler02 = new Handler(Looper.getMainLooper());
     private int score_01, cycle_01 = 0;
@@ -152,6 +152,7 @@ public class CPRActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
     private HandlerThread mBackgroundThread;
     private ArrayList<String> mac_list;
     private ArrayList<Integer> lung_list01, lung_list_LONG;
@@ -356,10 +357,6 @@ public class CPRActivity extends AppCompatActivity {
             depth_false = view01.getHeight() / 3;
         });
 
-        anne_aed = findViewById(R.id.anne_aed);
-        aed_tv = findViewById(R.id.anne_aed_text);
-        bolt = findViewById(R.id.bolt);
-
         LinearLayout layout100 = findViewById(R.id.cpr_layout100);
         LinearLayout layout120 = findViewById(R.id.cpr_layout120);
 
@@ -443,6 +440,7 @@ public class CPRActivity extends AppCompatActivity {
         remote_arrow_up_text = findViewById(R.id.remote_arrow_up_text);
         remote_depth_text = findViewById(R.id.remote_depth_text);
     }
+
     private int mLevel01 = 0;
     private int fromLevel01 = 0;
     private int toLevel01 = 0;
@@ -554,75 +552,13 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    private void runningAEDSequence(){
-        Thread thread = new Thread(() -> {
-            try {
-                isAED = true;
-                Thread.sleep(1000);
-                runOnUiThread(() -> {
-                    press_position.setVisibility(View.INVISIBLE);
-                    cpr_arrow01_.setVisibility(View.INVISIBLE);
-                    remote_arrow_down_text.setVisibility(View.INVISIBLE);
-                    lung01.setVisibility(View.INVISIBLE);
-                    test_lung01.setVisibility(View.INVISIBLE);
-                    anne.setVisibility(View.INVISIBLE);
-                    remote_depth_text.setVisibility(View.INVISIBLE);
-                    cpr_ani01.setVisibility(View.INVISIBLE);
-                    cpr_ani02.setVisibility(View.INVISIBLE);
-                    standardCPR_btn01.setVisibility(View.INVISIBLE);
-                    depth_btn01.setVisibility(View.INVISIBLE);
-                    depth_btn_cpr_up.setVisibility(View.INVISIBLE);
-                    depthCPR_view01.setVisibility(View.INVISIBLE);
-                    press_position.setVisibility(View.INVISIBLE);
-
-                    anne_aed.setVisibility(View.VISIBLE);
-                    aed_tv.setVisibility(View.VISIBLE);
-                    aed_tv.setText("패드를 올바른 위치에 부착하여 주십시오.");
-                });
-                Thread.sleep(3000);
-                runOnUiThread(() -> {
-                    aed_tv.setText("심전도 분석중입니다...");
-                });
-                Thread.sleep(5000);
-                runOnUiThread(() -> {
-                    aed_tv.setText("전기 충격이 필요합니다! 환자에게서 떨어진 후 충격 버튼을 누르십시오.");
-                });
-                Thread.sleep(3000);
-                runOnUiThread(() -> {
-                    bolt.setVisibility(View.VISIBLE);
-                });
-                Thread.sleep(1000);
-                runOnUiThread(() -> {
-                    bolt.setVisibility(View.INVISIBLE);
-                });
-                Thread.sleep(2000);
-                runOnUiThread(() -> {
-                    anne_aed.setVisibility(View.INVISIBLE);
-                    aed_tv.setVisibility(View.INVISIBLE);
-                    bolt.setVisibility(View.INVISIBLE);
-                });
-                isAED = false;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        thread.start();
-    }
-
     private int depthCount = 0;
     private boolean isAED = false;
 
     private void displayData(String data) { //TODO DATA
         if (data != null && !isAED) {
             String[] spil = data.split(",");
-            if (Devices.get("Device_01").equals(spil[2])) {
-                switch (spil[0]){
-                    case "a0":
-                        runningAEDSequence();
-                        break;
-                }
-            } else if (Devices.get("Device_02").equals(spil[2])) {
+            if (Devices.get("Device_02").equals(spil[2])) {
                 long now = System.currentTimeMillis();
                 if (!device2_connect)
                     device2_connect = true;
@@ -799,7 +735,6 @@ public class CPRActivity extends AppCompatActivity {
                         break;
 
                     case "0000fff2-0000-1000-8000-00805f9b34fb":
-
                         long secs = System.currentTimeMillis() - interval01;
                         now = now - (now % 10);
                         float current_time = (float) ((now - StartTime_L) / 1000.0f);
@@ -812,7 +747,7 @@ public class CPRActivity extends AppCompatActivity {
                                 Log.e("breath01", breath01 + "");
                                 breath01 = bre_threshold01 - 3;
                                 isPeakCount++;
-                                if(isPeakCount > 20){
+                                if (isPeakCount > 20) {
                                     isPeak = false;
                                     isPeakCount = 0;
                                 }
@@ -980,20 +915,15 @@ public class CPRActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-
-                            long now_ = System.currentTimeMillis();
-                            Date date_ = new Date(now_);
-                            SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                            String getTime_ = sdf_.format(date_);
-                            if(lung_list_LONG.isEmpty()) {
-                                if(breath01 < bre_threshold01 + 5)
+                            if (lung_list_LONG.isEmpty()) {
+                                if (breath01 < bre_threshold01 + 5)
                                     lung_list_LONG.add(breath01);
-                            } else{
-                                if(lung_list_LONG.get(0) - breath01 < 4 && lung_list_LONG.get(0) - breath01 > -4) {
-                                    if(lung_list_LONG.size() < 21) {
+                            } else {
+                                if (lung_list_LONG.get(0) - breath01 < 4 && lung_list_LONG.get(0) - breath01 > -4) {
+                                    if (lung_list_LONG.size() < 21) {
                                         lung_list_LONG.add(breath01);
                                     }
-                                } else{
+                                } else {
                                     lung_list_LONG.clear();
                                 }
                             }
@@ -1047,6 +977,7 @@ public class CPRActivity extends AppCompatActivity {
                             lung_list01.clear();
                             lungTimeList01.clear();
                         }
+
                         lung01.setVisibility(View.INVISIBLE);
                         test_lung01.setVisibility(View.INVISIBLE);
                         lung_list01.clear();
@@ -1062,11 +993,6 @@ public class CPRActivity extends AppCompatActivity {
                         }
 
                         Animation animation = new TranslateAnimation(0, 0, 0, depth_true);
-
-                        depthCount++;
-                        if(depthCount == 30){
-                            runningAEDSequence();
-                        }
 
                         new Thread(() -> runOnUiThread(() -> {
                             int value;
@@ -1088,35 +1014,35 @@ public class CPRActivity extends AppCompatActivity {
 
                         })).start();
 
-                        if (!start_check) {
-                            int Depth_correct_sum01 = 0;
-                            int Depth_size = 0;
 
-                            for (UserItem userItem : cprItem01) {
-                                if (userItem.getDepth_correct() != 0)
-                                    Depth_correct_sum01 = Depth_correct_sum01 + 1;
-                                if (userItem.getDepth_correct() != 0 || userItem.getDepth() != 0)
-                                    Depth_size = Depth_size + 1;
-                            }
+                        int Depth_correct_sum01 = 0;
+                        int Depth_size = 0;
 
-                            while (peakTimes.size() > 2) {
-                                peakTimes.remove(0);
-                            }
-                            long now2 = System.currentTimeMillis();
-                            now2 = now2 - (now2 % 10);
-                            peakTimes.add(now2);
-                            setBpm();
-                            float presstime = (float) ((now2 - StartTime_L) / 1000.0f);
-                            pressTimeList01.add(presstime);
+                        for (UserItem userItem : cprItem01) {
+                            if (userItem.getDepth_correct() != 0)
+                                Depth_correct_sum01 = Depth_correct_sum01 + 1;
+                            if (userItem.getDepth_correct() != 0 || userItem.getDepth() != 0)
+                                Depth_size = Depth_size + 1;
+                        }
 
-                            if (cprItem01.size() != 0) {
-                                if (!start_check) {
-                                    score_01 = (int) (((double) Depth_correct_sum01 / (double) Depth_size) * 100);
-                                    depth_correct = Depth_correct_sum01;
-                                    depth_num = Depth_size;
-                                }
+                        while (peakTimes.size() > 2) {
+                            peakTimes.remove(0);
+                        }
+                        long now2 = System.currentTimeMillis();
+                        now2 = now2 - (now2 % 10);
+                        peakTimes.add(now2);
+                        setBpm();
+                        float presstime = (float) ((now2 - StartTime_L) / 1000.0f);
+                        pressTimeList01.add(presstime);
+
+                        if (cprItem01.size() != 0) {
+                            if (!start_check) {
+                                score_01 = (int) (((double) Depth_correct_sum01 / (double) Depth_size) * 100);
+                                depth_correct = Depth_correct_sum01;
+                                depth_num = Depth_size;
                             }
                         }
+
                         if (!isReversed) {
                             if (depthSet >= minDepth && depthSet <= maxDepth)
                                 animation = new TranslateAnimation(0, 0, 0, depth_true);
@@ -1766,6 +1692,7 @@ public class CPRActivity extends AppCompatActivity {
             mLeDeviceListAdapter.clear();
             mLeDeviceListAdapter02.clear();
             mac_list.clear();
+            showScanDialog();
         });
         scan_btn.setOnClickListener(v -> {
             if (isScanning()) {
@@ -1780,6 +1707,7 @@ public class CPRActivity extends AppCompatActivity {
                 scanLeDevice(false);
             }
             mac_list.clear();
+            showScanDialog();
             dialog.dismiss();
         });
 

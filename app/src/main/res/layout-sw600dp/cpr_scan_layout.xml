@@ -59,6 +59,7 @@
                             android:text="AED"
                             android:textSize="300sp"
                             android:gravity="center"
+                            android:visibility="invisible"
                             app:neumorph_shapeAppearance="@style/CustomShapeAppearance"
                             app:neumorph_shadowElevation="3dp"
                             app:neumorph_shadowColorLight="#444444"

@@ -33,13 +33,14 @@
                 android:text="CPR"
                 android:textColor="#FF6A0D"
                 android:textStyle="bold" />
-
         </FrameLayout><!--top menu layout -->
 
         <LinearLayout
             android:id="@+id/cpr_timer_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:visibility="gone"
             android:layout_weight="1">
 
             <soup.neumorphism.NeumorphCardView
@@ -184,12 +185,11 @@
                                     android:layout_height="0dp"
                                     android:scaleType="fitCenter"
                                     android:src="@drawable/anne"
+                                    app:layout_constraintStart_toEndOf="@id/press_position"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintDimensionRatio="100:35"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintVertical_bias="0.2"
                                     app:layout_constraintWidth_percent="0.7" />
 
                                 <ImageView
@@ -200,12 +200,12 @@
                                     android:src="@drawable/sharp_img"
                                     android:visibility="visible"
                                     app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintDimensionRatio="1:1"
-                                    app:layout_constraintHeight_percent="0.37"
-                                    app:layout_constraintVertical_bias="0.8"
-                                    app:layout_constraintStart_toStartOf="parent" />
+                                    app:layout_constraintHeight_percent="0.5"
+                                    app:layout_constraintVertical_bias="0.5"
+                                    app:layout_constraintEnd_toStartOf="@id/anne"/>
 
                                 <ImageButton
                                     android:id="@+id/press_point_btn"
