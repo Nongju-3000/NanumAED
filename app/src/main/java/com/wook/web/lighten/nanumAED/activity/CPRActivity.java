@@ -89,7 +89,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 import soup.neumorphism.NeumorphButton;
 import soup.neumorphism.NeumorphImageButton;
 
-@SuppressLint({"LogNotTimber", "SetTextI18n","SimpleDateFormat"})
+@SuppressLint({"LogNotTimber", "SetTextI18n", "SimpleDateFormat"})
 public class CPRActivity extends AppCompatActivity {
     private final static String TAG = CPRActivity.class.getSimpleName();
     private static int depth_true, depth_false, depth_over;
@@ -109,13 +109,13 @@ public class CPRActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD = 20000; //scan time 4000
     private Button depth_btn01, press_ave_btn01, standard_btn01;
     private View view01;
-    private ImageView lung01,test_lung01,babyCircle, anne_aed, bolt, cpr_arrow01, cpr_arrow01_, cpr_ani01, cpr_ani02, press_position;
+    private ImageView lung01, test_lung01, babyCircle, anne_aed, bolt, cpr_arrow01, cpr_arrow01_, cpr_ani01, cpr_ani02, press_position;
     private ClipDrawable lung_clip01;
     private boolean start_check = true;
-    private TextView cpr_timer, aed_tv;
+    private TextView cpr_timer, aed_tv, aed_find_tv;
     private Button standardCPR_btn01, depth_btn_cpr_up;
     private long MillisecondTime, StartTime, TimeBuff, UpdateTime, interval01, StartTime_L = 0L;
-    private final Handler handler= new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private final Handler handler01 = new Handler(Looper.getMainLooper());
     private final Handler handler02 = new Handler(Looper.getMainLooper());
     private int score_01, cycle_01 = 0;
@@ -132,7 +132,7 @@ public class CPRActivity extends AppCompatActivity {
         add(0f);
     }};
     private ArrayList<Float> lungTimeList01;
-    private boolean isBreath01 = false, device2_connect = false, testMode = false, playCheck = false, isCali01 = false,
+    private boolean isBreath01 = false, device1_connect = false, device2_connect = false, testMode = false, playCheck = false, isCali01 = false,
             isAdult = true, isReversed = false, isLungDrawing = false, isBreOver01 = false, isBreBelow01 = false, isImageNormal01 = true,
             isReady = false;
     private final ArrayList<Long> peakTimes = new ArrayList<Long>();
@@ -152,6 +152,7 @@ public class CPRActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
     private HandlerThread mBackgroundThread;
     private ArrayList<String> mac_list;
     private ArrayList<Integer> lung_list01, lung_list_LONG;
@@ -222,7 +223,6 @@ public class CPRActivity extends AppCompatActivity {
         if (!start_check) {
             long now = System.currentTimeMillis();
             now = now - (now % 10);
-
             float bleTime = (float) ((now - StartTime_L) / 1000.0);
             if (!device2_connect) {
                 if (Objects.equals(Devices.get("Device_01"), mac)) {
@@ -251,10 +251,10 @@ public class CPRActivity extends AppCompatActivity {
                         connected = 0;
                     }
                     if (!isConnected) {
-                        cpr_layout_01.setAlpha(0.2f);
+                        //cpr_layout_01.setAlpha(0.2f);
                     } else {
                         handler_cpr01_disconnect.removeMessages(0);
-                        cpr_layout_01.setAlpha(1f);
+                        //cpr_layout_01.setAlpha(1f);
                     }
                 }
             } else {
@@ -266,10 +266,10 @@ public class CPRActivity extends AppCompatActivity {
                     }
                 }
                 if (!isConnected) {
-                    cpr_layout_01.setAlpha(0.2f);
+                    //cpr_layout_01.setAlpha(0.2f);
                 } else {
                     handler_cpr01_disconnect.removeMessages(0);
-                    cpr_layout_01.setAlpha(1f);
+                    //cpr_layout_01.setAlpha(1f);
                 }
             }
         }
@@ -358,6 +358,7 @@ public class CPRActivity extends AppCompatActivity {
 
         anne_aed = findViewById(R.id.anne_aed);
         aed_tv = findViewById(R.id.anne_aed_text);
+        aed_find_tv = findViewById(R.id.aed_find_tv);
         bolt = findViewById(R.id.bolt);
 
         LinearLayout layout100 = findViewById(R.id.cpr_layout100);
@@ -443,6 +444,7 @@ public class CPRActivity extends AppCompatActivity {
         remote_arrow_up_text = findViewById(R.id.remote_arrow_up_text);
         remote_depth_text = findViewById(R.id.remote_depth_text);
     }
+
     private int mLevel01 = 0;
     private int fromLevel01 = 0;
     private int toLevel01 = 0;
@@ -521,12 +523,12 @@ public class CPRActivity extends AppCompatActivity {
 
     // Example for sending actions to JitsiMeetSDK
     private void hangUp() {
-        try {
+        /*try {
             bluetoothLeServiceCPR.broadCastRxConnectionUpdate(bleDevice1, 0);
             Log.e(TAG, "bleDevice1_broadCastRxConnectionUpdate");
         } catch (Exception e) {
 
-        }
+        }*/
         try {
             bluetoothLeServiceCPR.broadCastRxConnectionUpdate(bleDevice2, 1);
             Log.e(TAG, "bleDevice2_broadCastRxConnectionUpdate");
@@ -554,78 +556,127 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    private void runningAEDSequence(){
-        Thread thread = new Thread(() -> {
-            try {
-                isAED = true;
-                Thread.sleep(1000);
-                runOnUiThread(() -> {
-                    press_position.setVisibility(View.INVISIBLE);
-                    cpr_arrow01_.setVisibility(View.INVISIBLE);
-                    remote_arrow_down_text.setVisibility(View.INVISIBLE);
-                    lung01.setVisibility(View.INVISIBLE);
-                    test_lung01.setVisibility(View.INVISIBLE);
-                    anne.setVisibility(View.INVISIBLE);
-                    remote_depth_text.setVisibility(View.INVISIBLE);
-                    cpr_ani01.setVisibility(View.INVISIBLE);
-                    cpr_ani02.setVisibility(View.INVISIBLE);
-                    standardCPR_btn01.setVisibility(View.INVISIBLE);
-                    depth_btn01.setVisibility(View.INVISIBLE);
-                    depth_btn_cpr_up.setVisibility(View.INVISIBLE);
-                    depthCPR_view01.setVisibility(View.INVISIBLE);
-                    press_position.setVisibility(View.INVISIBLE);
+    private boolean isPadAttached = false;
+    private boolean isPadBlinked = false;
+    private Thread padThread;
 
-                    anne_aed.setVisibility(View.VISIBLE);
-                    aed_tv.setVisibility(View.VISIBLE);
-                    aed_tv.setText("패드를 올바른 위치에 부착하여 주십시오.");
-                });
-                Thread.sleep(3000);
-                runOnUiThread(() -> {
-                    aed_tv.setText("심전도 분석중입니다...");
-                });
-                Thread.sleep(5000);
-                runOnUiThread(() -> {
-                    aed_tv.setText("전기 충격이 필요합니다! 환자에게서 떨어진 후 충격 버튼을 누르십시오.");
-                });
-                Thread.sleep(3000);
-                runOnUiThread(() -> {
-                    bolt.setVisibility(View.VISIBLE);
-                });
-                Thread.sleep(1000);
-                runOnUiThread(() -> {
-                    bolt.setVisibility(View.INVISIBLE);
-                });
-                Thread.sleep(2000);
-                runOnUiThread(() -> {
-                    anne_aed.setVisibility(View.INVISIBLE);
-                    aed_tv.setVisibility(View.INVISIBLE);
-                    bolt.setVisibility(View.INVISIBLE);
-                });
-                isAED = false;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    private void runningAEDSequence() {
+        isAED = true;
+        runOnUiThread(() -> {
+            aed_find_tv.setVisibility(View.INVISIBLE);
+            press_position.setVisibility(View.INVISIBLE);
+            cpr_arrow01_.setVisibility(View.INVISIBLE);
+            remote_arrow_down_text.setVisibility(View.INVISIBLE);
+            lung01.setVisibility(View.INVISIBLE);
+            test_lung01.setVisibility(View.INVISIBLE);
+            anne.setVisibility(View.INVISIBLE);
+            remote_depth_text.setVisibility(View.INVISIBLE);
+            cpr_ani01.setVisibility(View.INVISIBLE);
+            cpr_ani02.setVisibility(View.INVISIBLE);
+            standardCPR_btn01.setVisibility(View.INVISIBLE);
+            depth_btn01.setVisibility(View.INVISIBLE);
+            depth_btn_cpr_up.setVisibility(View.INVISIBLE);
+            depthCPR_view01.setVisibility(View.INVISIBLE);
+            press_position.setVisibility(View.INVISIBLE);
+            anne_aed.setVisibility(View.VISIBLE);
+            aed_tv.setVisibility(View.VISIBLE);
         });
+        if(!isPadBlinked && !isPadAttached){
+            padThread = new Thread(() -> {
+                try {
+                    isPadBlinked = true;
+                    while (isPadBlinked && !isPadAttached) {
+                        runOnUiThread(() -> {
+                            anne_aed.setImageResource(R.drawable.anne_aed);
+                        });
+                        Thread.sleep(1000);
+                        runOnUiThread(() -> {
+                            anne_aed.setImageResource(R.drawable.anne_aed_painted);
+                        });
+                        Thread.sleep(1000);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+            padThread.start();
+        }
 
-        thread.start();
+        if(isPadAttached && isPadBlinked){
+            isPadBlinked = false;
+            padThread.interrupt();
+            runOnUiThread(() -> anne_aed.setImageResource(R.drawable.anne_aed_painted));
+        }
     }
 
     private int depthCount = 0;
     private boolean isAED = false;
 
     private void displayData(String data) { //TODO DATA
-        if (data != null && !isAED) {
+        if (data != null) {
             String[] spil = data.split(",");
+            Log.e(TAG, "data = " + data);
             if (Devices.get("Device_01").equals(spil[2])) {
-                switch (spil[0]){
-                    case "a0":
+                switch (spil[0]) {
+                    case BluetoothLeServiceCPR.AED_PAD_CHECK:
                         runningAEDSequence();
+                        aed_tv.setText("패드를 환자에 부착하여 주십시오.");
+                        break;
+                    case BluetoothLeServiceCPR.AED_PAD_CONNECT:
+                        runningAEDSequence();
+                        aed_tv.setText("패드를 환자에 부착하여 주십시오.");
+                        break;
+                    case BluetoothLeServiceCPR.AED_ECG_CHECK:
+                        isPadAttached = true;
+                        runningAEDSequence();
+                        aed_tv.setText("ECG 측정 중입니다.");
+                        break;
+                    case BluetoothLeServiceCPR.AED_SHOCK_NECESSARY:
+                        runningAEDSequence();
+                        aed_tv.setText("전기충격이 필요합니다.");
+                        break;
+                    case BluetoothLeServiceCPR.AED_CHARGING:
+                        runningAEDSequence();
+                        aed_tv.setText("충전중...");
+                        break;
+                    case BluetoothLeServiceCPR.AED_CHARGED:
+                        runningAEDSequence();
+                        aed_tv.setText("충전이 완료되었습니다.");
+                        break;
+                    case BluetoothLeServiceCPR.AED_NOCONTACT:
+                        runningAEDSequence();
+                        aed_tv.setText("환자와 접촉금지!");
+                        break;
+                    case BluetoothLeServiceCPR.AED_SHOCKED:
+                        Thread thread = new Thread(() -> {
+                            try {
+                                runOnUiThread(() -> {
+                                    bolt.setVisibility(View.VISIBLE);
+                                });
+                                Thread.sleep(2000);
+                                runOnUiThread(() -> {
+                                    bolt.setVisibility(View.INVISIBLE);
+                                });
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        thread.start();
+                        break;
+                    case BluetoothLeServiceCPR.AED_CPR_START:
+                        aed_tv.setText("CPR을 시작해주세요.");
+                        runOnUiThread(() -> {
+                            anne_aed.setVisibility(View.INVISIBLE);
+                            bolt.setVisibility(View.INVISIBLE);
+                        });
+                        isAED = false;
                         break;
                 }
-            } else if (Devices.get("Device_02").equals(spil[2])) {
+            } else if (Devices.get("Device_02").equals(spil[2]) && !isAED) {
                 long now = System.currentTimeMillis();
                 if (!device2_connect)
                     device2_connect = true;
+                scanLeDevice(true);
                 switch (spil[1]) {
                     case "0000fff1-0000-1000-8000-00805f9b34fb":
                         if (!isReversed) {
@@ -800,7 +851,7 @@ public class CPRActivity extends AppCompatActivity {
 
                     case "0000fff2-0000-1000-8000-00805f9b34fb":
 
-                        long secs = System.currentTimeMillis() - interval01;
+                        /*long secs = System.currentTimeMillis() - interval01;
                         now = now - (now % 10);
                         float current_time = (float) ((now - StartTime_L) / 1000.0f);
 
@@ -812,7 +863,7 @@ public class CPRActivity extends AppCompatActivity {
                                 Log.e("breath01", breath01 + "");
                                 breath01 = bre_threshold01 - 3;
                                 isPeakCount++;
-                                if(isPeakCount > 20){
+                                if (isPeakCount > 20) {
                                     isPeak = false;
                                     isPeakCount = 0;
                                 }
@@ -985,15 +1036,15 @@ public class CPRActivity extends AppCompatActivity {
                             Date date_ = new Date(now_);
                             SimpleDateFormat sdf_ = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                             String getTime_ = sdf_.format(date_);
-                            if(lung_list_LONG.isEmpty()) {
-                                if(breath01 < bre_threshold01 + 5)
+                            if (lung_list_LONG.isEmpty()) {
+                                if (breath01 < bre_threshold01 + 5)
                                     lung_list_LONG.add(breath01);
-                            } else{
-                                if(lung_list_LONG.get(0) - breath01 < 4 && lung_list_LONG.get(0) - breath01 > -4) {
-                                    if(lung_list_LONG.size() < 21) {
+                            } else {
+                                if (lung_list_LONG.get(0) - breath01 < 4 && lung_list_LONG.get(0) - breath01 > -4) {
+                                    if (lung_list_LONG.size() < 21) {
                                         lung_list_LONG.add(breath01);
                                     }
-                                } else{
+                                } else {
                                     lung_list_LONG.clear();
                                 }
                             }
@@ -1026,12 +1077,12 @@ public class CPRActivity extends AppCompatActivity {
                                     }, 1000);
                                 }
                             }
-                        }
+                        }*/
 
                         break;
-
                     case "0000fff3-0000-1000-8000-00805f9b34fb":
                         if (!isReversed && !isAED) {
+                            aed_tv.setVisibility(View.INVISIBLE);
                             anne.setVisibility(View.VISIBLE);
                             if (isAdult) {
                                 remote_depth_text.setVisibility(View.VISIBLE);
@@ -1063,10 +1114,6 @@ public class CPRActivity extends AppCompatActivity {
 
                         Animation animation = new TranslateAnimation(0, 0, 0, depth_true);
 
-                        depthCount++;
-                        if(depthCount == 30){
-                            runningAEDSequence();
-                        }
 
                         new Thread(() -> runOnUiThread(() -> {
                             int value;
@@ -1088,35 +1135,35 @@ public class CPRActivity extends AppCompatActivity {
 
                         })).start();
 
-                        if (!start_check) {
-                            int Depth_correct_sum01 = 0;
-                            int Depth_size = 0;
 
-                            for (UserItem userItem : cprItem01) {
-                                if (userItem.getDepth_correct() != 0)
-                                    Depth_correct_sum01 = Depth_correct_sum01 + 1;
-                                if (userItem.getDepth_correct() != 0 || userItem.getDepth() != 0)
-                                    Depth_size = Depth_size + 1;
-                            }
+                        int Depth_correct_sum01 = 0;
+                        int Depth_size = 0;
 
-                            while (peakTimes.size() > 2) {
-                                peakTimes.remove(0);
-                            }
-                            long now2 = System.currentTimeMillis();
-                            now2 = now2 - (now2 % 10);
-                            peakTimes.add(now2);
-                            setBpm();
-                            float presstime = (float) ((now2 - StartTime_L) / 1000.0f);
-                            pressTimeList01.add(presstime);
+                        for (UserItem userItem : cprItem01) {
+                            if (userItem.getDepth_correct() != 0)
+                                Depth_correct_sum01 = Depth_correct_sum01 + 1;
+                            if (userItem.getDepth_correct() != 0 || userItem.getDepth() != 0)
+                                Depth_size = Depth_size + 1;
+                        }
 
-                            if (cprItem01.size() != 0) {
-                                if (!start_check) {
-                                    score_01 = (int) (((double) Depth_correct_sum01 / (double) Depth_size) * 100);
-                                    depth_correct = Depth_correct_sum01;
-                                    depth_num = Depth_size;
-                                }
+                        while (peakTimes.size() > 2) {
+                            peakTimes.remove(0);
+                        }
+                        long now2 = System.currentTimeMillis();
+                        now2 = now2 - (now2 % 10);
+                        peakTimes.add(now2);
+                        setBpm();
+                        float presstime = (float) ((now2 - StartTime_L) / 1000.0f);
+                        pressTimeList01.add(presstime);
+
+                        if (cprItem01.size() != 0) {
+                            if (!start_check) {
+                                score_01 = (int) (((double) Depth_correct_sum01 / (double) Depth_size) * 100);
+                                depth_correct = Depth_correct_sum01;
+                                depth_num = Depth_size;
                             }
                         }
+
                         if (!isReversed) {
                             if (depthSet >= minDepth && depthSet <= maxDepth)
                                 animation = new TranslateAnimation(0, 0, 0, depth_true);
@@ -1504,13 +1551,16 @@ public class CPRActivity extends AppCompatActivity {
         }
     }
 
-    NeumorphButton device_btn_aed;
+    NeumorphImageButton device_btn_aed;
     NeumorphImageButton device_btn_aio;
     int de1Connect = 0;
     int de2Connect = 0;
 
     private void connection_on(String address) {
         if (Objects.equals(Devices.get("Device_01"), address)) {
+            if (device_btn_aed != null)
+                device_btn_aed.setImageResource(R.drawable.cpr_on);
+            device1_connect = true;
             de1Connect = 1;
         } else if (Objects.equals(Devices.get("Device_02"), address)) {
             if (device_btn_aio != null)
@@ -1563,7 +1613,7 @@ public class CPRActivity extends AppCompatActivity {
 
         final NeumorphButton band_dialog_reset = (NeumorphButton) view.findViewById(R.id.cpr_dialog_reset);
         final NeumorphButton band_dialog_layout = (NeumorphButton) view.findViewById(R.id.cpr_dialog_layout);
-        device_btn_aed = (NeumorphButton) view.findViewById(R.id.device_btn_aed01);
+        device_btn_aed = (NeumorphImageButton) view.findViewById(R.id.device_btn_aed01);
         device_btn_aio = (NeumorphImageButton) view.findViewById(R.id.device_btn_aio_01);
 
         final LinearLayout cpr_scan_reset = (LinearLayout) view.findViewById(R.id.cpr_scan_reset);
@@ -1579,7 +1629,9 @@ public class CPRActivity extends AppCompatActivity {
                 if (status == BluetoothProfile.STATE_CONNECTED) {
                     if (Devices.get("Device_01").equals(device.getAddress())) {
                         mConnected = true;
+                        device_btn_aed.setImageResource(R.drawable.cpr_on);
                         de1Connect = 1;
+                        device1_connect = true;
                     } else if (Devices.get("Device_02").equals(device.getAddress())) {
                         mConnected = true;
                         device_btn_aio.setImageResource(R.drawable.cpr_on);
@@ -1591,18 +1643,13 @@ public class CPRActivity extends AppCompatActivity {
             }
 
             handler.postDelayed(() -> {
-                for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter.mLeDevices) {
-                    String address = bluetoothDevice.getMacAddress();
-                    if (Objects.equals(Devices.get("Device_01"), address)) {
-                        bluetoothLeServiceCPR.connect(address, 0);
-                        bleDevice1 = rxBleClient.getBleDevice(address);
-                    }
-                }
                 for (RxBleDevice bluetoothDevice : mLeDeviceListAdapter02.mLeDevices) {
                     String address = bluetoothDevice.getMacAddress();
                     if (Objects.equals(Devices.get("Device_02"), address)) {
                         bluetoothLeServiceCPR.connect(address, 1);
                         bleDevice2 = rxBleClient.getBleDevice(address);
+                        bluetoothLeServiceCPR.connect(Devices.get("Device_01"), 0);
+                        bleDevice1 = rxBleClient.getBleDevice(Devices.get("Device_01"));
                     }
                 }
             }, 2000);
@@ -1642,9 +1689,6 @@ public class CPRActivity extends AppCompatActivity {
 
             try {
                 if (!Devices.isEmpty()) { //TODO BAND SET
-                    if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_01"))) {
-                        bluetoothLeServiceCPR.writeCharacteristic(0, "f3");
-                    }
                     if (bluetoothLeServiceCPR.isConnected(Devices.get("Device_02"))) {
                         bluetoothLeServiceCPR.writeCharacteristic(1, "f3");
                         bluetoothLeServiceCPR.writeCharacteristic(1, "e0");
@@ -1746,7 +1790,6 @@ public class CPRActivity extends AppCompatActivity {
         });
 
         connect.setOnClickListener(v -> {
-
             if (isScanning()) {
                 scanLeDevice(false);
             }
@@ -1941,7 +1984,7 @@ public class CPRActivity extends AppCompatActivity {
         String address = bleDevice.getMacAddress();
         if (name != null) {
             if (!mac_list.contains(address)) {
-                if (name.contains("NT")) {
+                if (name.contains("NANUM")) {
                     mLeDeviceListAdapter.addDevice(bleDevice);
                     mLeDeviceListAdapter.notifyDataSetChanged();
                 }
@@ -1950,6 +1993,10 @@ public class CPRActivity extends AppCompatActivity {
                     mLeDeviceListAdapter02.notifyDataSetChanged();
                 }
             }
+            if(sharedPreferences.getString("DeviceCPR_01", "-").equals(address)){
+                aed_find_tv.setText("AED가 감지되었습니다.\n 연결 시도중...");
+            }
+            Log.e("ScanName", name);
         }
     }
 

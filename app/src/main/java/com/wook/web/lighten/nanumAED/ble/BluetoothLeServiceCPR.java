@@ -46,8 +46,9 @@ public class BluetoothLeServiceCPR extends Service {
     private static final UUID CHAR_POSITION_UUID = UUID.fromString("0000FFF1-0000-1000-8000-00805F9B34FB");
     private static final UUID CHAR_BREATH_UUID = UUID.fromString("0000FFF2-0000-1000-8000-00805F9B34FB");
     private static final UUID CHAR_DEPTH_UUID = UUID.fromString("0000FFF3-0000-1000-8000-00805F9B34FB");
-    private static final UUID UUID_WRITE = UUID.fromString("0000fff4-0000-1000-8000-00805f9b34fb");
-
+    private static final UUID UUID_AIO_WRITE = UUID.fromString("0000fff4-0000-1000-8000-00805f9b34fb");
+    private static final UUID UUID_AED_READ = UUID.fromString("49487786-66F1-0041-5441-444D554E414E");
+    private static final UUID UUID_AED_WRITE = UUID.fromString("49487786-66F2-0000-444D-434D554E414E");
     public final static String ACTION_READY = "ACTION_READY";
     public final static String ACTION_DEPTH_CHANGE = "ACTION_DEPTH_CHANGE";
     public final static String ACTION_CALL = "ACTION_CALL";
@@ -57,6 +58,7 @@ public class BluetoothLeServiceCPR extends Service {
     public final static String ACTION_CALIBRATION_MAGNET = "ACTION_CALIBRATION_MAGNET";
     public final static String ACTION_NEW_STATE = "ACTION_NEW_STATE";
     public final static String ACTION_BLE_CONNECTED = "ACTION_BLE_CONNECTED";
+    public final static String ACTION_AED_SCANNED = "ACTION_AED_SCANNED";
 
     public static final String CMD_RANGE_INCOMMING_FLAG = "f5";
     public static final String CMD_READY = "f1";
@@ -64,12 +66,22 @@ public class BluetoothLeServiceCPR extends Service {
     public static final String CMD_MAGNET = "c0";
     public static final String CMD_CALIBRATION = "b0";
     public static final String CMD_CALIBRATION_MAGNET = "ba";
-    public static final String CMD_STX = "02";
-    public static final String CMD_ETX = "03";
-    public static final String CMD_PLAY = "b1";
-    public static final String CMD_PAUSE = "b2";
-    public static final String CMD_NEXT = "b4";
-    public static final String CMD_PREV = "b3";
+    public static final String CMD_AED_STX = "02";
+    public static final String CMD_AED_ETX = "03";
+    public static final String CMD_AED_PLAY = "b1";
+    public static final String CMD_AED_PAUSE = "b0";
+    public static final String CMD_AED_NEXT = "b4";
+    public static final String CMD_AED_PREV = "b3";
+    public static final String AED_PAD_CHECK = "A0 ";
+    public static final String AED_PAD_CONNECT = "A1 ";
+    public static final String AED_ECG_CHECK = "E0 ";
+    public static final String AED_SHOCK_NECESSARY = "E1 ";
+    public static final String AED_CHARGING = "C0 ";
+    public static final String AED_CHARGED = "C1 ";
+    public static final String AED_NOCONTACT = "C2 ";
+    public static final String AED_SHOCKED = "C3 ";
+    public static final String AED_CPR_START = "C4 ";
+
     /**
      * BluetoothAdapter for handling connections
      */
@@ -89,8 +101,9 @@ public class BluetoothLeServiceCPR extends Service {
     public static ArrayList<Boolean> isCharARegistereds = new ArrayList<>();
     private static RxBleClient rxBleClient;
 
-    private Handler mHander = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private boolean isStart = false;
+    private boolean isAIOConnected = false;
     private String mode = "";
 
     //TODO ble data service setting
@@ -300,11 +313,11 @@ public class BluetoothLeServiceCPR extends Service {
             Log.e(TAG, "writeCharacteristic: " + data);
             byte[] sender = HexString.hexToBytes(data);
             if (connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
-                rxBleConnection.writeCharacteristic(UUID_WRITE, sender).subscribe();
+                rxBleConnection.writeCharacteristic(UUID_AIO_WRITE, sender).subscribe();
             }
             if (data.equals(CMD_RANGE_INCOMMING_FLAG)) {
                 isHandlerFree = false;
-                mHander.postDelayed(() -> {
+                mHandler.postDelayed(() -> {
                     int min = min_list.get(index);
                     if (min != 0) {
                         min_list.set(index, 0);
@@ -319,7 +332,7 @@ public class BluetoothLeServiceCPR extends Service {
                 if (min_list.get(index) == 0 && max_list.get(index) != 0) {
                     Print.e(TAG, "sent min data is end. -> time to send max flag");
                     isHandlerFree = false;
-                    mHander.postDelayed(() -> {
+                    mHandler.postDelayed(() -> {
                         int max = max_list.get(0);
                         if (max != 0) {
                             max_list.set(0, 0);
@@ -429,6 +442,11 @@ public class BluetoothLeServiceCPR extends Service {
     private void sendNewState(final RxBleDevice device, RxBleConnection.RxBleConnectionState newState, int index) {
         connectionChecking.set(index, newState);
         String connectedStatus = "";
+        if(RxBleConnection.RxBleConnectionState.DISCONNECTING == newState && index == 0 && isAIOConnected) {
+            isCharDRegistereds.set(index, false);
+            isCharARegistereds.set(index, false);
+            connect(device.getMacAddress(), index);
+        }
         if (RxBleConnection.RxBleConnectionState.DISCONNECTED == newState) {
             isCharDRegistereds.set(index, false);
             isCharARegistereds.set(index, false);
@@ -436,6 +454,7 @@ public class BluetoothLeServiceCPR extends Service {
             connectedStatus = "disconnected";
         } else if (RxBleConnection.RxBleConnectionState.CONNECTED == newState) {
             connectedStatus = "connected";
+            if(index == 1) isAIOConnected = true;
         }
         if (!connectedStatus.equals(preStatus) && (connectedStatus.equals("disconnected") || connectedStatus.equals("connected"))) {
             final Intent intent = new Intent(ACTION_NEW_STATE);
@@ -451,7 +470,6 @@ public class BluetoothLeServiceCPR extends Service {
         Print.e(TAG, "broadCastRxConnectionUpdate");
 
         if (isConnected(device.getMacAddress())) {
-            //connectCompositeDisposable.add(connectionDisposables.get(index));
             Disposable disposable = rxBleConnection.setupNotification(CHAR_POSITION_UUID)
                     .doOnSubscribe(notificationObservable -> {
                         rxEnableNotification(device, rxBleConnection, index);
@@ -466,30 +484,29 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
+    public void broadCastAEDRxConnectionUpdate(final RxBleDevice device, int index) {
+        RxBleConnection rxBleConnection = mRxBleConnections.get(index);
+        Print.e(TAG, "broadCastRxConnectionUpdate");
+
+        if (!isCharDRegistereds.get(index)) {
+            isCharDRegistereds.set(index, true);
+            isCharARegistereds.set(index, true);
+            if (isConnected(device.getMacAddress())) {
+                Disposable disposable = rxBleConnection.setupNotification(UUID_AED_READ)
+                        .doOnNext(notificationObservable -> sendConnection(device, index))
+                        .flatMap(notificationObservable -> notificationObservable)
+                        .subscribe(
+                                bytes -> onAEDDataReceived(device, bytes),
+                                this::onNotificationSetupFailure
+                        );
+                compositeDisposable.add(disposable);
+            }
+        }
+    }
+
     private void rxEnableNotification(RxBleDevice device, RxBleConnection rxBleConnection, int index) {
         if (!isCharDRegistereds.get(index)) {
             isCharDRegistereds.set(index, true);
-
-            /*if(Objects.requireNonNull(device.getName()).contains("AIO")) {
-                if (isConnected(device.getMacAddress())) {
-                    Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
-                            .doOnSubscribe(notificationObservable -> {
-                                rxEnableNotification(device, rxBleConnection, index);
-                                Print.e(TAG, "Breath Notification Setup");
-                            })
-                            .flatMap(notificationObservable -> notificationObservable)
-                            .subscribe(
-                                    bytes -> onBreathReceived(device, bytes),
-                                    this::onNotificationSetupFailure
-                            );
-                    compositeDisposable.add(disposable);
-                }
-            }else{
-                if(isConnected(device.getMacAddress())){
-                    sendConnection(device, index);
-                    angleHandler.postDelayed(getAngleRunnable(device, rxBleConnection), 0);
-                }
-            }*/
             if (isConnected(device.getMacAddress())) {
                 Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
                         .doOnSubscribe(notificationObservable -> {
@@ -506,7 +523,6 @@ public class BluetoothLeServiceCPR extends Service {
         } else {
             if (!isCharARegistereds.get(index)) {
                 isCharARegistereds.set(index, true);
-
                 if (isConnected(device.getMacAddress())) {
                     Disposable disposable = rxBleConnection.setupNotification(CHAR_DEPTH_UUID)
                             .doOnNext(notificationObservable -> sendConnection(device, index))
@@ -521,22 +537,8 @@ public class BluetoothLeServiceCPR extends Service {
         }
     }
 
-    private Runnable getAngleRunnable(RxBleDevice device, RxBleConnection rxBleConnection) {
-        return () -> {
-            if (isConnected(device.getMacAddress())) {
-                Disposable disposable = rxBleConnection.setupNotification(CHAR_BREATH_UUID)
-                        .flatMap(notificationObservable -> notificationObservable)
-                        .subscribe(
-                                bytes -> onBreathReceived(device, bytes),
-                                this::onNotificationSetupFailure
-                        );
-                compositeDisposable.add(disposable);
-            }
-        };
-    }
-
     private void sendConnection(RxBleDevice device, int index) {
-        if (isStart) {
+        if (isStart && index == 1) {
             writeCharacteristic(index, mode);
         }
         if (Objects.requireNonNull(device.getName()).contains("AIO")) {
@@ -554,6 +556,17 @@ public class BluetoothLeServiceCPR extends Service {
             for (byte byteChar : bytes)
                 stringBuilder.append(String.format("%02X ", byteChar));
             intent.putExtra(EXTRA_DATA, stringBuilder + "," + CHAR_POSITION_UUID + "," + bleDevice.getMacAddress());
+        }
+        sendBroadcast(intent);
+    }
+
+    private void onAEDDataReceived(RxBleDevice bleDevice, byte[] bytes) {
+        final Intent intent = new Intent(ACTION_DATA_AVAILABLE);
+        if (bytes != null && bytes.length > 0) {
+            final StringBuilder stringBuilder = new StringBuilder(bytes.length);
+            for (byte byteChar : bytes)
+                stringBuilder.append(String.format("%02X ", byteChar));
+            intent.putExtra(EXTRA_DATA, stringBuilder + "," + UUID_AED_READ + "," + bleDevice.getMacAddress());
         }
         sendBroadcast(intent);
     }
@@ -590,7 +603,7 @@ public class BluetoothLeServiceCPR extends Service {
     private PublishSubject<Boolean> disconnectTriggerSubject = PublishSubject.create();
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final CompositeDisposable statecompositeDisposable = new CompositeDisposable();
-    private ArrayList<Boolean> isregisterstateDisposable = new ArrayList<Boolean>() {{
+    private ArrayList<Boolean> isRegisterStateDisposable = new ArrayList<Boolean>() {{
         add(false);
         add(false);
     }};
@@ -602,6 +615,7 @@ public class BluetoothLeServiceCPR extends Service {
     private CompositeDisposable connectCompositeDisposable = new CompositeDisposable();
 
     public boolean connect(final String macAddress, int index) {
+        Log.e(TAG, "connect: " + index);
         RxBleDevice bleDevice = rxBleClient.getBleDevice(macAddress);
 
         Observable<RxBleConnection> connectionObservable = bleDevice
@@ -614,22 +628,24 @@ public class BluetoothLeServiceCPR extends Service {
                 .doFinally(this::dispose)
                 .subscribe(
                         connection -> {
-                            Log.e("connect", macAddress);
                             mRxBleConnections.set(index, connection);
-                            broadCastRxConnectionUpdate(bleDevice, index);
+                            if(index == 1) {
+                                broadCastRxConnectionUpdate(bleDevice, index);
+                            } else{
+                                broadCastAEDRxConnectionUpdate(bleDevice, index);
+                            }
                         },
                         this::onConnectionFailure,
                         this::onConnectionFinished
                 );
         compositeDisposable.add(connectionDisposable);
 
-        if (!isregisterstateDisposable.get(index)) {
-            Log.e("connect", "stateDisposable");
+        if (!isRegisterStateDisposable.get(index)) {
             Disposable stateDisposable = bleDevice.observeConnectionStateChanges()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(newState -> sendNewState(bleDevice, newState, index));
             statecompositeDisposable.add(stateDisposable);
-            isregisterstateDisposable.set(index, true);
+            isRegisterStateDisposable.set(index, true);
         }
 
         return true;
@@ -656,7 +672,7 @@ public class BluetoothLeServiceCPR extends Service {
         byte[] sender = HexString.hexToBytes(data);
         if (connectionChecking.get(index) == RxBleConnection.RxBleConnectionState.CONNECTED) {
             try {
-                mRxBleConnections.get(index).writeCharacteristic(UUID_WRITE, sender).subscribe();
+                mRxBleConnections.get(index).writeCharacteristic(UUID_AIO_WRITE, sender).subscribe();
                 Log.e(TAG, "write characteristic, data = " + data + ", index = " + index);
             } catch (BleGattException e) {
                 int status = e.getStatus();
@@ -672,8 +688,8 @@ public class BluetoothLeServiceCPR extends Service {
     public void disconnect() {
         compositeDisposable.clear();
         statecompositeDisposable.clear();
-        isregisterstateDisposable.set(0, false);
-        isregisterstateDisposable.set(1, false);
+        isRegisterStateDisposable.set(0, false);
+        isRegisterStateDisposable.set(1, false);
         for (int i = 0; i < isCharARegistereds.size(); i++) {
             isCharDRegistereds.set(i, false);
             isCharARegistereds.set(i, false);

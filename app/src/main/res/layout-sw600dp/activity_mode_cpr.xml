@@ -76,9 +76,7 @@
                             android:gravity="center"
                             android:maxLines="1"
                             android:text="Event Time"
-                            android:textColor="#ffffff"
-
-                            />
+                            android:textColor="#ffffff" />
 
                         <TextView
                             android:id="@+id/cpr_timer"
@@ -137,6 +135,19 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.1">
+
+                                <TextView
+                                    android:id="@+id/aed_find_tv"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    android:textSize="50sp"
+                                    android:text=""
+                                    android:textColor="#d3d3d3"
+                                />
 
                                 <ImageView
                                     android:id="@+id/anne_aed"

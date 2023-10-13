@@ -49,16 +49,15 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <soup.neumorphism.NeumorphButton
+                        <soup.neumorphism.NeumorphImageButton
                             android:id="@+id/device_btn_aed01"
-                            android:layout_width="650dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:layout_margin="20dp"
+                            android:src="@drawable/cpr_off"
                             android:adjustViewBounds="true"
-                            android:text="AED"
-                            android:textSize="300sp"
-                            android:gravity="center"
+                            android:scaleType="fitCenter"
                             app:neumorph_shapeAppearance="@style/CustomShapeAppearance"
                             app:neumorph_shadowElevation="3dp"
                             app:neumorph_shadowColorLight="#444444"
